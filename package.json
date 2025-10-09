@@ -1,0 +1,58 @@
+{
+  "name": "@hakkisagdic/context-manager",
+  "version": "1.1.1",
+  "description": "LLM context manager with method-level filtering and token optimization",
+  "main": "index.js",
+  "bin": {
+    "context-manager": "bin/cli.js"
+  },
+  "scripts": {
+    "test": "node test/test.js",
+    "test:all": "node test/test-suite.js",
+    "test:unit": "node test/unit-tests.js",
+    "test:comprehensive": "npm run test && npm run test:unit",
+    "analyze": "node bin/cli.js",
+    "analyze:methods": "node bin/cli.js --method-level",
+    "build": "echo 'No build step required'",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "code",
+    "analysis",
+    "llm",
+    "context",
+    "method-level",
+    "javascript",
+    "ast",
+    "tiktoken",
+    "optimizer"
+  ],
+  "author": "Hakkı Sağdıç",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "tiktoken": "^1.0.0"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {
+    "tiktoken": "^1.0.0"
+  },
+  "files": [
+    "index.js",
+    "context-manager.js",
+    "lib/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hakkisagdic/context-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hakkisagdic/context-manager/issues"
+  },
+  "homepage": "https://github.com/hakkisagdic/context-manager#readme"
+}
