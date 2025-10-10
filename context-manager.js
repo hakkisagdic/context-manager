@@ -76,6 +76,7 @@ class MethodAnalyzer {
         return content.substring(0, index).split('\n').length;
     }
 
+    //TODO : move to / different way to have keywords
     isKeyword(name) {
         const keywords = new Set([
             'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
@@ -86,6 +87,7 @@ class MethodAnalyzer {
         return keywords.has(name);
     }
 
+    // TODO match algo change
     extractMethodContent(content, methodName) {
         const patterns = [
             new RegExp(`(function\\s+${methodName}\\s*\\([^)]*\\)\\s*\\{[^}]*(?:\\{[^}]*\\}[^}]*)*\\})`, 'g'),
@@ -318,7 +320,7 @@ class TokenCalculator {
         }
         return this.estimateTokens(content, filePath);
     }
-
+// look for these nums ***
     estimateTokens(content, filePath) {
         const ext = path.extname(filePath).toLowerCase();
         const charsPerToken = {

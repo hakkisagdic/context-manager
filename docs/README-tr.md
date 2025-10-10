@@ -467,6 +467,7 @@ node token-analysis/token-calculator.js --verbose --save-report
 ### Performans İpuçları
 
 - İlk çalıştırmada tiktoken yüklenir (biraz yavaş olabilir)
+// TODO büyüklük algılama otomatik olsun
 - Büyük projeler için verbose modu devre dışı bırakın
 - JSON raporları büyük projeler için disk alanı kullanır
 - `.calculatorignore` desenlerini optimize edin
