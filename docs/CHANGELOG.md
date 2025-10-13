@@ -2,6 +2,17 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [1.1.2] - 2025-10-13
+
+### Fixed
+- 🐛 **LLM Context Path Generation** - Fixed hardcoded `utility-mcp/src/` prefix in `generateCompactPaths` method
+  - Paths now correctly use project-relative structure
+  - Root directory files grouped under `/` instead of empty string
+  - Eliminates incorrect path prefixes in LLM context exports
+
+### Added
+- ✨ **GitHub Actions Manual Trigger** - Added `workflow_dispatch` to npm-publish workflow for manual testing
+
 ## [1.1.1] - 2025-10-09
 
 ### Fixed
