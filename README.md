@@ -41,6 +41,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 - 🔗 **Consistent exports** - Clipboard and file exports use identical JSON format
 - 📤 **Interactive export** - Prompts for export choice when no options specified
 - 🔀 **Dual context modes** - compact (default) or detailed format
+- 📄 **GitIngest format** - Generate single-file digest for LLM consumption (inspired by [GitIngest](https://github.com/coderamp-labs/gitingest))
 
 ## Quick Start
 
@@ -58,8 +59,14 @@ context-manager --save-report
 # Generate LLM context file
 context-manager --context-export
 
+# Generate GitIngest-style digest (single file for LLMs)
+context-manager --gitingest
+
 # Method-level analysis
 context-manager --method-level
+
+# Combine multiple exports
+context-manager -g -s  # GitIngest digest + detailed report
 
 # Use detailed context format (legacy)
 context-manager --method-level --detailed-context --context-clipboard
@@ -284,6 +291,81 @@ context-manager --save-report --context-clipboard
 - CI/CD pipeline context generation
 - Automated documentation updates
 - Project health monitoring
+
+## GitIngest Format Export
+
+Context-manager now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption.
+
+### What is GitIngest Format?
+
+GitIngest format consolidates your entire codebase into a single text file with:
+- Project summary and statistics
+- Visual directory tree structure
+- Complete file contents with clear separators
+- Token count estimates
+
+This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitingest), implemented purely in JavaScript with zero additional dependencies.
+
+### Usage
+
+```bash
+# Generate digest.txt (single-file output)
+context-manager --gitingest
+
+# Short flag
+context-manager -g
+
+# Combine with other exports
+context-manager -g -s  # digest.txt + token-analysis-report.json
+```
+
+### Output Example
+
+The generated `digest.txt` file looks like:
+
+```
+Directory: my-project
+Files analyzed: 42
+
+Estimated tokens: 15.2k
+Directory structure:
+└── my-project/
+    ├── src/
+    │   ├── index.js
+    │   └── utils.js
+    └── README.md
+
+
+================================================
+FILE: src/index.js
+================================================
+[complete file contents here]
+
+================================================
+FILE: src/utils.js
+================================================
+[complete file contents here]
+```
+
+### Key Features
+
+- **Single File**: Everything in one file for easy LLM ingestion
+- **Tree Visualization**: Clear directory structure
+- **Token Estimates**: Formatted as "1.2k" or "1.5M"
+- **Sorted Output**: Files sorted by token count (largest first)
+- **Filter Compatible**: Respects all `.gitignore` and calculator ignore rules
+
+### Use Cases
+
+1. **LLM Context Windows**: Paste entire codebase as single context
+2. **Code Reviews**: Share complete project snapshot
+3. **Documentation**: Single-file project reference
+4. **AI Analysis**: Perfect for ChatGPT, Claude, or other LLMs
+5. **Archival**: Simple project snapshot format
+
+### Version Tracking
+
+Context-manager implements GitIngest format v0.3.1. See [docs/GITINGEST_VERSION.md](docs/GITINGEST_VERSION.md) for implementation details and version history.
 
 ## Configuration
 

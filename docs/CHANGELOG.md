@@ -2,6 +2,33 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [1.2.0] - 2025-10-13
+
+### Added
+- 🎯 **GitIngest Format Export** - Generate single-file digest for LLM consumption
+  - New `GitIngestFormatter` class for digest generation
+  - `--gitingest` / `-g` CLI flag for digest export
+  - Creates `digest.txt` with project summary, tree structure, and file contents
+  - Format inspired by [GitIngest](https://github.com/coderamp-labs/gitingest) v0.3.1
+  - Pure JavaScript implementation with zero additional dependencies
+  - Respects all `.gitignore` and calculator filter rules
+  - Files sorted by token count (largest first)
+  - Token estimates formatted as "1.2k" or "1.5M"
+- 📄 **Version Tracking** - Added `docs/GITINGEST_VERSION.md` for format tracking
+- 🧪 **GitIngest Tests** - New `test/test-gitingest.js` with 10 comprehensive tests
+- 📦 **New npm scripts**:
+  - `test:gitingest` - Run GitIngest integration tests
+  - `analyze:gitingest` - Quick digest generation
+  - Updated `test:comprehensive` to include GitIngest tests
+- 📚 **Documentation Updates**:
+  - README.md updated with GitIngest section
+  - Examples and use cases for digest format
+  - Version tracking documentation
+
+### Changed
+- 📤 **Interactive Export Menu** - Added GitIngest as option 4 (was 4 options, now 5)
+- 🔧 **Token Output** - Added `token-analysis-report.json` to `.gitignore`
+
 ## [1.1.2] - 2025-10-13
 
 ### Fixed

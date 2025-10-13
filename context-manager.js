@@ -10,6 +10,170 @@ let tiktoken = null;
 try { tiktoken = require('tiktoken'); } catch {}
 
 /**
+ * GitIngest-style Digest Formatter
+ * Formats analyzed code into a single prompt-friendly text file
+ */
+class GitIngestFormatter {
+    constructor(projectRoot, stats, analysisResults) {
+        this.projectRoot = projectRoot;
+        this.stats = stats;
+        this.analysisResults = analysisResults;
+    }
+
+    generateDigest() {
+        let digest = '';
+
+        // Header with project info
+        digest += this.generateSummary();
+        digest += '\n';
+
+        // Directory tree structure
+        digest += this.generateTree();
+        digest += '\n';
+
+        // File contents
+        digest += this.generateFileContents();
+
+        return digest;
+    }
+
+    generateSummary() {
+        const projectName = path.basename(this.projectRoot);
+        let summary = `Directory: ${projectName}\n`;
+        summary += `Files analyzed: ${this.stats.totalFiles}\n`;
+
+        if (this.stats.totalTokens > 0) {
+            const tokenStr = this.formatTokenCount(this.stats.totalTokens);
+            summary += `\nEstimated tokens: ${tokenStr}`;
+        }
+
+        return summary;
+    }
+
+    formatTokenCount(tokens) {
+        if (tokens >= 1_000_000) {
+            return `${(tokens / 1_000_000).toFixed(1)}M`;
+        } else if (tokens >= 1_000) {
+            return `${(tokens / 1_000).toFixed(1)}k`;
+        }
+        return tokens.toString();
+    }
+
+    generateTree() {
+        let tree = 'Directory structure:\n';
+
+        // Build tree structure from analysis results
+        const fileTree = this.buildFileTree();
+        tree += this.formatTreeNode(fileTree, '', true);
+
+        return tree;
+    }
+
+    buildFileTree() {
+        const root = {
+            name: path.basename(this.projectRoot),
+            type: 'directory',
+            children: {}
+        };
+
+        // Sort files by path for consistent tree structure
+        const sortedFiles = [...this.analysisResults].sort((a, b) =>
+            a.relativePath.localeCompare(b.relativePath)
+        );
+
+        for (const fileInfo of sortedFiles) {
+            const parts = fileInfo.relativePath.split('/');
+            let current = root.children;
+
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                const isLastPart = i === parts.length - 1;
+
+                if (isLastPart) {
+                    // It's a file
+                    current[part] = {
+                        name: part,
+                        type: 'file',
+                        fileInfo: fileInfo
+                    };
+                } else {
+                    // It's a directory
+                    if (!current[part]) {
+                        current[part] = {
+                            name: part,
+                            type: 'directory',
+                            children: {}
+                        };
+                    }
+                    current = current[part].children;
+                }
+            }
+        }
+
+        return root;
+    }
+
+    formatTreeNode(node, prefix = '', isLast = true) {
+        let result = '';
+
+        if (node.name) {
+            const connector = isLast ? '└── ' : '├── ';
+            const displayName = node.type === 'directory' ? `${node.name}/` : node.name;
+            result += `${prefix}${connector}${displayName}\n`;
+        }
+
+        if (node.type === 'directory' && node.children) {
+            const newPrefix = node.name ? (prefix + (isLast ? '    ' : '│   ')) : '';
+            const childKeys = Object.keys(node.children).sort();
+
+            childKeys.forEach((key, index) => {
+                const child = node.children[key];
+                const childIsLast = index === childKeys.length - 1;
+                result += this.formatTreeNode(child, newPrefix, childIsLast);
+            });
+        }
+
+        return result;
+    }
+
+    generateFileContents() {
+        let content = '';
+
+        // Sort files by token count (largest first)
+        const sortedFiles = [...this.analysisResults].sort((a, b) =>
+            b.tokens - a.tokens
+        );
+
+        for (const fileInfo of sortedFiles) {
+            if (fileInfo.error) continue;
+
+            content += '\n';
+            content += '='.repeat(48) + '\n';
+            content += `FILE: ${fileInfo.relativePath}\n`;
+            content += '='.repeat(48) + '\n';
+
+            try {
+                const fileContent = fs.readFileSync(fileInfo.path, 'utf8');
+                content += fileContent;
+                if (!fileContent.endsWith('\n')) {
+                    content += '\n';
+                }
+            } catch (error) {
+                content += `Error reading file: ${error.message}\n`;
+            }
+        }
+
+        return content;
+    }
+
+    saveToFile(outputPath) {
+        const digest = this.generateDigest();
+        fs.writeFileSync(outputPath, digest, 'utf8');
+        return digest.length;
+    }
+}
+
+/**
  * Method-Level Code Analyzer
  */
 class MethodAnalyzer {
@@ -608,16 +772,17 @@ class TokenCalculator {
         console.log('1) Save detailed JSON report (token-analysis-report.json)');
         console.log('2) Generate LLM context file (llm-context.json)');
         console.log('3) Copy LLM context to clipboard');
-        console.log('4) No export (skip)');
-        
+        console.log('4) Generate GitIngest digest (digest.txt)');
+        console.log('5) No export (skip)');
+
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
-        
-        rl.question('🤔 Which export option would you like? (1-4): ', (answer) => {
+
+        rl.question('🤔 Which export option would you like? (1-5): ', (answer) => {
             const choice = parseInt(answer.trim());
-            
+
             switch (choice) {
                 case 1:
                     console.log('\n💾 Saving detailed JSON report...');
@@ -635,15 +800,28 @@ class TokenCalculator {
                     this.exportContextToClipboard(clipboardContext);
                     break;
                 case 4:
+                    console.log('\n📄 Generating GitIngest digest...');
+                    this.saveGitIngestDigest(analysisResults);
+                    break;
+                case 5:
                     console.log('\n✅ Analysis complete. No export selected.');
                     break;
                 default:
                     console.log('\n❌ Invalid option. Skipping export.');
                     break;
             }
-            
+
             rl.close();
         });
+    }
+
+    saveGitIngestDigest(analysisResults) {
+        const formatter = new GitIngestFormatter(this.projectRoot, this.stats, analysisResults);
+        const digestPath = path.join(this.projectRoot, 'digest.txt');
+        const digestSize = formatter.saveToFile(digestPath);
+
+        console.log(`💾 GitIngest digest saved to: digest.txt`);
+        console.log(`📊 Digest size: ${(digestSize / 1024).toFixed(1)} KB`);
     }
 
     run() {
@@ -783,13 +961,13 @@ class TokenCalculator {
     }
 
     handleExports(analysisResults) {
-        const { saveReport, contextExport, contextToClipboard } = this.options;
-        
-        if (contextExport || contextToClipboard || saveReport) {
+        const { saveReport, contextExport, contextToClipboard, gitingest } = this.options;
+
+        if (contextExport || contextToClipboard || saveReport || gitingest) {
             if (contextExport || contextToClipboard) {
                 console.log('\n🤖 Generating LLM Context...');
                 const context = this.generateLLMContext(analysisResults);
-                
+
                 if (contextToClipboard) {
                     this.exportContextToClipboard(context);
                 } else {
@@ -797,9 +975,14 @@ class TokenCalculator {
                     console.log('💾 LLM context saved to: llm-context.json');
                 }
             }
-            
+
             if (saveReport) {
                 this.saveDetailedReport(analysisResults);
+            }
+
+            if (gitingest) {
+                console.log('\n📄 Generating GitIngest digest...');
+                this.saveGitIngestDigest(analysisResults);
             }
         } else {
             this.promptForExport(analysisResults);
@@ -838,7 +1021,8 @@ function main() {
         verbose: args.includes('--verbose') || args.includes('-v'),
         contextExport: args.includes('--context-export'),
         contextToClipboard: args.includes('--context-clipboard'),
-        methodLevel: args.includes('--method-level') || args.includes('-m')
+        methodLevel: args.includes('--method-level') || args.includes('-m'),
+        gitingest: args.includes('--gitingest') || args.includes('-g')
     };
     
     printStartupInfo();
@@ -856,8 +1040,9 @@ function printStartupInfo() {
     console.log('  --context-export      Generate LLM context file list');
     console.log('  --context-clipboard   Copy context to clipboard');
     console.log('  --method-level, -m    Enable method-level analysis');
+    console.log('  --gitingest, -g       Generate GitIngest-style digest');
     console.log('  --help, -h           Show this help message');
-    
+
     if (!tiktoken) {
         console.log('\n💡 For exact token counts, install tiktoken: npm install tiktoken');
     }
@@ -870,20 +1055,30 @@ function printHelp() {
     console.log('Usage: context-manager [options]');
     console.log('       node context-manager.js [options]  # Direct usage');
     console.log();
+    console.log('Options:');
+    console.log('  -s, --save-report        Save detailed JSON report');
+    console.log('  -v, --verbose            Show all included files');
+    console.log('  --context-export         Generate LLM context file');
+    console.log('  --context-clipboard      Copy context to clipboard');
+    console.log('  -m, --method-level       Enable method-level analysis');
+    console.log('  -g, --gitingest          Generate GitIngest-style digest');
+    console.log('  -h, --help               Show this help');
+    console.log();
     console.log('Method-level Configuration:');
-    console.log('  .methodinclude          Include only specified methods');
-    console.log('  .methodignore           Exclude specified methods');
+    console.log('  .methodinclude           Include only specified methods');
+    console.log('  .methodignore            Exclude specified methods');
     console.log();
     console.log('Examples:');
     console.log('  context-manager                      # Interactive export selection');
     console.log('  context-manager --save-report        # Save JSON report');
     console.log('  context-manager --context-clipboard  # Copy to clipboard');
+    console.log('  context-manager --gitingest          # Generate digest.txt');
     console.log('  context-manager --method-level       # Method-level analysis');
-    console.log('  context-manager -m -s -v             # Method analysis with verbose');
+    console.log('  context-manager -g -s -v             # GitIngest + report + verbose');
 }
 
 if (require.main === module) {
     main();
 }
 
-module.exports = { TokenCalculator, TokenAnalyzer: TokenCalculator, GitIgnoreParser, MethodAnalyzer, MethodFilterParser };
+module.exports = { TokenCalculator, TokenAnalyzer: TokenCalculator, GitIgnoreParser, MethodAnalyzer, MethodFilterParser, GitIngestFormatter };
