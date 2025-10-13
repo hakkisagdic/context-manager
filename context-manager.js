@@ -549,26 +549,23 @@ class TokenCalculator {
     generateCompactPaths(analysisResults) {
         const sortedFiles = analysisResults.sort((a, b) => b.tokens - a.tokens);
         const pathGroups = {};
-        const commonPrefix = 'utility-mcp/src/';
-        
+
         sortedFiles.forEach(file => {
-            let filePath = file.relativePath;
-            
-            if (filePath.startsWith(commonPrefix)) {
-                filePath = filePath.substring(commonPrefix.length);
-            }
-            
+            const filePath = file.relativePath;
             const parts = filePath.split('/');
-            const categoryPath = parts.length > 1 ? `${commonPrefix}${parts[0]}/` : 'utility-mcp/';
-            
+
+            // Group files by their directory path
+            // If file is in root, use '/' as key, otherwise use directory path with trailing slash
+            const categoryPath = parts.length > 1 ? parts.slice(0, -1).join('/') + '/' : '/';
+
             if (!pathGroups[categoryPath]) {
                 pathGroups[categoryPath] = [];
             }
-            
+
             const filename = parts[parts.length - 1];
             pathGroups[categoryPath].push(filename);
         });
-        
+
         return pathGroups;
     }
 
