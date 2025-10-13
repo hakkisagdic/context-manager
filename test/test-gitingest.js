@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { TokenCalculator, GitIngestFormatter } = require('../context-manager.js');
+const { TokenCalculator, GitIngestFormatter } = require('../index.js');
 
 console.log('🧪 Testing GitIngest Integration...\n');
 

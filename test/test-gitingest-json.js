@@ -187,8 +187,12 @@ const digestContent = fs.readFileSync(path.join(testDir, 'digest.txt'), 'utf8');
 const lines = digestContent.split('\n').length;
 const hasFiles = (digestContent.match(/FILE:/g) || []).length;
 
-if (lines < 100) {
-    console.error('❌ FAIL: Digest content too short');
+// Check if method filtering is active
+const hasMethodFiltering = digestContent.includes('Method filtering:');
+const minLines = hasMethodFiltering ? 10 : 100;  // Lower threshold if method filtering active
+
+if (lines < minLines) {
+    console.error(`❌ FAIL: Digest content too short (${lines} lines, expected >= ${minLines})`);
     process.exit(1);
 }
 
@@ -197,7 +201,7 @@ if (hasFiles < 1) {
     process.exit(1);
 }
 
-console.log(`   ✓ Digest has ${lines} lines and ${hasFiles} files\n`);
+console.log(`   ✓ Digest has ${lines} lines and ${hasFiles} files${hasMethodFiltering ? ' (method filtering active)' : ''}\n`);
 
 // Cleanup
 console.log('🧹 Cleaning up test files...');

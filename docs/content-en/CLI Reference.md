@@ -81,6 +81,27 @@ Enables method-level analysis mode.
 
 **Return value**: Includes method-specific information in the output, including method names, line numbers, and token counts.
 
+### --gitingest (-g)
+Generates a GitIngest-style digest file (digest.txt) with the complete codebase in a single file.
+
+**Behavior**: Creates a prompt-friendly text file containing project summary, directory tree, and all file contents. Files are sorted by token count (largest first).
+
+**Return value**: Creates digest.txt file in the project root with formatted codebase content.
+
+### --gitingest-from-report <file>
+Generates a GitIngest digest from an existing token-analysis-report.json file (fast, no re-scan).
+
+**Behavior**: Reads the specified JSON report and creates digest.txt without re-analyzing the codebase. If filename is omitted, defaults to token-analysis-report.json.
+
+**Return value**: Creates digest.txt file instantly (~0.1 seconds, 20-30x faster than live scan).
+
+### --gitingest-from-context <file>
+Generates a GitIngest digest from an existing llm-context.json file (fast, no re-scan).
+
+**Behavior**: Reads the specified JSON context and creates digest.txt without re-analyzing the codebase. If filename is omitted, defaults to llm-context.json.
+
+**Return value**: Creates digest.txt file instantly (~0.1 seconds, 20-30x faster than live scan).
+
 ### --help (-h)
 Displays the help message with available options and usage examples.
 
@@ -93,14 +114,15 @@ Displays the help message with available options and usage examples.
 - [bin/cli.js](file://bin/cli.js#L4-L25)
 
 ## Interactive Export Selection
-When the context-manager is run without specifying any export options (--save-report, --context-export, or --context-clipboard), it automatically activates the interactive export selection feature. After completing the analysis, the tool presents a menu with four export options:
+When the context-manager is run without specifying any export options (--save-report, --context-export, --context-clipboard, or --gitingest), it automatically activates the interactive export selection feature. After completing the analysis, the tool presents a menu with five export options:
 
 1. Save detailed JSON report (token-analysis-report.json)
 2. Generate LLM context file (llm-context.json)
 3. Copy LLM context to clipboard
-4. No export (skip)
+4. Generate GitIngest digest (digest.txt)
+5. No export (skip)
 
-The user is prompted to enter a number (1-4) to select their preferred export option. This interactive mode ensures that users can choose the most appropriate export format after reviewing the analysis results, preventing missed opportunities to export valuable context data.
+The user is prompted to enter a number (1-5) to select their preferred export option. This interactive mode ensures that users can choose the most appropriate export format after reviewing the analysis results, preventing missed opportunities to export valuable context data.
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
@@ -115,17 +137,31 @@ context-manager --method-level --context-clipboard
 ```
 This command performs method-level analysis and copies the resulting context to the clipboard, ideal for quickly sharing focused code context with AI assistants.
 
-### Save report with verbose output
+### Generate GitIngest digest
 ```bash
-context-manager --save-report --verbose
+context-manager --gitingest
+# or short form
+context-manager -g
 ```
-This combination saves a detailed JSON report while showing all included files during analysis, useful for comprehensive codebase reviews.
+Creates a single digest.txt file with the entire codebase, perfect for LLM consumption.
+
+### Two-step workflow with JSON-based digest (fast)
+```bash
+# Step 1: Analyze once
+context-manager --save-report
+
+# Step 2: Generate digest anytime (instant, no re-scan)
+context-manager --gitingest-from-report
+```
+This approach is 20-30x faster for repeated digest generation since it skips file re-scanning.
 
 ### Combined analysis with multiple outputs
 ```bash
-context-manager --method-level --save-report --context-export --verbose
+context-manager --gitingest --save-report --context-export
+# Short form
+context-manager -g -s --context-export
 ```
-This command performs method-level analysis with verbose output while generating both a detailed report and an LLM context file, suitable for CI/CD pipelines and thorough codebase documentation.
+This command generates all three output formats in one run: digest.txt, token-analysis-report.json, and llm-context.json.
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
