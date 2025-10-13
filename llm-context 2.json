@@ -1,0 +1,16 @@
+{
+  "project": {
+    "root": "context-manager",
+    "totalFiles": 3,
+    "totalTokens": 10444
+  },
+  "paths": {
+    "/": [
+      "context-manager.js",
+      "index.js"
+    ],
+    "bin/": [
+      "cli.js"
+    ]
+  }
+}

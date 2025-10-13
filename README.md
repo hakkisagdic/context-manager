@@ -309,15 +309,31 @@ This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitinges
 ### Usage
 
 ```bash
-# Generate digest.txt (single-file output)
+# Standard workflow - analyze and generate digest in one step
 context-manager --gitingest
-
-# Short flag
 context-manager -g
 
 # Combine with other exports
 context-manager -g -s  # digest.txt + token-analysis-report.json
+
+# Two-step workflow - generate digest from existing JSON (fast, no re-scan)
+context-manager -s                                    # Step 1: Create report
+context-manager --gitingest-from-report               # Step 2: Generate digest
+
+# Or from LLM context
+context-manager --context-export                      # Step 1: Create context
+context-manager --gitingest-from-context              # Step 2: Generate digest
+
+# With custom filenames
+context-manager --gitingest-from-report my-report.json
+context-manager --gitingest-from-context my-context.json
 ```
+
+**Why use JSON-based digest?**
+- ⚡ **Performance**: Instant digest generation without re-scanning
+- 🔄 **Reusability**: Generate multiple digests from one analysis
+- 📦 **Workflow**: Separate analysis from export steps
+- 🎯 **Flexibility**: Use different JSON sources for different purposes
 
 ### Output Example
 
