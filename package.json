@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
-  "version": "1.1.1",
-  "description": "LLM context manager with method-level filtering and token optimization",
+  "version": "2.0.0",
+  "description": "LLM context manager with method-level filtering, token optimization, and GitIngest format support",
   "main": "index.js",
   "bin": {
     "context-manager": "bin/cli.js"
@@ -10,9 +10,12 @@
     "test": "node test/test.js",
     "test:all": "node test/test-suite.js",
     "test:unit": "node test/unit-tests.js",
-    "test:comprehensive": "npm run test && npm run test:unit",
+    "test:gitingest": "node test/test-gitingest.js",
+    "test:gitingest-json": "node test/test-gitingest-json.js",
+    "test:comprehensive": "npm run test && npm run test:unit && npm run test:gitingest && npm run test:gitingest-json",
     "analyze": "node bin/cli.js",
     "analyze:methods": "node bin/cli.js --method-level",
+    "analyze:gitingest": "node bin/cli.js --gitingest",
     "build": "echo 'No build step required'",
     "prepublishOnly": "npm test"
   },

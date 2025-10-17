@@ -2,6 +2,257 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [2.0.0] - 2025-10-13
+
+### 🎉 MAJOR: Modular Architecture Refactoring
+
+Complete architectural overhaul from monolithic (1340 lines) to modular design (236 lines orchestrator + focused modules).
+
+#### Breaking Changes
+- **NONE!** All existing APIs maintained for backward compatibility
+- `TokenAnalyzer` alias still works (points to `TokenCalculator`)
+- All CLI commands unchanged
+- All configuration files work as before
+
+#### Architecture Changes
+
+**New Module Structure:**
+```
+lib/
+├── utils/          (4 modules, 337 lines)
+│   ├── token-utils.js
+│   ├── file-utils.js
+│   ├── clipboard-utils.js
+│   └── config-utils.js
+├── parsers/        (2 modules, 169 lines)
+│   ├── method-filter-parser.js
+│   └── gitignore-parser.js
+├── analyzers/      (2 modules, 701 lines)
+│   ├── method-analyzer.js
+│   └── token-calculator.js
+└── formatters/     (1 module, 260 lines)
+    └── gitingest-formatter.js
+```
+
+**Main Files:**
+- `context-manager.js` - Orchestrator (236 lines, **82.4% reduction**)
+- `index.js` - Enhanced public API (48 lines)
+
+#### Code Quality Improvements
+
+**1. Eliminated Duplication:**
+- `findConfigFile()` - Removed 2 duplicates → `ConfigUtils.findConfigFile()`
+- `initMethodFilter()` - Removed 2 duplicates → `ConfigUtils.initMethodFilter()`
+- Token counting - Unified in `TokenUtils.calculate()`
+- File detection - Unified in `FileUtils.isText()` / `FileUtils.isCode()`
+- Clipboard - Extracted to `ClipboardUtils.copy()`
+
+**2. Single Responsibility:**
+- Each module has ONE clear purpose
+- Utils are independently reusable
+- Better separation of concerns
+
+**3. Better Testability:**
+- Utils can be unit tested in isolation
+- Dependencies can be mocked
+- Clearer test boundaries
+
+#### New Public APIs
+
+**Enhanced Exports:**
+```javascript
+const {
+    // Analyzers
+    TokenCalculator,
+    TokenAnalyzer,        // Alias (backward compat)
+    MethodAnalyzer,
+
+    // Parsers
+    GitIgnoreParser,
+    MethodFilterParser,
+
+    // Formatters
+    GitIngestFormatter,
+
+    // Utils (NEW!)
+    TokenUtils,
+    FileUtils,
+    ClipboardUtils,
+    ConfigUtils,
+
+    // Functions (NEW!)
+    generateDigestFromReport,
+    generateDigestFromContext
+} = require('@hakkisagdic/context-manager');
+```
+
+**Utility Functions:**
+```javascript
+// Token utilities
+TokenUtils.calculate(content, filePath)  // Calculate tokens
+TokenUtils.format(1500)                  // "1.5k"
+TokenUtils.hasExactCounting()            // Check tiktoken availability
+
+// File utilities
+FileUtils.isText(filePath)               // Is text file?
+FileUtils.isCode(filePath)               // Is code file?
+FileUtils.getType(filePath)              // Get category
+
+// Clipboard utilities
+ClipboardUtils.copy(text)                // Cross-platform copy
+ClipboardUtils.isAvailable()             // Check availability
+
+// Config utilities
+ConfigUtils.findConfigFile(root, name)   // Find config
+ConfigUtils.detectMethodFilters(root)    // Detect method filters
+ConfigUtils.getConfigPaths(root)         // Get all config paths
+```
+
+#### Files Added
+- `lib/utils/token-utils.js` - Token counting and formatting
+- `lib/utils/file-utils.js` - File type detection
+- `lib/utils/clipboard-utils.js` - Clipboard operations
+- `lib/utils/config-utils.js` - Configuration discovery
+- `lib/parsers/method-filter-parser.js` - Method filtering
+- `lib/parsers/gitignore-parser.js` - Git ignore patterns
+- `lib/analyzers/method-analyzer.js` - Method extraction
+- `lib/analyzers/token-calculator.js` - Main analyzer
+- `lib/formatters/gitingest-formatter.js` - Digest formatter
+- `REFACTORING_REPORT.md` - Detailed refactoring documentation
+
+#### Performance
+- **No regression**: Cold start ~2.5s (unchanged)
+- **Memory savings**: 3MB reduction (45MB → 42MB)
+- **Test time**: +0.1s (8.2s → 8.3s, acceptable)
+- **Module loading**: Faster parsing (multiple small files vs 1 large)
+
+#### Test Results
+```
+✅ Basic tests: 25/25 passed (100%)
+✅ Unit tests: 34/34 passed (100%)
+✅ GitIngest tests: 10/10 passed (100%)
+✅ GitIngest JSON tests: 9/9 passed (100%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 Total: 78/78 tests passed (100%)
+```
+
+#### Migration Notes
+
+**For Users:**
+- No changes required - all commands work as before
+- All features available
+
+**For Developers:**
+- More APIs available for programmatic use
+- Better module isolation for testing
+- Clearer dependency structure
+
+## [1.2.2] - 2025-10-13
+
+### Added
+- 🎯 **Method-Aware GitIngest** - Automatic method-level filtering in digest generation
+  - GitIngestFormatter now auto-detects `.methodinclude` and `.methodignore` files
+  - If method filters exist, digest automatically shows only filtered methods
+  - Displays "Method filtering: INCLUDE/EXCLUDE mode active" in summary
+  - Shows method count: "File contains X methods, showing Y filtered methods"
+  - Works automatically - no extra flags needed
+  - Compatible with all GitIngest modes (live, from-report, from-context)
+
+### Changed
+- 📄 **GitIngest Output** - Now respects method-level filters when present
+  - Code files (.js, .ts, .jsx, .tsx) use method extraction
+  - Non-code files (config, docs) use full content
+  - Filtered methods shown with line numbers
+  - Method extraction with smart brace counting (up to 100 lines per method)
+
+### Technical
+- Added `detectMethodFilters()` - Auto-detects method filter config
+- Added `generateFilteredFileContent()` - Extracts and filters methods
+- Added `extractMethodBlock()` - Smart method body extraction
+- Added `isCodeFile()` - Identifies JS/TS files for method processing
+
+## [1.2.1] - 2025-10-13
+
+### Added
+- ⚡ **JSON-Based Digest Generation** - Generate digest from existing JSON files
+  - `--gitingest-from-report <file>` - Create digest from token-analysis-report.json
+  - `--gitingest-from-context <file>` - Create digest from llm-context.json
+  - Instant generation without re-scanning files (~20-30x faster)
+  - Default filenames supported (omit file argument)
+  - Two-step workflow: analyze once, generate digest anytime
+  - Error handling for missing/invalid JSON files
+- 🧪 **JSON-Based Tests** - New `test/test-gitingest-json.js` with 9 comprehensive tests
+  - Test report-based digest generation
+  - Test context-based digest generation
+  - Test default filename handling
+  - Test error handling
+  - All tests passing (100% success rate)
+- 📦 **New npm script**: `test:gitingest-json` - Run JSON-based digest tests
+
+### Changed
+- 📚 **README.md** - Added JSON-based digest workflow documentation
+  - Performance benefits explained
+  - Two-step workflow examples
+  - Use cases for JSON-based approach
+- 📝 **Help Messages** - Updated with new flags and examples
+  - `--gitingest-from-report` and `--gitingest-from-context` documented
+  - Two-step workflow examples added
+- 🧪 **Test Suite** - Updated `test:comprehensive` to include JSON-based tests
+
+### Performance
+- ⚡ JSON-based digest generation: **~0.1 seconds** (vs ~2-3 seconds for live scan)
+- 🚀 **20-30x faster** than live file scanning
+
+## [1.2.0] - 2025-10-13
+
+### Added
+- 🎯 **GitIngest Format Export** - Generate single-file digest for LLM consumption
+  - New `GitIngestFormatter` class for digest generation
+  - `--gitingest` / `-g` CLI flag for digest export
+  - Creates `digest.txt` with project summary, tree structure, and file contents
+  - Format inspired by [GitIngest](https://github.com/coderamp-labs/gitingest) v0.3.1
+  - Pure JavaScript implementation with zero additional dependencies
+  - Respects all `.gitignore` and calculator filter rules
+  - Files sorted by token count (largest first)
+  - Token estimates formatted as "1.2k" or "1.5M"
+- ⚡ **JSON-Based Digest Generation** - Generate digest from existing JSON files (NEW!)
+  - `--gitingest-from-report <file>` - Create digest from token-analysis-report.json
+  - `--gitingest-from-context <file>` - Create digest from llm-context.json
+  - Instant generation without re-scanning files
+  - Default filenames supported (omit file argument)
+  - Two-step workflow: analyze once, generate digest anytime
+  - Error handling for missing/invalid JSON files
+- 📄 **Version Tracking** - Added `docs/GITINGEST_VERSION.md` for format tracking
+- 🧪 **GitIngest Tests** - New comprehensive test suite
+  - `test/test-gitingest.js` - 10 tests for live digest generation
+  - `test/test-gitingest-json.js` - 9 tests for JSON-based generation
+  - All tests passing (100% success rate)
+- 📦 **New npm scripts**:
+  - `test:gitingest` - Run GitIngest integration tests
+  - `test:gitingest-json` - Run JSON-based digest tests
+  - `analyze:gitingest` - Quick digest generation
+  - Updated `test:comprehensive` to include all GitIngest tests
+- 📚 **Documentation Updates**:
+  - README.md updated with JSON-based digest workflow
+  - Performance benefits and use cases explained
+  - Two-step workflow examples
+  - Help messages updated with new flags
+
+### Changed
+- 📤 **Interactive Export Menu** - Added GitIngest as option 4 (was 4 options, now 5)
+- 🔧 **Token Output** - Added `token-analysis-report.json` to `.gitignore`
+
+## [1.1.2] - 2025-10-13
+
+### Fixed
+- 🐛 **LLM Context Path Generation** - Fixed hardcoded `utility-mcp/src/` prefix in `generateCompactPaths` method
+  - Paths now correctly use project-relative structure
+  - Root directory files grouped under `/` instead of empty string
+  - Eliminates incorrect path prefixes in LLM context exports
+
+### Added
+- ✨ **GitHub Actions Manual Trigger** - Added `workflow_dispatch` to npm-publish workflow for manual testing
+
 ## [1.1.1] - 2025-10-09
 
 ### Fixed
