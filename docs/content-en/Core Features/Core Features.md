@@ -2,17 +2,30 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
+- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Updated in recent commit*
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js) - *Updated in recent commit*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in recent commit*
 - [README.md](file://README.md)
 - [index.js](file://index.js)
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated Method-Level Analysis section to include new GitIngest-style digest formatter and method filtering capabilities
+- Added new section on GitIngest Digest Generation to cover the new formatter functionality
+- Enhanced Token Counting section with updated context on GitIngest integration
+- Added new sources for recently modified and added files
+- Updated Feature Integration section to reflect new export options and formatter integration
 
 ## Table of Contents
 1. [File-Level Analysis](#file-level-analysis)
 2. [Method-Level Analysis](#method-level-analysis)
 3. [Token Counting](#token-counting)
-4. [Feature Integration](#feature-integration)
-5. [Common Issues and Performance](#common-issues-and-performance)
+4. [GitIngest Digest Generation](#gitingest-digest-generation)
+5. [Feature Integration](#feature-integration)
+6. [Common Issues and Performance](#common-issues-and-performance)
 
 ## File-Level Analysis
 
@@ -40,6 +53,8 @@ Method filtering is controlled by `.methodinclude` and `.methodignore` configura
 - [context-manager.js](file://context-manager.js#L69-L109)
 - [context-manager.js](file://context-manager.js#L357-L377)
 - [README.md](file://README.md#L544-L610)
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92) - *Updated in recent commit*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47) - *Added in recent commit*
 
 ## Token Counting
 
@@ -54,18 +69,38 @@ The tool also tracks token statistics at multiple levels, including per-file, pe
 - [context-manager.js](file://context-manager.js#L288-L315)
 - [README.md](file://README.md#L356)
 
+## GitIngest Digest Generation
+
+The context-manager tool now includes a GitIngest-style digest formatter that generates comprehensive, prompt-friendly text files from code analysis results. This feature is implemented through the `GitIngestFormatter` class, which creates structured output suitable for LLM context consumption.
+
+The digest generation process begins with the `GitIngestFormatter` constructor, which accepts the project root, analysis statistics, and file analysis results. The formatter automatically detects method filtering configuration through the `detectMethodFilters` method, enabling method-level filtering when `.methodinclude` or `.methodignore` files exist in the project.
+
+The generated digest includes several components: a summary header with project information and token estimates, a directory tree structure showing the project layout, and file contents formatted with clear separators. When method-level filtering is active, the formatter extracts only the methods that match the filter criteria rather than including entire files, making the digest more focused and efficient.
+
+The formatter supports multiple generation methods: direct creation from live analysis, generation from existing `token-analysis-report.json` files, and creation from `llm-context.json` files. This flexibility allows users to generate digests quickly from previously saved analysis results without re-scanning the entire codebase. The `--gitingest-from-report` and `--gitingest-from-context` CLI flags enable these alternative generation methods.
+
+**Section sources**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264) - *Added in recent commit*
+- [context-manager.js](file://context-manager.js#L524-L597) - *Updated in recent commit*
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L524-L597) - *Updated in recent commit*
+- [test/test-gitingest.js](file://test/test-gitingest.js#L0-L172) - *Added in recent commit*
+- [test/test-gitingest-json.js](file://test/test-gitingest-json.js#L0-L224) - *Added in recent commit*
+
 ## Feature Integration
 
-The core features of the context-manager tool are orchestrated through the `TokenCalculator` class, which integrates file-level analysis, method-level analysis, and token counting into a cohesive workflow. The `run` method serves as the main entry point, coordinating the entire analysis process from directory scanning to final reporting.
+The core features of the context-manager tool are orchestrated through the `TokenCalculator` class, which integrates file-level analysis, method-level analysis, token counting, and digest generation into a cohesive workflow. The `run` method serves as the main entry point, coordinating the entire analysis process from directory scanning to final reporting.
 
 The integration begins with initialization of the various components: the `GitIgnoreParser` for file filtering, the `MethodAnalyzer` and `MethodFilterParser` for method extraction (when enabled), and the token counting system. The tool then scans the directory structure, applying filtering rules to determine which files to analyze. For each included file, it reads the content and calculates tokens, optionally extracting and analyzing individual methods when the `methodLevel` option is enabled.
 
 The results are aggregated in comprehensive statistics that track files, tokens, bytes, and lines at various levels of granularity. The tool can generate different output formats depending on the use case: a compact format for LLM context optimization, a detailed method-level context when requested, or a comprehensive JSON report for analysis and monitoring. The `generateLLMContext` method creates structured output that can be exported to a file or copied to the clipboard, making it easy to share codebase context with AI assistants.
 
+Additionally, the tool now supports direct generation of GitIngest-style digests through the `saveGitIngestDigest` method, which creates an instance of `GitIngestFormatter` and saves the formatted digest to `digest.txt`. This integration allows users to generate comprehensive code summaries with a single command.
+
 **Section sources**
 - [context-manager.js](file://context-manager.js#L213-L251)
 - [context-manager.js](file://context-manager.js#L498-L539)
 - [context-manager.js](file://context-manager.js#L774-L813)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L642) - *Updated in recent commit*
 
 ## Common Issues and Performance
 
@@ -75,7 +110,10 @@ For large codebases, performance is optimized through several mechanisms. The to
 
 Inaccurate token counts can occur when the `tiktoken` library is not installed, forcing the tool to rely on estimation. While the estimation is generally accurate (~95% compared to exact counts), it may vary depending on the specific characteristics of the code. Developers working with strict token limits should install `tiktoken` for precise counting. The tool also provides detailed reporting that breaks down token usage by file type and directory, helping identify unexpected large files or directories that might be skewing the overall count.
 
+When using the GitIngest digest generation feature, users should be aware that generating from existing JSON files (`token-analysis-report.json` or `llm-context.json`) is significantly faster than scanning the entire codebase, especially for large projects. However, this approach relies on the freshness of the JSON files, so users should ensure their analysis data is up-to-date before generating digests.
+
 **Section sources**
 - [context-manager.js](file://context-manager.js#L253-L286)
 - [context-manager.js](file://context-manager.js#L376-L406)
 - [README.md](file://README.md#L544-L610)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264) - *Added in recent commit*

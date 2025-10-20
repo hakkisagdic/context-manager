@@ -2,9 +2,11 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *6f5fea32 commit'inde güncellendi*
+- [README.md](file://README.md) - *6f5fea32 commit'inde güncellendi*
 - [bin/cli.js](file://bin/cli.js)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *6f5fea32 commit'inde eklendi*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *6f5fea32 commit'inde eklendi*
 </cite>
 
 ## İçindekiler
@@ -16,6 +18,8 @@
 6. [Büyük Kod Tabanlarında Performans Sorunları](#büyük-kod-tabanlarında-performans-sorunları)
 7. [Tanı Adımları](#tanı-adımları)
 8. [Yaygın Ortam Sorunları](#yaygın-ortam-sorunları)
+9. [GitIngest Digest Üretim Sorunları](#gitingest-digest-uretim-sorunları)
+10. [Method Seviyesi Filtreleme Sorunları](#method-seviyesi-filtreleme-sorunları)
 
 ## Include/Exclude Mod Karışıklığı
 
@@ -139,3 +143,44 @@ Diğer bir yaygın sorun, aracı yanlış dizinden çalıştırmaktır. Araç va
 - [context-manager.js](file://context-manager.js#L259-L292)
 - [context-manager.js](file://context-manager.js#L825-L840)
 - [README.md](file://README.md#L294-L356)
+
+## GitIngest Digest Üretim Sorunları
+
+GitIngest-style digest formatlamasının uygulanmasıyla, digest üretimiyle ilgili yeni sorunlar ortaya çıkabilir. `--gitingest` flag'i LLM tüketimi için tek dosyalık bir digest oluşturur, ancak kullanıcılar bu özellikle ilgili sorunlarla karşılaşabilir.
+
+Yaygın sorunlar şunları içerir:
+- `--gitingest` flag'i kullanıldığında digest.txt çıktısı eksik
+- Oluşturulan digest'teki yanlış token tahminleri
+- Dizin ağacı yapısı gerçek proje yapısını yansıtmıyor
+- Digest çıktısında dosya içerikleri eksik
+
+GitIngestFormatter, `.methodinclude` veya `.methodignore` dosyaları mevcut olduğunda method seviyesi filtrelemeyi otomatik olarak algılar ve uygular. Method filtreleme aktifse, digest methodlar için INCLUDE veya EXCLUDE modunun aktif olup olmadığını belirten bir not içerecektir.
+
+`--gitingest-from-report` veya `--gitingest-from-context` kullanarak mevcut JSON raporlarından digest oluştururken, belirtilen JSON dosyasının var olduğundan ve doğru yapıya sahip olduğundan emin olun. Araç, dosya bulunamazsa veya geçersiz formata sahipse bir hata mesajı görüntüler.
+
+**Bölüm kaynakları**
+- [context-manager.js](file://context-manager.js#L294-L382)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L1-L269)
+- [README.md](file://README.md#L100-L150)
+
+## Method Seviyesi Filtreleme Sorunları
+
+Method seviyesi filtreleme, kullanıcıların `.methodinclude` ve `.methodignore` dosyalarını kullanarak belirli metodları analize dahil etmesine veya hariç tutmasına olanak tanır. Bu dosyalar doğru şekilde yapılandırılmadığında sorunlar ortaya çıkabilir.
+
+MethodFilterParser bu dosyaları işler ve desenleri düzgün ifadelere dönüştürür. Desenler, regex'te `.*`'a dönüştürülen wildcard'ları (`*`) destekler. Desenler büyük/küçük harfe duyarsızdır ve method adlarını veya dosya.method kombinasyonlarını eşleştirebilir.
+
+Yaygın sorunlar şunları içerir:
+- Yanlış sözdizimi nedeniyle desenler beklenen metodlarla eşleşmiyor
+- Negasyon desenleri beklenildiği gibi çalışmıyor
+- Method filtreleme beklenildiğinde uygulanmıyor
+
+Araç, method filtre kuralları yüklendiginde mesajlar loglar:
+- `.methodinclude` algılandığında "🔧 Method include rules loaded: X patterns"
+- `.methodignore` algılandığında "🚫 Method ignore rules loaded: X patterns"
+
+Method filtreleme, digest oluştururken GitIngestFormatter tarafından otomatik olarak algılanır ve uygulanır, normal analiz ve digest üretimi arasında tutarlı davranış sağlar.
+
+**Bölüm kaynakları**
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L1-L51)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L15-L25)
+- [README.md](file://README.md#L200-L250)

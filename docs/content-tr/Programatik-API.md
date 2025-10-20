@@ -2,10 +2,22 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [index.js](file://index.js)
+- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [index.js](file://index.js) - *Son commit'te güncellendi*
 - [README.md](file://README.md)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Core uygulama*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Son commit'te eklendi*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Son commit'te eklendi*
 </cite>
+
+## Güncelleme Özeti
+**Yapılan Değişiklikler**
+- TokenAnalyzer sınıfı dokümantasyonu TokenCalculator ile alias ilişkisini yansıtacak şekilde güncellendi
+- GitIngestFormatter ve MethodFilterParser sınıfları için yeni bölümler eklendi
+- Yapılandırma seçenekleri yeni gitingest seçeneğini içerecek şekilde güncellendi
+- Yeni generateDigestFromReport ve generateDigestFromContext fonksiyonları için dokümantasyon eklendi
+- Kullanım örnekleri yeni formatter ve parser sınıflarını içerecek şekilde güncellendi
+- Core bileşenler diyagramı yeni ilişkileri gösterecek şekilde geliştirildi
 
 ## İçindekiler
 1. [Giriş](#giriş)
@@ -36,6 +48,7 @@ Mimari, her bileşenin belirli bir sorumluluğa sahip olduğu modüler bir tasar
 - MethodAnalyzer, kod dosyalarından method tanımlarını çıkarır
 - MethodFilterParser, methodlara dahil etme/hariç tutma kurallarını uygular
 - TokenCalculator, core analizi ve token sayımını gerçekleştirir
+- GitIngestFormatter, GitIngest-style digest dosyaları oluşturur
 
 Bu bileşenler, tutarlı bir analiz deneyimi sağlamak için TokenAnalyzer (TokenCalculator olarak uygulanmıştır) içinde kompoze edilir. Bu tasarım, son kullanıcılar için basit bir arayüz korurken her bileşenin bağımsız geliştirilmesine ve test edilmesine izin verir.
 
@@ -58,17 +71,29 @@ class MethodFilterParser {
 +constructor(methodIncludePath, methodIgnorePath)
 +shouldIncludeMethod(methodName, fileName)
 }
+class GitIngestFormatter {
++constructor(projectRoot, stats, analysisResults)
++generateDigest()
++saveToFile(outputPath)
+}
 TokenAnalyzer --> GitIgnoreParser : "kullanır"
 TokenAnalyzer --> MethodAnalyzer : "kullanır"
 TokenAnalyzer --> MethodFilterParser : "kullanır"
+TokenAnalyzer --> GitIngestFormatter : "gitingest seçeneği için kullanır"
+GitIngestFormatter --> MethodAnalyzer : "method çıkarma için kullanır"
+GitIngestFormatter --> MethodFilterParser : "method filtreleme için kullanır"
 ```
 
 **Diyagram kaynakları**
 - [context-manager.js](file://context-manager.js#L14-L109)
 - [context-manager.js](file://context-manager.js#L118-L223)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 **Bölüm kaynakları**
 - [context-manager.js](file://context-manager.js#L14-L223)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## TokenAnalyzer Sınıfı
 
@@ -84,6 +109,8 @@ const analyzer = new TokenAnalyzer(directoryPath, options);
 
 - `directoryPath` (string): Analiz edilmesi gereken dizinin yolu. Bu genellikle projenizin kök dizini veya analiz etmek istediğiniz belirli bir alt dizindir.
 - `options` (object): Analizin davranışını kontrol eden konfigürasyon seçenekleri. Detaylar için Konfigürasyon Seçenekleri bölümüne bakın.
+
+**Önemli Not**: TokenAnalyzer aslında TokenCalculator sınıfı için bir alias'tir. Kod tabanında, TokenAnalyzer geriye dönük uyumluluk için index.js dosyasında TokenCalculator'un bir alias'i olarak export edilir. Bu, TokenAnalyzer ve TokenCalculator'un iki farklı isimle aynı sınıf olduğu anlamına gelir.
 
 ### run() Methodu
 
@@ -105,6 +132,7 @@ participant TokenAnalyzer
 participant GitIgnoreParser
 participant MethodAnalyzer
 participant MethodFilterParser
+participant GitIngestFormatter
 Application->>TokenAnalyzer : new TokenAnalyzer(path, options)
 TokenAnalyzer->>TokenAnalyzer : Bileşenleri başlat
 Application->>TokenAnalyzer : run()
@@ -120,6 +148,11 @@ MethodFilterParser-->>MethodAnalyzer : Dahil et/Hariç tut kararı
 end
 end
 TokenAnalyzer->>TokenAnalyzer : İstatistikleri güncelle
+end
+alt gitingest etkin
+TokenAnalyzer->>GitIngestFormatter : Digest oluştur
+GitIngestFormatter->>GitIngestFormatter : Method filtreleme uygula
+GitIngestFormatter->>GitIngestFormatter : GitIngest digest olarak formatla
 end
 TokenAnalyzer->>TokenAnalyzer : Raporları oluştur
 TokenAnalyzer->>Application : Sonuçları çıktıla

@@ -2,10 +2,21 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [package.json](file://package.json)
-- [README.md](file://README.md)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js) - *Updated in recent commit*
+- [context-manager.js](file://context-manager.js) - *Modified in recent commit*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
+- [package.json](file://package.json#L35-L38)
+- [README.md](file://README.md#L294-L356)
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated token counting implementation to use new TokenUtils class
+- Added documentation for exact token counting with tiktoken library
+- Enhanced estimated token counting section with updated ratios and implementation
+- Added integration details with GitIngest formatter
+- Updated performance implications section with new findings
+- Added troubleshooting guidance for tiktoken installation issues
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -31,7 +42,7 @@ The context-manager tool provides sophisticated token counting functionality to 
 
 The token counting system in context-manager implements two complementary methods for determining token counts: exact counting using the tiktoken library and estimated counting using character-per-token ratios. The system automatically selects the appropriate method based on library availability and performance requirements.
 
-The primary entry point for token calculation is the `calculateTokens` method in the `TokenCalculator` class, which serves as a dispatcher between the exact and estimated counting methods. When tiktoken is available, the system uses exact counting; otherwise, it falls back to estimation.
+The primary entry point for token calculation is the `calculateTokens` method in the `TokenCalculator` class, which delegates to the `TokenUtils.calculate` method. This utility class serves as a dispatcher between the exact and estimated counting methods. When tiktoken is available, the system uses exact counting; otherwise, it falls back to estimation.
 
 ```mermaid
 flowchart TD
@@ -45,9 +56,10 @@ ReturnEstimate --> End
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L20-L32)
 
 **Section sources**
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L20-L32)
 - [context-manager.js](file://context-manager.js#L280-L292)
 
 ## Exact Token Counting with tiktoken
@@ -76,11 +88,11 @@ end
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L20-L32)
 - [package.json](file://package.json#L35-L38)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [lib/utils/token-utils.js](file:///Users/hakki.sagdiс/Documents/GitHub/context-manager/lib/utils/token-utils.js#L20-L32)
 - [package.json](file://package.json#L35-L38)
 
 ## Estimated Token Counting Implementation
@@ -110,10 +122,10 @@ The implementation includes specific character-per-token ratios for common file 
 - HTML/XML: 2.8 characters per token
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L294-L304)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L45-L65)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L294-L304)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L45-L65)
 
 ## File Type Specific Examples
 
@@ -126,7 +138,7 @@ Configuration files like JSON, YAML, and XML have their own specific ratios that
 The system determines if a file should be analyzed as a text file through the `isTextFile` method, which checks both file extensions and common text file names like "readme", "license", and "changelog".
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L294-L304)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L45-L65)
 - [context-manager.js](file://context-manager.js#L306-L321)
 
 ## Integration with File and Project Statistics
@@ -261,6 +273,6 @@ try { tiktoken = require('tiktoken'); } catch {}
 This pattern ensures that the tool remains functional even if tiktoken installation fails or is not performed, while still providing the option for exact counting when desired. The startup sequence displays the token calculation method being used, helping users verify their installation status.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L7-L9)
+- [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L7-L9)
 - [package.json](file://package.json#L35-L38)
 - [README.md](file://README.md#L294-L356)
