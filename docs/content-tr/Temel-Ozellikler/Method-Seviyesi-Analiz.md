@@ -2,11 +2,13 @@
 
 <cite>
 **Bu Belgedeki Referans Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [README.md](file://README.md) - *Son commit'te güncellendi*
 - [CLAUDE.md](file://CLAUDE.md)
 - [index.js](file://index.js)
-- [bin/cli.js](file://bin/cli.js)
+- [bin/cli.js](file://bin/cli.js) - *Son commit'te güncellendi*
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js) - *Son commit'te eklendi*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Son commit'te eklendi*
 </cite>
 
 ## İçindekiler

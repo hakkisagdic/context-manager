@@ -2,9 +2,19 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [README.md](file://README.md) - *Method filtreleme örnekleri ile güncellendi*
+- [context-manager.js](file://context-manager.js) - *Method seviyesi analiz desteği ile ana orkestratör*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *6f5fea3204f18ec9d0802a00b400af1bb823e411 commit'inde eklendi*
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js) - *Method filtre başlatmasını desteklemek için değiştirildi*
 </cite>
+
+## Güncelleme Özeti
+**Yapılan Değişiklikler**
+- Method Filtreleme Sistemi bölümü yeni dosyalardan uygulama detayları ile güncellendi
+- Pattern Syntax Rehberi, gerçek kod uygulamasına dayanarak güncellendi
+- Yapılandırma Örnekleri, doğru method filtreleme senaryoları ile geliştirildi
+- Method filtreleme mantığı hakkında eski bilgiler düzeltildi
+- Gerçek analiz edilen kod dosyalarını yansıtan yeni bölüm kaynakları eklendi
 
 ## İçindekiler
 1. [Dosya Filtreleme Sistemi](#dosya-filtreleme-sistemi)
@@ -46,6 +56,8 @@ Filtreleme mantığı, yapilandirma dosyalarını yükleyen, pattern'leri regula
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
 - [context-manager.js](file://context-manager.js#L69-L96)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L29-L50)
 
 ## Pattern Syntax Rehberi
 
@@ -63,6 +75,7 @@ Pattern satırları içinde satır içi yorumların desteklenmediğini unutmamak
 - [README.md](file://README.md#L544-L610)
 - [README.md](file://README.md#L418)
 - [context-manager.js](file://context-manager.js#L153-L173)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L25-L35)
 
 ## Yapilandirma Örnekleri
 
@@ -124,6 +137,7 @@ utils.debugLog
 **Bölüm kaynakları**
 - [README.md](file://README.md#L294-L356)
 - [README.md](file://README.md#L544-L610)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L37-L45)
 
 ## Yaygın Yapilandirma Sorunları
 
@@ -162,3 +176,4 @@ Son olarak, farklı filtreleme yaklaşımlarının performans etkilerini göz ö
 - [README.md](file://README.md#L30-L103)
 - [README.md](file://README.md#L253-L293)
 - [context-manager.js](file://context-manager.js#L408-L447)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)

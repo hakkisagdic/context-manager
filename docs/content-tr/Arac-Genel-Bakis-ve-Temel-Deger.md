@@ -2,20 +2,31 @@
 
 <cite>
 **Bu Belgede Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [bin/cli.js](file://bin/cli.js)
-- [index.js](file://index.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [bin/cli.js](file://bin/cli.js) - *Son commit'te güncellendi*
+- [index.js](file://index.js) - *Son commit'te güncellendi*
+- [README.md](file://README.md) - *Son commit'te güncellendi*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Son commit'te eklendi*
 </cite>
+
+## Güncelleme Özeti
+**Yapılan Değişiklikler**
+- Yeni GitIngest formatı digest üretici özelliği için kapsamlı dokümantasyon eklendi
+- Mimari bölümü yeni GitIngestFormatter bileşeni ile güncellendi
+- CLI arayüzü bölümü yeni GitIngest export seçenekleri ile geliştirildi
+- GitIngest digest üretim iş akışı için yeni bölüm eklendi
+- Pratik kullanım senaryoları GitIngest format örneklerini içerecek şekilde güncellendi
+- Yeni formatter ve parser dosyalarını içerecek şekilde sequence diyagramı eklendi
 
 ## İçindekiler
 1. [Araç Genel Bakış ve Temel Değer](#arac-genel-bakis-ve-temel-deger)
 2. [Mimari ve Bileşen İlişkileri](#mimari-ve-bilesen-iliskileri)
 3. [CLI Arayüzü ve İş Akışı Düzenlemesi](#cli-arayuzu-ve-is-akisi-duzenlemesi)
-4. [Metod Seviyesi Analiz ve Filtreleme](#metod-seviyesi-analiz-ve-filtreleme)
-5. [Token Sayımı ve Context Oluşturma](#token-sayimi-ve-context-olusturma)
-6. [Yapılandırma ve Filtreleme Modları](#yapilandirma-ve-filtreleme-modlari)
-7. [Pratik Kullanım Örnekleri](#pratik-kullanim-ornekleri)
+4. [GitIngest Digest Üretimi](#gitingest-digest-uretimi)
+5. [Metod Seviyesi Analiz ve Filtreleme](#metod-seviyesi-analiz-ve-filtreleme)
+6. [Token Sayımı ve Context Oluşturma](#token-sayimi-ve-context-olusturma)
+7. [Yapılandırma ve Filtreleme Modları](#yapilandirma-ve-filtreleme-modlari)
+8. [Pratik Kullanım Örnekleri](#pratik-kullanim-ornekleri)
 
 ## Araç Genel Bakış ve Temel Değer
 
@@ -36,6 +47,7 @@ Ana bileşenler şunları içerir:
 - **GitIgnoreParser**: .gitignore ve özel ignore/include kurallarına dayalı dosya seviyesi filtrelemeyi yönetir
 - **MethodAnalyzer**: Regex desenleri kullanarak JavaScript/TypeScript dosyalarından metodları çıkarır
 - **MethodFilterParser**: Yapılandırma dosyalarına dayalı metodları filtrelemek için include/exclude kuralları uygular
+- **GitIngestFormatter**: GitIngest-style digest dosyaları oluşturur
 
 Bu bileşenler koordineli bir şekilde birlikte çalışır: GitIgnoreParser analize hangi dosyaların dahil edileceğini belirler, TokenCalculator bu dosyaları işler ve metod çıkarmayı MethodAnalyzer'a devreder, ve MethodFilterParser yapılandırma kurallarına göre çıkarılan metodları filtreler. Bu modüler tasarım, tutarlı bir analiz iş akışını sürdürürken her bileşenin bağımsız geliştirme ve testine olanak tanır.
 
@@ -101,6 +113,7 @@ CLI, analiz davranışını kontrol eden çeşitli önemli seçenekleri destekle
 - `--context-export`: Bir LLM context dosya listesi oluşturur
 - `--context-clipboard`: Context'i doğrudan panoya kopyalar
 - `--method-level` veya `-m`: Metod seviyesi analizini etkinleştirir
+- `--gitingest` veya `-g`: GitIngest-style digest dosyası oluşturur
 - `--help` veya `-h`: Yardım bilgilerini görüntüler
 
 Export seçenekleri belirtilmediğinde, araç interaktif moda girer ve analizi tamamladıktan sonra kullanıcıdan bir export seçeneği seçmesini ister. Bu, kullanıcıların analiz sonuçlarını istenen formatta export etme fırsatını asla kaçırmamasını sağlar. CLI ayrıca, proje kök dizini olarak mevcut çalışma dizini ile TokenAnalyzer'ın başlatılmasını yönetir ve analiz seçeneklerini yapılandırmak için komut satırı argümanlarını işler.
@@ -110,16 +123,16 @@ sequenceDiagram
 participant User as "User"
 participant CLI as "CLI Interface"
 participant Analyzer as "TokenAnalyzer"
-User->>CLI : Execute command (e.g., context-manager --method-level --context-clipboard)
+User->>CLI : Execute command (e.g., context-manager --method-level --gitingest)
 CLI->>CLI : Parse command-line arguments
 CLI->>CLI : Initialize options object
 CLI->>Analyzer : Create TokenAnalyzer instance with options
 Analyzer->>Analyzer : Scan directory and filter files
 Analyzer->>Analyzer : Analyze files and extract methods (if method-level enabled)
 Analyzer->>Analyzer : Calculate token counts
-Analyzer->>Analyzer : Generate LLM context
+Analyzer->>Analyzer : Generate LLM context or GitIngest digest
 Analyzer->>CLI : Return analysis results
-CLI->>CLI : Export context to clipboard
+CLI->>CLI : Export context to file or clipboard
 CLI->>User : Display completion message
 ```
 
@@ -130,6 +143,53 @@ CLI->>User : Display completion message
 **Bölüm kaynakları**
 - [bin/cli.js](file://bin/cli.js#L1-L67)
 - [context-manager.js](file://context-manager.js#L225-L790)
+
+## GitIngest Digest Üretimi
+
+context-manager aracı artık GitIngest-style digest dosyaları oluşturmayı desteklemektedir - LLM tüketimi için mükemmel olan tek, prompt-dostu metin dosyası. Bu özellik, tüm kod tabanını net bir dizin ağacı yapısı ve tam dosya içerikleriyle tek bir dosyada birleştiren alternatif bir format sağlamak için uygulanmıştır.
+
+GitIngestFormatter sınıfı bu digest dosyalarını oluşturmaktan sorumludur. TokenCalculator'dan gelen analiz sonuçlarını alır ve bunları şunları içeren yapılandırılmış bir metin dosyasına biçimlendirir:
+- Proje özeti ve istatistikleri
+- ASCII art kullanarak görsel dizin ağacı yapısı
+- Net ayırıcılarla tam dosya içerikleri
+- İnsan tarafından okunabilir şekilde biçimlendirilmiş token sayım tahminleri (örn., "1.2k")
+
+Digest oluşturma süreci, .gitignore ve calculator ignore/include kuralları dahil tüm filtreleme kurallarına uyar. Metod seviyesi analiz etkinleştirildiğinde, formatter her dosyada yalnızca belirtilen metodları dahil etmek için metod filtreleme uygular, bu da digest'i daha da odaklı ve alakalı hale getirir.
+
+GitIngest digest çeşitli şekillerde oluşturulabilir:
+1. Doğrudan tam bir analizden: `context-manager --gitingest`
+2. Mevcut bir JSON raporundan: `context-manager --gitingest-from-report token-analysis-report.json`
+3. Mevcut bir LLM context dosyasından: `context-manager --gitingest-from-context llm-context.json`
+
+Bu iki adımlı iş akışı, digest'in tüm kod tabanını yeniden taramadan mevcut JSON dosyalarından anında oluşturulabilmesi nedeniyle performans optimizasyonuna olanak tanır.
+
+```mermaid
+sequenceDiagram
+participant User as "User"
+participant CLI as "CLI Interface"
+participant Analyzer as "TokenAnalyzer"
+participant Formatter as "GitIngestFormatter"
+User->>CLI : Execute command (e.g., context-manager --gitingest)
+CLI->>CLI : Parse command-line arguments
+CLI->>Analyzer : Create TokenAnalyzer instance
+Analyzer->>Analyzer : Scan and analyze codebase
+Analyzer->>Analyzer : Collect analysis results
+Analyzer->>Formatter : Create GitIngestFormatter with results
+Formatter->>Formatter : Generate digest content
+Formatter->>Formatter : Save digest to digest.txt
+Formatter->>Analyzer : Return digest size
+Analyzer->>CLI : Report completion
+CLI->>User : Display success message with digest size
+```
+
+**Diagram kaynakları**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [context-manager.js](file://context-manager.js#L332-L339)
+
+**Bölüm kaynakları**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [context-manager.js](file://context-manager.js#L332-L339)
+- [README.md](file://README.md#L600-L700)
 
 ## Metod Seviyesi Analiz ve Filtreleme
 
@@ -271,6 +331,8 @@ Araç ayrıca geliştiricilerin belirli sorunlu metodlara odaklanmasına olanak 
 
 CI/CD entegrasyonu, kod tabanı büyümesini ve karmaşıklığını izlemek için otomatik token analizi aracılığıyla kolaylaştırılır. Script'ler, token sayılarını takip etmek ve LLM context limitleri etkilemeden önce potansiyel sorunları tespit etmek için günlük olarak `context-manager --save-report` çalıştırabilir. Kod tabanının token bütçelerini aşıp aşmadığını kontrol ederek kod kalitesi geçitleri uygulanabilir ve projelerin AI destekli geliştirme için yönetilebilir limitler içinde kalması sağlanır.
 
+GitIngest formatter tarafından etkinleştirilen yeni bir kullanım senaryosu, LLM tüketimi için tek dosyalık digest'ler oluşturmaktır. Geliştiriciler, tüm kod tabanını LLM prompt'larına yapıştırmak için mükemmel yapılandırılmış bir formatta içeren bir `digest.txt` dosyası oluşturmak için `context-manager --gitingest` çalıştırabilir. Bu özellikle kod incelemeleri, dokümantasyon oluşturma ve AI analiz iş akışları için kullanışlıdır.
+
 ```mermaid
 erDiagram
 USER_REQUIREMENT {
@@ -299,6 +361,7 @@ USER_REQUIREMENT {
 "Method-Level Debugging" "Focus on specific problematic methods" "context-manager --method-level --verbose" ".methodinclude with *auth*, *login*" "Method context with line numbers"
 "CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".calculatorignore with test/ and docs/" "Detailed analysis for historical tracking"
 "Code Quality Gates" "Ensure code stays within token budgets" "context-manager --method-level --save-report" ".methodinclude with core business logic" "Token count validation"
+"GitIngest Digest" "Create single-file digest for LLM consumption" "context-manager --gitingest" ".methodinclude with core methods" "Single-file text digest (~10-50KB)"
 }
 CONFIG_FILE {
 ".calculatorinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
@@ -311,13 +374,17 @@ OUTPUT_FORMAT {
 "Detailed JSON" "~8.6k chars" "Full paths, categories, importance scores" "Codebase analysis"
 "Method context" "~4.5k chars" "Method names, line numbers, token counts" "Method-level debugging"
 "Detailed report" "~12k chars" "Comprehensive statistics, largest files" "CI/CD integration"
+"GitIngest digest" "~10-50KB" "Directory tree, file contents" "LLM consumption, code reviews"
 }
 ```
 
 **Diagram kaynakları**
 - [README.md](file://README.md#L499-L542)
 - [README.md](file://README.md#L801-L879)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L499-L542)
+- [README.md](file://README.md#L801-L879)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 - [README.md](file://README.md#L801-L879)
