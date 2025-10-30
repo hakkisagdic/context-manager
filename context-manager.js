@@ -35,10 +35,11 @@ function generateDigestFromReport(reportPath) {
         console.log(`✅ Report loaded: ${report.files.length} files`);
         console.log('📄 Generating GitIngest digest from report...\n');
 
+        const { summary = report.summary|| {}, files =report.files || [] } = report || {};
         const formatter = new GitIngestFormatter(
             projectRoot,
-            report.summary,
-            report.files
+            summary,
+            files
         );
 
         const digestPath = path.join(process.cwd(), 'digest.txt');
