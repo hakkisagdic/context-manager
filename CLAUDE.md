@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is an LLM context optimization tool with method-level filtering and exact token counting. It analyzes JavaScript/TypeScript codebases and generates optimized file/method lists for AI assistant consumption.
+**context-manager** is an LLM context optimization tool with method-level filtering and exact token counting. It analyzes JavaScript/TypeScript/Rust/C#/Go/Java codebases and generates optimized file/method lists for AI assistant consumption.
 
 **Core Capabilities:**
 - File-level and method-level token analysis using tiktoken (GPT-4 compatible)
+- Multi-language support: JavaScript, TypeScript, Rust, C#, Go, and Java
 - Dual filtering system (include/exclude modes) for files and methods
 - Multiple output formats: JSON reports, LLM context exports, clipboard integration
 - Pattern matching with wildcards and negation support
@@ -20,7 +21,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **[context-manager.js](context-manager.js)** - Core analysis engine containing:
 - `TokenCalculator` - Main orchestrator for file scanning, token counting, and reporting
 - `GitIgnoreParser` - Handles .gitignore, .calculatorignore, .calculatorinclude pattern matching
-- `MethodAnalyzer` - Extracts methods from JavaScript/TypeScript files using regex patterns
+- `MethodAnalyzer` - Extracts methods from JavaScript/TypeScript/Rust/C#/Go/Java files using regex patterns
+- `GoMethodAnalyzer` - Specialized analyzer for Go functions, methods, and interfaces
+- `JavaMethodAnalyzer` - Specialized analyzer for Java methods and constructors
 - `MethodFilterParser` - Filters methods based on .methodinclude/.methodignore rules
 
 **[index.js](index.js)** - Module entry point, exports all core classes for programmatic usage
@@ -78,7 +81,7 @@ npm run prepublishOnly # Runs tests before publish
 5. Generate statistics and reports
 
 ### Method-Level Analysis
-1. Extract methods from JS/TS files using regex patterns
+1. Extract methods from JS/TS/Rust/C#/Go/Java files using language-specific regex patterns
 2. Filter methods using .methodinclude/.methodignore
 3. Calculate tokens per method
 4. Generate method-centric context
@@ -97,11 +100,35 @@ Method-level format includes method names, line numbers, and token counts per fi
 ## Important Implementation Details
 
 ### Method Extraction Patterns
-Uses 4 regex patterns to detect function declarations:
+
+**JavaScript/TypeScript:** Uses 5 regex patterns to detect function declarations:
 - Named functions: `function name()`
 - Object methods: `name: function()`
 - Arrow functions: `const name = () =>`
 - Async functions: `async name()`
+- Getters/Setters: `get/set name()`
+- Class methods: `name() {}`
+
+**Rust:** Uses regex patterns to detect:
+- Free functions: `pub fn function_name()` or `fn function_name()`
+- Impl methods: `fn method_name()` (inside impl blocks)
+- Supports modifiers: `async`, `const`, `unsafe`, `pub`
+
+**C#:** Uses 3 regex patterns to detect methods:
+- Standard methods: `public/private/protected/internal static/async returnType MethodName(params)`
+- Properties: `Type PropertyName { get; set; }`
+- Expression-bodied members: `Type MethodName() => expression`
+- Supports generic types, constraints, and all access modifiers
+
+**Go:** Uses 3 regex patterns to detect functions and methods:
+- Regular functions: `func FunctionName(params) returnType`
+- Methods with receivers: `func (r *Receiver) MethodName(params) returnType`
+- Interface methods: `MethodName(params) returnType` (within interface declarations)
+
+**Java:** Uses 2 regex patterns to detect method declarations:
+- Methods with modifiers: `public/private/protected static returnType methodName()`
+- Constructors: `ClassName()`
+- Supports generic types, throws clauses, and access modifiers
 
 ### Configuration File Discovery
 Searches in order:

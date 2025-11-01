@@ -200,6 +200,141 @@ function second() {}
 }
 
 // ============================================================================
+// GO METHOD ANALYZER TESTS
+// ============================================================================
+console.log('\n🐹 Go Method Analyzer Tests\n' + '-'.repeat(70));
+
+// Test 11a: Go function detection
+{
+    const code = `
+package main
+
+func HelloWorld() {
+    println("hello")
+}
+
+func Add(a, b int) int {
+    return a + b
+}
+    `;
+    const methods = methodAnalyzer.extractMethods(code, 'test.go');
+    assert(
+        methods.length === 2,
+        'MethodAnalyzer (Go): Extracts Go functions',
+        `Expected 2 functions, got ${methods.length}`
+    );
+}
+
+// Test 11b: Go method detection (with receivers)
+{
+    const code = `
+package main
+
+type Calculator struct {
+    value int
+}
+
+func (c *Calculator) Add(n int) {
+    c.value += n
+}
+
+func (c Calculator) GetValue() int {
+    return c.value
+}
+    `;
+    const methods = methodAnalyzer.extractMethods(code, 'test.go');
+    assert(
+        methods.length === 2,
+        'MethodAnalyzer (Go): Extracts Go methods with receivers',
+        `Expected 2 methods, got ${methods.length}`
+    );
+}
+
+// Test 11c: Go interface method detection
+{
+    const code = `
+package main
+
+type Reader interface {
+    Read(p []byte) (n int, err error)
+    Close() error
+}
+    `;
+    const methods = methodAnalyzer.extractMethods(code, 'test.go');
+    assert(
+        methods.length >= 2,
+        'MethodAnalyzer (Go): Extracts interface methods',
+        `Expected at least 2 interface methods, got ${methods.length}`
+    );
+}
+
+// ============================================================================
+// JAVA METHOD ANALYZER TESTS
+// ============================================================================
+console.log('\n☕ Java Method Analyzer Tests\n' + '-'.repeat(70));
+
+// Test 11d: Java method detection
+{
+    const code = `
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    private void validateInput(int x) {
+        if (x < 0) throw new IllegalArgumentException();
+    }
+}
+    `;
+    const methods = methodAnalyzer.extractMethods(code, 'Calculator.java');
+    assert(
+        methods.length >= 2,
+        'MethodAnalyzer (Java): Extracts Java methods',
+        `Expected at least 2 methods, got ${methods.length}`
+    );
+}
+
+// Test 11e: Java constructor detection
+{
+    const code = `
+public class Person {
+    private String name;
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+}
+    `;
+    const methods = methodAnalyzer.extractMethods(code, 'Person.java');
+    assert(
+        methods.length >= 2,
+        'MethodAnalyzer (Java): Extracts constructors and methods',
+        `Expected at least 2 (constructor + method), got ${methods.length}`
+    );
+}
+
+// Test 11f: Multi-language support integration
+{
+    const jsCode = 'function jsFunc() { return 42; }';
+    const goCode = 'func GoFunc() { println("hello") }';
+    const javaCode = 'public int javaMethod() { return 42; }';
+
+    const jsMethods = methodAnalyzer.extractMethods(jsCode, 'test.js');
+    const goMethods = methodAnalyzer.extractMethods(goCode, 'test.go');
+    const javaMethods = methodAnalyzer.extractMethods(javaCode, 'Test.java');
+
+    assert(
+        jsMethods.length === 1 && goMethods.length === 1 && javaMethods.length >= 1,
+        'MethodAnalyzer: Multi-language support (JS/Go/Java)',
+        `Expected all languages to extract methods successfully`
+    );
+}
+
+// ============================================================================
 // TOKEN ANALYZER TESTS
 // ============================================================================
 console.log('\n📊 TokenAnalyzer Tests\n' + '-'.repeat(70));

@@ -2,9 +2,21 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Updated in recent commit*
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js) - *Updated in recent commit*
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Updated in recent commit*
+- [README.md](file://README.md) - *Updated in recent commit*
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated all sections to reflect the actual implementation of the method filtering system
+- Added accurate source references for all sections based on code analysis
+- Corrected the configuration file loading mechanism to show proper initialization through ConfigUtils
+- Updated the filtering logic section with accurate implementation details from the code
+- Enhanced the integration section with precise details about TokenCalculator's method analysis
+- Fixed outdated pattern syntax information to match actual implementation
+- Updated practical examples to align with current README content
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -22,7 +34,7 @@ The context-manager tool provides a sophisticated method-level filtering system 
 
 **Section sources**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js)
 
 ## Configuration Files
 
@@ -32,6 +44,8 @@ The method filtering system relies on two optional configuration files that can 
 - **`.methodignore`**: When `.methodinclude` is absent, this file enables EXCLUDE mode, where methods matching the specified patterns are excluded from analysis
 
 The system follows a clear priority hierarchy: if `.methodinclude` exists, it takes precedence over `.methodignore`, ensuring that developers have precise control over method selection. This dual-mode approach provides flexibility for different use cases, allowing developers to either whitelist specific methods of interest or blacklist methods that should be excluded from LLM context.
+
+The `MethodFilterParser` is initialized through the `ConfigUtils.initMethodFilter` method, which automatically detects configuration files in standard locations (package root and project root). This centralized configuration management ensures consistent behavior across different project setups.
 
 ```mermaid
 graph TD
@@ -46,12 +60,12 @@ F --> I[Include all methods]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [README.md](file://README.md#L544-L610)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L28-L41)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [README.md](file://README.md#L544-L610)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L28-L41)
 
 ## Pattern Syntax
 
@@ -63,7 +77,6 @@ The method filtering system supports several pattern types that provide flexible
 | Wildcard | `*pattern*` | Matches methods containing the pattern | `*Handler` matches "requestHandler", "responseHandler" |
 | Class Methods | `Class.*` | Matches all methods within a specific class | `TokenCalculator.*` matches all methods in the TokenCalculator class |
 | File Methods | `filename.methodName` | Matches specific methods in specific files | `server.handleRequest` matches only the handleRequest method in server.js |
-| Negation | `!pattern` | Excludes methods matching the pattern | `!*test*` excludes all methods containing "test" |
 
 The pattern matching is case-insensitive and supports the use of the `*` wildcard character to match any sequence of characters. This allows for powerful filtering rules that can target specific categories of methods based on naming conventions, which is particularly useful for excluding test, debug, or utility methods that follow predictable naming patterns.
 
@@ -100,11 +113,11 @@ TokenCalculator --> MethodFilterParser : "uses"
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## Integration with TokenCalculator
 
@@ -138,12 +151,12 @@ TC->>TC : generateLLMContext()
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L231-L800)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L231-L800)
 
 ## Practical Examples
 

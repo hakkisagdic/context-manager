@@ -2,9 +2,21 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Son commit'te güncellendi*
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js) - *Son commit'te güncellendi*
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Son commit'te güncellendi*
+- [README.md](file://README.md) - *Son commit'te güncellendi*
 </cite>
+
+## Güncelleme Özeti
+**Yapılan Değişiklikler**
+- Tüm bölümler method filtreleme sisteminin gerçek uygulamasını yansıtacak şekilde güncellendi
+- Kod analizine dayalı olarak tüm bölümler için doğru kaynak referansları eklendi
+- Yapılandırma dosyası yükleme mekanizması, ConfigUtils aracılığıyla doğru başlatmayı gösterecek şekilde düzeltildi
+- Filtreleme mantığı bölümü koddan doğru uygulama detayları ile güncellendi
+- Entegrasyon bölümü TokenCalculator'un method analizi hakkında kesin detaylarla geliştirildi
+- Gerçek uygulamayla eşleşmesi için eski pattern sözdizimi bilgileri düzeltildi
+- Pratik örnekler mevcut README içeriğiyle uyumlu hale getirildi
 
 ## İçindekiler
 1. [Giriş](#giriş)
@@ -22,7 +34,7 @@ context-manager aracı, LLM context oluşturmasına hangi methodların dahil edi
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js)
 
 ## Yapilandirma Dosyaları
 
@@ -32,6 +44,8 @@ Method filtreleme sistemi, proje kökünde veya araç dizininde yerleştirilebil
 - **`.methodignore`**: `.methodinclude` olmadığında, bu dosya EXCLUDE modunu etkinleştirir; burada belirtilen pattern'lerle eşleşen methodlar analizden hariç tutulur
 
 Sistem net bir öncelik hiyerarşisi takip eder: `.methodinclude` mevcutsa, `.methodignore` üzerinde önceliğe sahiptir ve geliştiricilerin method seçimi üzerinde hassas kontrole sahip olmasını sağlar. Bu çift modlu yaklaşım, farklı kullanım durumları için esneklik sağlar ve geliştiricilerin ya ilgi çekici belirli methodları whitelist'e almalarına ya da LLM context'inden hariç tutulması gereken methodları blacklist'e almalarına olanak tanır.
+
+`MethodFilterParser`, standart konumlarda (paket kökü ve proje kökü) yapılandırma dosyalarını otomatik olarak algılayan `ConfigUtils.initMethodFilter` methodu aracılığıyla başlatılır. Bu merkezi yapılandırma yönetimi, farklı proje kurulumlarında tutarlı davranış sağlar.
 
 ```mermaid
 graph TD
@@ -46,12 +60,12 @@ F --> I[Include all methods]
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [README.md](file://README.md#L544-L610)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L28-L41)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [README.md](file://README.md#L544-L610)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L28-L41)
 
 ## Pattern Sözdizimi
 
@@ -63,7 +77,6 @@ Method filtreleme sistemi, esnek eşleştirme yetenekleri sağlayan birkaç patt
 | Wildcard | `*pattern*` | Pattern içeren methodları eşleştirir | `*Handler`, "requestHandler", "responseHandler" eşleştirir |
 | Class Methodları | `Class.*` | Belirli bir class içindeki tüm methodları eşleştirir | `TokenCalculator.*`, TokenCalculator class'ındaki tüm methodları eşleştirir |
 | File Methodları | `filename.methodName` | Belirli dosyalardaki belirli methodları eşleştirir | `server.handleRequest` yalnızca server.js'deki handleRequest methodunu eşleştirir |
-| Negasyon | `!pattern` | Pattern ile eşleşen methodları hariç tutar | `!*test*` "test" içeren tüm methodları hariç tutar |
 
 Pattern eşleştirme büyük/küçük harf duyarsızdır ve herhangi bir karakter dizisini eşleştirmek için `*` wildcard karakterinin kullanımını destekler. Bu, test, debug veya utility methodlarını öngörülebilir adlandırma pattern'lerini takip eden kategorilere göre hedefleyebilen güçlü filtreleme kurallarına olanak tanır ve özellikle bu tür methodları hariç tutmak için yararlıdır.
 
@@ -100,11 +113,11 @@ TokenCalculator --> MethodFilterParser : "uses"
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## TokenCalculator ile Entegrasyon
 

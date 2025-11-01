@@ -2,9 +2,9 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
-- [bin/cli.js](file://bin/cli.js)
+- [README.md](file://README.md) - *Updated with GitIngest format details*
+- [context-manager.js](file://context-manager.js) - *Added GitIngest generation functions*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *New GitIngest formatter implementation*
 </cite>
 
 ## Table of Contents
@@ -12,8 +12,9 @@
 2. [Detailed JSON Report](#detailed-json-report)
 3. [LLM Context Formats](#llm-context-formats)
 4. [Clipboard Format](#clipboard-format)
-5. [Use Cases and Performance](#use-cases-and-performance)
-6. [Parsing Strategies](#parsing-strategies)
+5. [GitIngest Format](#gitingest-format)
+6. [Use Cases and Performance](#use-cases-and-performance)
+7. [Parsing Strategies](#parsing-strategies)
 
 ## Introduction
 
@@ -176,6 +177,151 @@ end
 - [README.md](file://README.md#L1-L891)
 - [context-manager.js](file://context-manager.js#L547-L579)
 
+## GitIngest Format
+
+The context-manager tool now supports a new output format: GitIngest-style digest files. This format consolidates the entire codebase analysis into a single, prompt-friendly text file that is ideal for LLM consumption.
+
+### GitIngest Format Overview
+
+The GitIngest format provides a comprehensive, human-readable summary of the codebase with the following components:
+- Project summary and statistics
+- Visual directory tree structure
+- Complete file contents with clear separators
+- Token count estimates
+- Method-level filtering when enabled
+
+This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitingest) and is implemented in pure JavaScript with zero additional dependencies.
+
+### Generation Methods
+
+The GitIngest digest can be generated through multiple pathways:
+
+**Direct Generation**
+```bash
+# Generate digest directly from codebase analysis
+context-manager --gitingest
+context-manager -g
+```
+
+**JSON-Based Generation**
+```bash
+# Generate digest from existing JSON report (instant, no re-scan)
+context-manager --gitingest-from-report token-analysis-report.json
+
+# Generate digest from LLM context file
+context-manager --gitingest-from-context llm-context.json
+```
+
+**Two-Step Workflow**
+```bash
+# Step 1: Create analysis report
+context-manager --save-report
+
+# Step 2: Generate digest from report (instant)
+context-manager --gitingest-from-report token-analysis-report.json
+```
+
+### Output Structure
+
+The generated `digest.txt` file follows this structure:
+
+```
+Directory: my-project
+Files analyzed: 42
+Method filtering: INCLUDE mode active
+
+Estimated tokens: 15.2k
+Directory structure:
+└── my-project/
+    ├── src/
+    │   ├── index.js
+    │   └── utils.js
+    └── README.md
+
+
+================================================
+FILE: src/index.js
+================================================
+[complete file contents here]
+
+================================================
+FILE: src/utils.js
+================================================
+[complete file contents here]
+```
+
+### Key Features
+
+- **Single File Output**: Everything consolidated into one file for easy LLM ingestion
+- **Tree Visualization**: Clear directory structure with proper indentation
+- **Token Estimates**: Formatted as "1.2k" or "1.5M" for readability
+- **Sorted Output**: Files sorted by token count (largest first)
+- **Filter Compatibility**: Respects all `.gitignore` and calculator ignore rules
+- **Method-Level Filtering**: When enabled, only includes methods that match filter criteria
+- **Performance Optimized**: JSON-based generation is instant with no re-scanning
+
+### Method-Level Filtering
+
+When method-level analysis is enabled, the GitIngest formatter applies method filtering based on `.methodinclude` and `.methodignore` configuration files:
+
+- **INCLUDE Mode**: Only methods specified in `.methodinclude` are included
+- **EXCLUDE Mode**: Methods specified in `.methodignore` are excluded
+
+For code files, only the filtered methods are included in the digest, with clear annotations:
+
+```
+// File contains 15 methods, showing 5 filtered methods
+
+// Method: calculateTokens (line 45)
+function calculateTokens(content) {
+    // method implementation
+}
+
+// Method: validateInput (line 89)
+function validateInput(data) {
+    // method implementation
+}
+```
+
+### Implementation Details
+
+The GitIngest format is implemented through the `GitIngestFormatter` class in `lib/formatters/gitingest-formatter.js`. This class handles:
+- Project summary generation
+- Directory tree construction
+- File content extraction
+- Method-level filtering
+- Output formatting and file saving
+
+The formatter automatically detects method filtering configuration and applies it when processing code files.
+
+```mermaid
+classDiagram
+class GitIngestFormatter {
++projectRoot : string
++stats : object
++analysisResults : array
++methodFilterEnabled : boolean
++generateDigest() : string
++generateSummary() : string
++generateTree() : string
++generateFileContents() : string
++saveToFile(outputPath) : number
+}
+class GitIngestFormatter --|> MethodAnalyzer
+class GitIngestFormatter --|> MethodFilterParser
+class GitIngestFormatter --|> ConfigUtils
+class GitIngestFormatter --|> TokenUtils
+class GitIngestFormatter --|> FileUtils
+```
+
+**Diagram sources**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+
+**Section sources**
+- [README.md](file://README.md#L1-L891)
+- [context-manager.js](file://context-manager.js#L16-L127)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+
 ## Use Cases and Performance
 
 The different output formats serve specific use cases in development workflows:
@@ -192,11 +338,20 @@ The different output formats serve specific use cases in development workflows:
 - **Documentation Generation**: Full project structure analysis
 - **Code Review Preparation**: Detailed file relationships and importance
 
+**GitIngest Format Use Cases:**
+- **LLM Context Windows**: Paste entire codebase as single context
+- **Code Reviews**: Share complete project snapshot
+- **Documentation**: Single-file project reference
+- **AI Analysis**: Perfect for ChatGPT, Claude, or other LLMs
+- **Archival**: Simple project snapshot format
+- **Performance-Critical Workflows**: Instant digest generation from existing JSON
+
 **Performance Considerations:**
 - The compact format reduces context size by approximately 89% compared to the full codebase
 - Token counting uses tiktoken for GPT-4 compatibility when available, with estimation fallback
 - Directory grouping and common prefix compression optimize space usage
 - Method-level analysis adds overhead but provides granular context for focused debugging
+- JSON-based digest generation provides instant output without re-scanning the codebase
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
@@ -216,6 +371,12 @@ Downstream processing of context-manager outputs can leverage the consistent JSO
 - Traverse path groups to reconstruct directory structure
 - Utilize method information for targeted code analysis
 - Integrate with AI tools that accept structured project context
+
+**For GitIngest Format:**
+- Parse directory tree to understand project structure
+- Extract file contents for code analysis
+- Process method-level content when filtering is applied
+- Use token estimates for context window management
 
 **General Parsing Recommendations:**
 - Validate JSON structure before processing
