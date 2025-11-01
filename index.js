@@ -14,6 +14,9 @@ const MethodFilterParser = require('./lib/parsers/method-filter-parser');
 // Formatters
 const GitIngestFormatter = require('./lib/formatters/gitingest-formatter');
 
+// Presets
+const PresetManager = require('./lib/presets/preset-manager');
+
 // Utils
 const TokenUtils = require('./lib/utils/token-utils');
 const FileUtils = require('./lib/utils/file-utils');
@@ -35,6 +38,9 @@ module.exports = {
 
     // Formatters
     GitIngestFormatter,
+
+    // Presets
+    PresetManager,
 
     // Utils
     TokenUtils,

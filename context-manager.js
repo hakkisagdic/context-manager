@@ -10,6 +10,7 @@ const path = require('path');
 const TokenCalculator = require('./lib/analyzers/token-calculator');
 const GitIngestFormatter = require('./lib/formatters/gitingest-formatter');
 const TokenUtils = require('./lib/utils/token-utils');
+const PresetManager = require('./lib/presets/preset-manager');
 
 /**
  * Generate GitIngest digest from token-analysis-report.json
@@ -139,6 +140,27 @@ function main() {
         return;
     }
 
+    // Handle --list-presets
+    if (args.includes('--list-presets')) {
+        const presetManager = new PresetManager();
+        presetManager.printAvailablePresets();
+        return;
+    }
+
+    // Handle --preset-info
+    const presetInfoIndex = args.indexOf('--preset-info');
+    if (presetInfoIndex !== -1) {
+        const presetName = args[presetInfoIndex + 1];
+        if (!presetName) {
+            console.error('❌ Error: Please specify a preset name');
+            console.log('Usage: context-manager --preset-info <name>');
+            process.exit(1);
+        }
+        const presetManager = new PresetManager();
+        presetManager.printPresetInfo(presetName);
+        return;
+    }
+
     // Handle --gitingest-from-report
     const reportFlagIndex = args.indexOf('--gitingest-from-report');
     if (reportFlagIndex !== -1) {
@@ -155,7 +177,8 @@ function main() {
         return;
     }
 
-    const options = {
+    // Parse preset option
+    let options = {
         saveReport: args.includes('--save-report') || args.includes('-s'),
         verbose: args.includes('--verbose') || args.includes('-v'),
         contextExport: args.includes('--context-export'),
@@ -164,27 +187,73 @@ function main() {
         gitingest: args.includes('--gitingest') || args.includes('-g')
     };
 
-    printStartupInfo();
+    // Apply preset if specified
+    const presetIndex = args.indexOf('--preset');
+    if (presetIndex !== -1) {
+        const presetName = args[presetIndex + 1];
+        if (!presetName) {
+            console.error('❌ Error: Please specify a preset name');
+            console.log('Usage: context-manager --preset <name>');
+            console.log('Run "context-manager --list-presets" to see available presets');
+            process.exit(1);
+        }
+
+        try {
+            const presetManager = new PresetManager();
+
+            // Validate preset exists
+            if (!presetManager.hasPreset(presetName)) {
+                console.error(`❌ Error: Preset '${presetName}' not found`);
+                console.log('\nAvailable presets:');
+                presetManager.printAvailablePresets();
+                process.exit(1);
+            }
+
+            // Apply preset configuration
+            options = presetManager.applyPreset(presetName, options);
+
+            // Create temporary filter files for preset
+            const tempFilters = presetManager.createTempFilters(presetName, process.cwd());
+            options.tempFilters = tempFilters;
+
+            // Print preset info
+            presetManager.printPresetInfo(presetName);
+        } catch (error) {
+            console.error(`❌ Error applying preset: ${error.message}`);
+            process.exit(1);
+        }
+    } else {
+        printStartupInfo();
+    }
 
     const calculator = new TokenCalculator(process.cwd(), options);
     calculator.run();
+
+    // Cleanup temporary filter files if preset was used
+    if (options.tempFilters) {
+        const presetManager = new PresetManager();
+        presetManager.cleanupTempFilters(process.cwd());
+    }
 }
 
 function printStartupInfo() {
-    console.log('🚀 Code Analyzer by Hakkı Sağdıç');
+    console.log('🚀 Context Manager by Hakkı Sağdıç');
     console.log('='.repeat(50));
     console.log('📋 Available options:');
+    console.log('  --preset <name>       Use a preset configuration');
+    console.log('  --list-presets        List all available presets');
     console.log('  --save-report, -s     Save detailed JSON report');
     console.log('  --verbose, -v         Show included files and directories');
     console.log('  --context-export      Generate LLM context file list');
     console.log('  --context-clipboard   Copy context to clipboard');
     console.log('  --method-level, -m    Enable method-level analysis');
     console.log('  --gitingest, -g       Generate GitIngest-style digest');
-    console.log('  --help, -h           Show this help message');
+    console.log('  --help, -h            Show this help message');
 
     if (!TokenUtils.hasExactCounting()) {
         console.log('\n💡 For exact token counts, install tiktoken: npm install tiktoken');
     }
+    console.log('💡 Try: context-manager --preset llm-explain');
     console.log();
 }
 
@@ -194,36 +263,54 @@ function printHelp() {
     console.log('Usage: context-manager [options]');
     console.log('       node context-manager.js [options]  # Direct usage');
     console.log();
-    console.log('Options:');
+    console.log('Preset Options:');
+    console.log('  --preset <name>                      Use a preset configuration');
+    console.log('  --list-presets                       List all available presets');
+    console.log('  --preset-info <name>                 Show detailed preset information');
+    console.log();
+    console.log('Analysis Options:');
     console.log('  -s, --save-report                    Save detailed JSON report');
     console.log('  -v, --verbose                        Show all included files');
     console.log('  --context-export                     Generate LLM context file');
     console.log('  --context-clipboard                  Copy context to clipboard');
     console.log('  -m, --method-level                   Enable method-level analysis');
     console.log('  -g, --gitingest                      Generate GitIngest-style digest');
+    console.log();
+    console.log('Digest Generation:');
     console.log('  --gitingest-from-report <file>       Generate digest from report JSON');
     console.log('  --gitingest-from-context <file>      Generate digest from context JSON');
+    console.log();
+    console.log('Other:');
     console.log('  -h, --help                           Show this help');
     console.log();
-    console.log('Method-level Configuration:');
-    console.log('  .methodinclude                       Include only specified methods');
-    console.log('  .methodignore                        Exclude specified methods');
+    console.log('Configuration Files:');
+    console.log('  .calculatorinclude                   Files to include (INCLUDE mode)');
+    console.log('  .calculatorignore                    Files to exclude (EXCLUDE mode)');
+    console.log('  .methodinclude                       Methods to include');
+    console.log('  .methodignore                        Methods to exclude');
     console.log();
     console.log('Examples:');
+    console.log('  # Using presets (recommended)');
+    console.log('  context-manager --preset llm-explain      # Ultra-compact LLM context');
+    console.log('  context-manager --preset review           # Code review digest');
+    console.log('  context-manager --preset security-audit   # Security-focused analysis');
+    console.log('  context-manager --list-presets            # See all presets');
+    console.log();
     console.log('  # Standard workflow');
-    console.log('  context-manager                      # Interactive export selection');
-    console.log('  context-manager --save-report        # Save JSON report');
-    console.log('  context-manager --gitingest          # Generate digest.txt');
-    console.log('  context-manager -g -s                # Both digest + report');
+    console.log('  context-manager                           # Interactive export selection');
+    console.log('  context-manager --save-report             # Save JSON report');
+    console.log('  context-manager --gitingest               # Generate digest.txt');
+    console.log('  context-manager -g -s                     # Both digest + report');
     console.log();
     console.log('  # Generate digest from existing JSON files (fast, no re-scan)');
     console.log('  context-manager --gitingest-from-report token-analysis-report.json');
     console.log('  context-manager --gitingest-from-context llm-context.json');
     console.log();
-    console.log('  # Two-step workflow');
-    console.log('  context-manager -s                   # Step 1: Analyze and save report');
-    console.log('  context-manager --gitingest-from-report token-analysis-report.json');
-    console.log('                                       # Step 2: Generate digest (instant)');
+    console.log('  # Custom analysis');
+    console.log('  context-manager --method-level --verbose  # Method-level with details');
+    console.log('  context-manager --preset review -v        # Override preset verbosity');
+    console.log();
+    console.log('For more information: https://github.com/hakkisagdic/context-manager');
 }
 
 if (require.main === module) {
@@ -232,6 +319,7 @@ if (require.main === module) {
 
 module.exports = {
     TokenCalculator,
+    PresetManager,
     generateDigestFromReport,
     generateDigestFromContext
 };

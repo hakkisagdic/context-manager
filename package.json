@@ -12,10 +12,12 @@
     "test:unit": "node test/unit-tests.js",
     "test:gitingest": "node test/test-gitingest.js",
     "test:gitingest-json": "node test/test-gitingest-json.js",
-    "test:comprehensive": "npm run test && npm run test:unit && npm run test:gitingest && npm run test:gitingest-json",
+    "test:presets": "node test/test-presets.js",
+    "test:comprehensive": "npm run test && npm run test:unit && npm run test:gitingest && npm run test:gitingest-json && npm run test:presets",
     "analyze": "node bin/cli.js",
     "analyze:methods": "node bin/cli.js --method-level",
     "analyze:gitingest": "node bin/cli.js --gitingest",
+    "analyze:preset": "node bin/cli.js --preset llm-explain",
     "build": "echo 'No build step required'",
     "prepublishOnly": "npm test"
   },
