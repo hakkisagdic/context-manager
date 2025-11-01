@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is an LLM context optimization tool with method-level filtering and exact token counting. It analyzes JavaScript/TypeScript/Rust/C#/Go/Java codebases and generates optimized file/method lists for AI assistant consumption.
+**context-manager** is a universal LLM context optimization tool with method-level filtering and exact token counting. It analyzes codebases in 14+ programming languages and generates optimized file/method lists for AI assistant consumption.
 
 **Core Capabilities:**
 - File-level and method-level token analysis using tiktoken (GPT-4 compatible)
-- Multi-language support: JavaScript, TypeScript, Rust, C#, Go, and Java
+- Multi-language support: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, and Scala
 - Dual filtering system (include/exclude modes) for files and methods
 - Multiple output formats: JSON reports, LLM context exports, clipboard integration
 - Pattern matching with wildcards and negation support
@@ -21,9 +21,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **[context-manager.js](context-manager.js)** - Core analysis engine containing:
 - `TokenCalculator` - Main orchestrator for file scanning, token counting, and reporting
 - `GitIgnoreParser` - Handles .gitignore, .calculatorignore, .calculatorinclude pattern matching
-- `MethodAnalyzer` - Extracts methods from JavaScript/TypeScript/Rust/C#/Go/Java files using regex patterns
+- `MethodAnalyzer` - Extracts methods from 14+ programming languages using regex patterns
 - `GoMethodAnalyzer` - Specialized analyzer for Go functions, methods, and interfaces
-- `JavaMethodAnalyzer` - Specialized analyzer for Java methods and constructors
 - `MethodFilterParser` - Filters methods based on .methodinclude/.methodignore rules
 
 **[index.js](index.js)** - Module entry point, exports all core classes for programmatic usage
@@ -81,7 +80,7 @@ npm run prepublishOnly # Runs tests before publish
 5. Generate statistics and reports
 
 ### Method-Level Analysis
-1. Extract methods from JS/TS/Rust/C#/Go/Java files using language-specific regex patterns
+1. Extract methods from 14+ programming languages using language-specific regex patterns
 2. Filter methods using .methodinclude/.methodignore
 3. Calculate tokens per method
 4. Generate method-centric context
@@ -129,6 +128,34 @@ Method-level format includes method names, line numbers, and token counts per fi
 - Methods with modifiers: `public/private/protected static returnType methodName()`
 - Constructors: `ClassName()`
 - Supports generic types, throws clauses, and access modifiers
+
+**Python:** Uses 2 regex patterns to detect:
+- Functions: `def function_name()` or `async def function_name()`
+- Decorated methods: `@staticmethod/@classmethod def method_name()`
+
+**PHP:** Uses 2 regex patterns to detect:
+- Functions: `function function_name()`
+- Methods: `public/private/protected static function method_name()`
+
+**Ruby:** Detects method definitions:
+- Methods: `def method_name` or `def self.method_name`
+- Supports question/exclamation marks: `method?` and `method!`
+
+**Kotlin:** Detects function definitions:
+- Functions: `fun functionName()` with support for `suspend`, `inline` modifiers
+- Extension functions: `Type.functionName()`
+
+**Swift:** Uses 2 regex patterns:
+- Functions: `func functionName()` with access modifiers
+- Initializers: `init()`
+
+**C/C++:** Uses 2 regex patterns:
+- Functions: Return type + function name with optional `virtual`, `static`, `inline` modifiers
+- Constructors: `ClassName::ClassName()`
+
+**Scala:** Detects methods and functions:
+- Methods: `def methodName` with optional `override`
+- Lambda assignments: `val name = () => ...`
 
 ### Configuration File Discovery
 Searches in order:
