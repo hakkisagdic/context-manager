@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
-  "version": "2.1.0",
-  "description": "LLM context manager with method-level filtering, token optimization, and GitIngest format support",
+  "version": "2.2.0",
+  "description": "Universal LLM context manager supporting 14+ languages with method-level filtering, token optimization, and GitIngest format support",
   "main": "index.js",
   "bin": {
     "context-manager": "bin/cli.js"
@@ -29,9 +29,21 @@
     "javascript",
     "typescript",
     "rust",
+    "csharp",
+    "go",
+    "java",
+    "python",
+    "php",
+    "ruby",
+    "kotlin",
+    "swift",
+    "cpp",
+    "scala",
+    "multi-language",
     "ast",
     "tiktoken",
-    "optimizer"
+    "optimizer",
+    "gitingest"
   ],
   "author": "Hakkı Sağdıç",
   "license": "MIT",

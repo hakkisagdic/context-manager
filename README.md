@@ -1,6 +1,6 @@
 # Context Manager
 
-LLM context optimization tool with method-level filtering and token analysis. Perfect for AI-assisted development workflows.
+Universal LLM context optimization tool supporting 14+ programming languages with method-level filtering and token analysis. Perfect for AI-assisted development workflows.
 
 ## ☕ Support This Project
 
@@ -27,7 +27,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 ## Features
 
 - ✅ **Exact token counting** using tiktoken (GPT-4 compatible)
-- 🦀 **Multi-language support** - JavaScript, TypeScript, and Rust with method-level analysis
+- 🌍 **Multi-language support** - 14+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala
 - 🚫 **Dual ignore system** - respects both `.gitignore` and calculator ignore rules
 - 📋 **Include/Exclude modes** - `.calculatorinclude` takes priority over `.calculatorignore`
 - 📊 **Detailed reporting** - by file type, largest files, statistics
