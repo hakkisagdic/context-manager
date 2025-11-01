@@ -189,7 +189,8 @@ function main() {
         contextExport: args.includes('--context-export'),
         contextToClipboard: args.includes('--context-clipboard'),
         methodLevel: args.includes('--method-level') || args.includes('-m'),
-        gitingest: args.includes('--gitingest') || args.includes('-g')
+        gitingest: args.includes('--gitingest') || args.includes('-g'),
+        traceRules: args.includes('--trace-rules')
     };
 
     // Add token budget options if specified
@@ -280,6 +281,7 @@ function printStartupInfo() {
     console.log('  --list-presets           List all available presets');
     console.log('  --target-tokens <number> Fit within token budget');
     console.log('  --fit-strategy <name>    Token fitting strategy');
+    console.log('  --trace-rules            Debug filter rules (why files included/excluded)');
     console.log('  --save-report, -s        Save detailed JSON report');
     console.log('  --verbose, -v            Show included files and directories');
     console.log('  --context-export         Generate LLM context file list');
@@ -311,6 +313,9 @@ function printHelp() {
     console.log('  --target-tokens <number>             Fit within token budget');
     console.log('  --fit-strategy <strategy>            Token fitting strategy');
     console.log('                                       (auto, shrink-docs, methods-only, top-n, balanced)');
+    console.log();
+    console.log('Debugging Options:');
+    console.log('  --trace-rules                        Debug filter rules (show why files included/excluded)');
     console.log();
     console.log('Analysis Options:');
     console.log('  -s, --save-report                    Save detailed JSON report');
@@ -354,6 +359,10 @@ function printHelp() {
     console.log('  context-manager --target-tokens 50000     # Auto-fit to 50k tokens');
     console.log('  context-manager --target-tokens 100000 --fit-strategy shrink-docs');
     console.log('  context-manager --preset review --target-tokens 80000  # Combine preset + budget');
+    console.log();
+    console.log('  # Debugging filter rules');
+    console.log('  context-manager --trace-rules             # See why files included/excluded');
+    console.log('  context-manager --trace-rules -v          # Detailed rule tracing');
     console.log();
     console.log('  # Custom analysis');
     console.log('  context-manager --method-level --verbose  # Method-level with details');

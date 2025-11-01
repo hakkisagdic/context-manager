@@ -21,6 +21,9 @@ const PresetManager = require('./lib/presets/preset-manager');
 const TokenBudgetFitter = require('./lib/optimizers/token-budget-fitter');
 const FitStrategies = require('./lib/optimizers/fit-strategies');
 
+// Debug
+const RuleTracer = require('./lib/debug/rule-tracer');
+
 // Utils
 const TokenUtils = require('./lib/utils/token-utils');
 const FileUtils = require('./lib/utils/file-utils');
@@ -49,6 +52,9 @@ module.exports = {
     // Optimizers
     TokenBudgetFitter,
     FitStrategies,
+
+    // Debug
+    RuleTracer,
 
     // Utils
     TokenUtils,
