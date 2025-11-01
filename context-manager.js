@@ -178,6 +178,10 @@ function main() {
         return;
     }
 
+    // Parse token budget options
+    const targetTokensIndex = args.indexOf('--target-tokens');
+    const fitStrategyIndex = args.indexOf('--fit-strategy');
+
     // Parse preset option
     let options = {
         saveReport: args.includes('--save-report') || args.includes('-s'),
@@ -187,6 +191,37 @@ function main() {
         methodLevel: args.includes('--method-level') || args.includes('-m'),
         gitingest: args.includes('--gitingest') || args.includes('-g')
     };
+
+    // Add token budget options if specified
+    if (targetTokensIndex !== -1) {
+        const targetTokensValue = args[targetTokensIndex + 1];
+        if (!targetTokensValue) {
+            console.error('❌ Error: Please specify target token count');
+            console.log('Usage: context-manager --target-tokens <number>');
+            process.exit(1);
+        }
+        options.targetTokens = parseInt(targetTokensValue, 10);
+        if (isNaN(options.targetTokens)) {
+            console.error('❌ Error: Target tokens must be a number');
+            process.exit(1);
+        }
+    }
+
+    if (fitStrategyIndex !== -1) {
+        const strategyValue = args[fitStrategyIndex + 1];
+        if (!strategyValue) {
+            console.error('❌ Error: Please specify fit strategy');
+            console.log('Available strategies: auto, shrink-docs, methods-only, top-n, balanced');
+            process.exit(1);
+        }
+        const validStrategies = ['auto', 'shrink-docs', 'methods-only', 'top-n', 'balanced'];
+        if (!validStrategies.includes(strategyValue)) {
+            console.error(`❌ Error: Invalid strategy '${strategyValue}'`);
+            console.log('Available strategies: ' + validStrategies.join(', '));
+            process.exit(1);
+        }
+        options.fitStrategy = strategyValue;
+    }
 
     // Apply preset if specified
     const presetIndex = args.indexOf('--preset');
@@ -241,20 +276,23 @@ function printStartupInfo() {
     console.log('🚀 Context Manager by Hakkı Sağdıç');
     console.log('='.repeat(50));
     console.log('📋 Available options:');
-    console.log('  --preset <name>       Use a preset configuration');
-    console.log('  --list-presets        List all available presets');
-    console.log('  --save-report, -s     Save detailed JSON report');
-    console.log('  --verbose, -v         Show included files and directories');
-    console.log('  --context-export      Generate LLM context file list');
-    console.log('  --context-clipboard   Copy context to clipboard');
-    console.log('  --method-level, -m    Enable method-level analysis');
-    console.log('  --gitingest, -g       Generate GitIngest-style digest');
-    console.log('  --help, -h            Show this help message');
+    console.log('  --preset <name>          Use a preset configuration');
+    console.log('  --list-presets           List all available presets');
+    console.log('  --target-tokens <number> Fit within token budget');
+    console.log('  --fit-strategy <name>    Token fitting strategy');
+    console.log('  --save-report, -s        Save detailed JSON report');
+    console.log('  --verbose, -v            Show included files and directories');
+    console.log('  --context-export         Generate LLM context file list');
+    console.log('  --context-clipboard      Copy context to clipboard');
+    console.log('  --method-level, -m       Enable method-level analysis');
+    console.log('  --gitingest, -g          Generate GitIngest-style digest');
+    console.log('  --help, -h               Show this help message');
 
     if (!TokenUtils.hasExactCounting()) {
         console.log('\n💡 For exact token counts, install tiktoken: npm install tiktoken');
     }
     console.log('💡 Try: context-manager --preset llm-explain');
+    console.log('💡 Or:  context-manager --target-tokens 50000 --fit-strategy auto');
     console.log();
 }
 
@@ -268,6 +306,11 @@ function printHelp() {
     console.log('  --preset <name>                      Use a preset configuration');
     console.log('  --list-presets                       List all available presets');
     console.log('  --preset-info <name>                 Show detailed preset information');
+    console.log();
+    console.log('Token Budget Options:');
+    console.log('  --target-tokens <number>             Fit within token budget');
+    console.log('  --fit-strategy <strategy>            Token fitting strategy');
+    console.log('                                       (auto, shrink-docs, methods-only, top-n, balanced)');
     console.log();
     console.log('Analysis Options:');
     console.log('  -s, --save-report                    Save detailed JSON report');
@@ -306,6 +349,11 @@ function printHelp() {
     console.log('  # Generate digest from existing JSON files (fast, no re-scan)');
     console.log('  context-manager --gitingest-from-report token-analysis-report.json');
     console.log('  context-manager --gitingest-from-context llm-context.json');
+    console.log();
+    console.log('  # Token budget fitting');
+    console.log('  context-manager --target-tokens 50000     # Auto-fit to 50k tokens');
+    console.log('  context-manager --target-tokens 100000 --fit-strategy shrink-docs');
+    console.log('  context-manager --preset review --target-tokens 80000  # Combine preset + budget');
     console.log();
     console.log('  # Custom analysis');
     console.log('  context-manager --method-level --verbose  # Method-level with details');

@@ -17,6 +17,10 @@ const GitIngestFormatter = require('./lib/formatters/gitingest-formatter');
 // Presets
 const PresetManager = require('./lib/presets/preset-manager');
 
+// Optimizers
+const TokenBudgetFitter = require('./lib/optimizers/token-budget-fitter');
+const FitStrategies = require('./lib/optimizers/fit-strategies');
+
 // Utils
 const TokenUtils = require('./lib/utils/token-utils');
 const FileUtils = require('./lib/utils/file-utils');
@@ -41,6 +45,10 @@ module.exports = {
 
     // Presets
     PresetManager,
+
+    // Optimizers
+    TokenBudgetFitter,
+    FitStrategies,
 
     // Utils
     TokenUtils,
