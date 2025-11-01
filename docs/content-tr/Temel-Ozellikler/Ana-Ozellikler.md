@@ -2,9 +2,10 @@
 
 <cite>
 **Bu Belgedeki Referans Dosyalar**
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [README.md](file://README.md) - *Son commit'te güncellendi*
 - [index.js](file://index.js)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Son commit'te eklendi*
 </cite>
 
 ## İçindekiler

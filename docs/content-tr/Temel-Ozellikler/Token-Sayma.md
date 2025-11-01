@@ -2,9 +2,10 @@
 
 <cite>
 **Bu Belgedeki Referans Dosyalar**
-- [context-manager.js](file://context-manager.js)
+- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
 - [package.json](file://package.json)
-- [README.md](file://README.md)
+- [README.md](file://README.md) - *Son commit'te güncellendi*
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Son commit'te eklendi*
 </cite>
 
 ## İçindekiler

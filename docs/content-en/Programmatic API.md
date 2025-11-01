@@ -2,10 +2,22 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [index.js](file://index.js)
+- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [index.js](file://index.js) - *Updated in recent commit*
 - [README.md](file://README.md)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Core implementation*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in recent commit*
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated TokenAnalyzer class documentation to reflect its alias relationship with TokenCalculator
+- Added new sections for GitIngestFormatter and MethodFilterParser classes
+- Updated configuration options to include the new gitingest option
+- Added documentation for the new generateDigestFromReport and generateDigestFromContext functions
+- Updated usage examples to include the new formatter and parser classes
+- Enhanced core components diagram to show new relationships
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -36,6 +48,7 @@ The architecture follows a modular design where each component has a specific re
 - MethodAnalyzer extracts method definitions from code files
 - MethodFilterParser applies inclusion/exclusion rules to methods
 - TokenCalculator performs the core analysis and token counting
+- GitIngestFormatter generates GitIngest-style digest files
 
 These components are composed within the TokenAnalyzer (implemented as TokenCalculator) to provide a cohesive analysis experience. This design allows for independent development and testing of each component while maintaining a simple interface for end users.
 
@@ -58,17 +71,29 @@ class MethodFilterParser {
 +constructor(methodIncludePath, methodIgnorePath)
 +shouldIncludeMethod(methodName, fileName)
 }
+class GitIngestFormatter {
++constructor(projectRoot, stats, analysisResults)
++generateDigest()
++saveToFile(outputPath)
+}
 TokenAnalyzer --> GitIgnoreParser : "uses"
 TokenAnalyzer --> MethodAnalyzer : "uses"
 TokenAnalyzer --> MethodFilterParser : "uses"
+TokenAnalyzer --> GitIngestFormatter : "uses for gitingest option"
+GitIngestFormatter --> MethodAnalyzer : "uses for method extraction"
+GitIngestFormatter --> MethodFilterParser : "uses for method filtering"
 ```
 
 **Diagram sources**
 - [context-manager.js](file://context-manager.js#L14-L109)
 - [context-manager.js](file://context-manager.js#L118-L223)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 **Section sources**
 - [context-manager.js](file://context-manager.js#L14-L223)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## TokenAnalyzer Class
 
@@ -84,6 +109,8 @@ const analyzer = new TokenAnalyzer(directoryPath, options);
 
 - `directoryPath` (string): The path to the directory that should be analyzed. This is typically the root of your project or a specific subdirectory you want to analyze.
 - `options` (object): Configuration options that control the behavior of the analysis. See the Configuration Options section for details.
+
+**Important Note**: TokenAnalyzer is actually an alias for the TokenCalculator class. In the codebase, TokenAnalyzer is exported as an alias of TokenCalculator in the index.js file for backward compatibility. This means that TokenAnalyzer and TokenCalculator are the same class with two different names.
 
 ### run() Method
 
@@ -105,6 +132,7 @@ participant TokenAnalyzer
 participant GitIgnoreParser
 participant MethodAnalyzer
 participant MethodFilterParser
+participant GitIngestFormatter
 Application->>TokenAnalyzer : new TokenAnalyzer(path, options)
 TokenAnalyzer->>TokenAnalyzer : Initialize components
 Application->>TokenAnalyzer : run()
@@ -121,16 +149,23 @@ end
 end
 TokenAnalyzer->>TokenAnalyzer : Update statistics
 end
+alt gitingest enabled
+TokenAnalyzer->>GitIngestFormatter : Generate digest
+GitIngestFormatter->>GitIngestFormatter : Apply method filtering
+GitIngestFormatter->>GitIngestFormatter : Format as GitIngest digest
+end
 TokenAnalyzer->>TokenAnalyzer : Generate reports
 TokenAnalyzer->>Application : Output results
 ```
 
 **Diagram sources**
 - [context-manager.js](file://context-manager.js#L225-L790)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
 **Section sources**
 - [context-manager.js](file://context-manager.js#L225-L790)
 - [index.js](file://index.js#L1-L8)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
 ## Configuration Options
 
@@ -145,6 +180,7 @@ The TokenAnalyzer class accepts various options through the options object param
 | saveReport | boolean | false | Saves a detailed JSON report of the analysis to token-analysis-report.json |
 | contextExport | boolean | false | Generates an LLM context file (llm-context.json) with optimized file listings |
 | contextClipboard | boolean | false | Copies the LLM context directly to the system clipboard |
+| gitingest | boolean | false | Generates a GitIngest-style digest file (digest.txt) containing the full codebase content |
 
 ### Option Interactions
 
@@ -154,12 +190,14 @@ These options can be combined to achieve different analysis workflows:
 - Combining `saveReport: true` with other options allows for both immediate feedback and persistent storage of analysis results
 - Using `contextExport: true` or `contextClipboard: true` generates optimized context for LLM consumption, either saving to a file or copying to clipboard
 - The `verbose` option controls the amount of information displayed during analysis, with more details shown when enabled
+- The `gitingest: true` option generates a comprehensive digest file that includes the full content of all analyzed files in a GitIngest-style format, which is particularly useful for providing complete context to LLMs
 
 When no export options are specified, the tool will prompt the user to select an export option after completing the analysis.
 
 **Section sources**
 - [README.md](file://README.md#L100-L300)
 - [context-manager.js](file://context-manager.js#L225-L232)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
 ## Data Models
 
@@ -246,22 +284,77 @@ const llmAnalyzer = new TokenAnalyzer('./src', {
 llmAnalyzer.run();
 ```
 
-### CI/CD Integration
+### GitIngest Digest Generation
 
 ```javascript
-// Integration in CI/CD pipeline
-const ciAnalyzer = new TokenAnalyzer('./src', {
-    saveReport: true,
-    contextExport: true
+// Generate GitIngest-style digest
+const digestAnalyzer = new TokenAnalyzer('./src', {
+    gitingest: true,
+    methodLevel: true
 });
 
-ciAnalyzer.run();
+digestAnalyzer.run();
+```
+
+### Using GitIngestFormatter Directly
+
+```javascript
+// Use GitIngestFormatter directly for custom digest generation
+const { GitIngestFormatter } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+
+// First run analysis to get results
+const analyzer = new TokenAnalyzer('./src', { methodLevel: true });
+const analysisResults = []; // This would be populated during analysis
+
+// Create formatter with results
+const formatter = new GitIngestFormatter(
+    process.cwd(),
+    analyzer.stats,
+    analysisResults
+);
+
+// Generate and save digest
+formatter.saveToFile('custom-digest.txt');
+```
+
+### Using MethodFilterParser Directly
+
+```javascript
+// Use MethodFilterParser directly for method filtering
+const { MethodFilterParser } = require('@hakkisagdic/context-manager');
+
+// Create filter parser with custom paths
+const methodFilter = new MethodFilterParser(
+    './.methodinclude',  // Path to include file
+    './.methodignore'    // Path to ignore file
+);
+
+// Check if a method should be included
+const shouldInclude = methodFilter.shouldIncludeMethod('getUser', 'UserService');
+```
+
+### Generate Digest from Existing Reports
+
+```javascript
+// Generate GitIngest digest from existing token-analysis-report.json
+const { generateDigestFromReport } = require('@hakkisagdic/context-manager');
+
+generateDigestFromReport('token-analysis-report.json');
+
+// Generate GitIngest digest from existing llm-context.json
+const { generateDigestFromContext } = require('@hakkisagdic/context-manager');
+
+generateDigestFromContext('llm-context.json');
 ```
 
 These examples show how the TokenAnalyzer can be configured for different use cases, from basic analysis to LLM-optimized context generation. The flexibility of the options allows developers to tailor the analysis to their specific needs, whether for development, debugging, or automated workflows.
 
 **Section sources**
 - [README.md](file://README.md#L700-L800)
+- [index.js](file://index.js#L1-L48)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## Error Handling
 
@@ -327,6 +420,14 @@ The tool maintains backward compatibility for its core API. The TokenAnalyzer cl
 
 Check the release notes for any changes to configuration file formats or option parameters. While the core options remain consistent, new options may be added in newer versions.
 
+### New Features
+
+Recent updates have introduced several new features that enhance the tool's capabilities:
+- **GitIngestFormatter**: A new formatter class that generates GitIngest-style digest files containing the full codebase content
+- **MethodFilterParser**: A new parser class that handles method-level filtering based on .methodinclude and .methodignore files
+- **gitingest option**: A new configuration option that enables generation of GitIngest-style digest files
+- **generateDigestFromReport and generateDigestFromContext**: New utility functions that can generate GitIngest digests from existing report files without re-scanning the codebase
+
 ### Dependency Management
 
 Ensure that required dependencies are properly installed, particularly tiktoken for exact token counting. The tool will fall back to estimation if tiktoken is not available, but with reduced accuracy.
@@ -343,3 +444,6 @@ The tool's output format for JSON reports and context exports is designed to be 
 
 **Section sources**
 - [README.md](file://README.md#L800-L891)
+- [index.js](file://index.js#L1-L48)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)

@@ -12,6 +12,8 @@ build/
 
 # Generated output files
 llm-context.json
+digest.txt
+token-analysis-report.json
 
 # Configuration files (user-specific)
 .calculatorignore

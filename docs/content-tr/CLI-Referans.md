@@ -2,10 +2,21 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [bin/cli.js](file://bin/cli.js)
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [bin/cli.js](file://bin/cli.js) - *6f5fea32 commit'inde güncellendi*
+- [context-manager.js](file://context-manager.js) - *6f5fea32 ve 0b9cbab0 commit'lerinde güncellendi*
+- [README.md](file://README.md) - *Her iki commit'te de güncellendi*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *6f5fea32 commit'inde eklendi*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *6f5fea32 commit'inde eklendi*
 </cite>
+
+## Güncelleme Özeti
+**Yapılan Değişiklikler**
+- Yeni GitIngest işlevselliği ve JSON tabanlı digest üretimi için kapsamlı dokümantasyon eklendi
+- Kullanılabilir seçenekler bölümü yeni CLI bayrakları ile güncellendi: --gitingest (-g), --gitingest-from-report, ve --gitingest-from-context
+- Method seviyesi analiz dokümantasyonu, method filtreleme konfigürasyonu hakkında detaylar ile geliştirildi
+- Kullanım örnekleri ve çıktı formatı detayları ile GitIngest format export için yeni bölüm eklendi
+- Kullanım örnekleri, yeni komut kombinasyonlarını içerecek şekilde güncellendi
+- Bölüm kaynakları, yeni eklenen formatter ve parser dosyalarını içerecek şekilde genişletildi
 
 ## İçindekiler
 1. [Giriş](#giriş)
@@ -13,10 +24,11 @@
 3. [Kullanılabilir Seçenekler](#kullanılabilir-seçenekler)
 4. [İnteraktif Export Seçimi](#interaktif-export-seçimi)
 5. [Kullanım Örnekleri](#kullanım-örnekleri)
-6. [Exit Code'lar ve Hata Yönetimi](#exit-codelar-ve-hata-yönetimi)
-7. [Performans Değerlendirmeleri](#performans-değerlendirmeleri)
-8. [Shell Script Entegrasyonu](#shell-script-entegrasyonu)
-9. [Sorun Giderme Rehberi](#sorun-giderme-rehberi)
+6. [GitIngest Format Export](#gitingest-format-export)
+7. [Exit Code'lar ve Hata Yönetimi](#exit-codelar-ve-hata-yönetimi)
+8. [Performans Değerlendirmeleri](#performans-değerlendirmeleri)
+9. [Shell Script Entegrasyonu](#shell-script-entegrasyonu)
+10. [Sorun Giderme Rehberi](#sorun-giderme-rehberi)
 
 ## Giriş
 context-manager CLI, kod tabanlarını analiz etmek ve LLM tüketimi için context'i optimize etmek üzere kapsamlı bir araç sağlar. Method seviyesinde filtreleme, kesin token sayımı ve AI destekli geliştirme iş akışlarını desteklemek için birden fazla export formatı sunar. Araç hem .gitignore hem de özel ignore/include kurallarına saygı gösterir ve farklı analiz senaryoları için esnek konfigürasyon seçenekleri sağlar.
@@ -81,6 +93,27 @@ Method seviyesinde analiz modunu etkinleştirir.
 
 **Dönüş değeri**: Method adları, satır numaraları ve token sayıları dahil olmak üzere çıktıya method'a özgü bilgileri dahil eder.
 
+### --gitingest (-g)
+GitIngest-style digest dosyası oluşturur (digest.txt).
+
+**Davranış**: Tüm kod tabanını proje özeti, dizin ağacı yapısı ve tam dosya içerikleri ile birleştirerek LLM tüketimi için mükemmel tek bir metin dosyası oluşturur.
+
+**Dönüş değeri**: Digest içeriğini proje kök dizininde digest.txt dosyası olarak kaydeder.
+
+### --gitingest-from-report
+Mevcut bir token-analysis-report.json dosyasından GitIngest digest oluşturur (hızlı, yeniden tarama yok).
+
+**Davranış**: Belirtilen JSON raporunu okur ve kod tabanını yeniden analiz etmeden digest.txt oluşturur. Dosya adı belirtilmezse, token-analysis-report.json varsayılan olarak kullanılır.
+
+**Dönüş değeri**: Rapor verisinden anında digest.txt dosyası oluşturur.
+
+### --gitingest-from-context
+Mevcut bir llm-context.json dosyasından GitIngest digest oluşturur.
+
+**Davranış**: LLM context dosyasını okur ve kod tabanını yeniden taramadan digest oluşturur, hızlı digest üretimini mümkün kılar.
+
+**Dönüş değeri**: Context verisinden türetilen içerikle digest.txt dosyası oluşturur.
+
 ### --help (-h)
 Kullanılabilir seçenekler ve kullanım örnekleri ile yardım mesajını görüntüler.
 
@@ -91,6 +124,7 @@ Kullanılabilir seçenekler ve kullanım örnekleri ile yardım mesajını gör�
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
+- [context-manager.js](file://context-manager.js#L150-L170)
 
 ## İnteraktif Export Seçimi
 context-manager herhangi bir export seçeneği (--save-report, --context-export veya --context-clipboard) belirtilmeden çalıştırıldığında, otomatik olarak interactive export seçimi özelliğini etkinleştirir. Analiz tamamlandıktan sonra, araç dört export seçeneği içeren bir menü sunar:
@@ -125,10 +159,66 @@ Bu kombinasyon, analiz sırasında tüm dahil edilen dosyaları gösterirken det
 ```bash
 context-manager --method-level --save-report --context-export --verbose
 ```
-Bu komut, hem detaylı bir rapor hem de bir LLM context dosyası oluştururken verbose çıktı ile method seviyesinde analiz yapar, CI/CD pipeline'ları ve kapsamlı kod tabanı dokümantasyonu için uygundur.
+Bu komut, hem detaylı bir rapor hem de bir LLM context dosyası oluştuururken verbose çıktı ile method seviyesinde analiz yapar, CI/CD pipeline'ları ve kapsamlı kod tabanı dokümantasyonu için uygundur.
+
+### GitIngest digest üretimi
+```bash
+context-manager --gitingest
+```
+Tüm kod tabanını LLM tüketimi için prompt-dostu bir formatta içeren tek bir digest.txt dosyası oluşturur.
+
+### İki adımlı digest üretimi
+```bash
+context-manager --save-report
+context-manager --gitingest-from-report token-analysis-report.json
+```
+Önce kod tabanını analiz eder ve bir rapor kaydeder, ardından mevcut rapordan yeniden tarama yapmadan hızlıca bir digest oluşturur.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
+
+## GitIngest Format Export
+context-manager artık GitIngest-style digest dosyaları oluşturmayı desteklemektedir - LLM tüketimi için mükemmel olan tek, prompt-dostu metin dosyası.
+
+### GitIngest Formatı Nedir?
+GitIngest formatı, tüm kod tabanınızı şunları içeren tek bir metin dosyasına birleştirir:
+- Proje özeti ve istatistikleri
+- Görsel dizin ağacı yapısı
+- Net ayırıcılarla tam dosya içerikleri
+- Token sayımı tahminleri
+
+Bu format, [GitIngest](https://github.com/coderamp-labs/gitingest)'ten ilham alınmıştır ve sıfır ek bağımlılıkla tamamen JavaScript'te uygulanmıştır.
+
+### Kullanım
+```
+# Standart iş akışı - tek adımda analiz et ve digest oluştur
+context-manager --gitingest
+context-manager -g
+
+# Diğer export'larla birleştir
+context-manager -g -s  # digest.txt + token-analysis-report.json
+
+# İki adımlı iş akışı - mevcut JSON'dan digest oluştur (hızlı, yeniden tarama yok)
+context-manager -s                                    # Adım 1: Rapor oluştur
+context-manager --gitingest-from-report               # Adım 2: Digest oluştur
+
+# Veya LLM context'inden
+context-manager --context-export                      # Adım 1: Context oluştur
+context-manager --gitingest-from-context              # Adım 2: Digest oluştur
+```
+
+### Çıktı Formatı
+Oluşturulan `digest.txt` dosyası şunları içerir:
+- Proje adı ve dosya sayısı
+- Tree formatıyla dizin yapısı görselleştirmesi
+- Tahmini token sayısı
+- Net sınırlayıcılarla ayrılmış dosya içerikleri
+- Method seviyesi filtreleme aktifken, yalnızca dahil edilen methodlar gösterilir
+
+**Bölüm kaynakları**
+- [README.md](file://README.md#L0-L891)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## Exit Code'lar ve Hata Yönetimi
 context-manager CLI güçlü hata yönetim mekanizmaları uygular:
@@ -151,6 +241,7 @@ Büyük kod tabanlarını analiz ederken, aşağıdaki performans optimizasyonla
 - Belirli işlevselliğe odaklanmak için method seviyesinde analizi etkinleştirin
 - Çıktı işlemeyi azaltmak için büyük repolar için verbose modu kullanmaktan kaçının
 - Daha hızlı işleme ve daha küçük çıktı için compact context formatını kullanın
+- Yeniden tarama yapmadan anında digest oluşturma için JSON tabanlı digest üretimini (--gitingest-from-report veya --gitingest-from-context) kullanın
 
 Araç, verimli dizin taraması ve token sayma algoritmaları ile performans için optimize edilmiştir. Çok büyük kod tabanları için, ilk tarama birkaç saniye sürebilir, ancak sonraki analizler işlenen dosya sayısını azaltan filtreleme kurallarından faydalanır.
 
@@ -198,6 +289,11 @@ Dosyaların .gitignore veya calculator kuralları tarafından hariç tutulup tut
 
 ### Token sayımı tutarsızlıkları
 Kesin token sayımı için tiktoken'ın yüklendiğinden emin olun. tiktoken olmadan, araç dosya türüne dayalı tahmin kullanır.
+
+### GitIngest digest sorunları
+- --gitingest-from-report veya --gitingest-from-context kullanırken gerekli JSON dosyalarının var olduğundan emin olun
+- digest.txt'yi okuma ve yazma için dosya izinlerini kontrol edin
+- Mevcut dosyalardan oluştururken JSON formatının geçerli olduğunu doğrulayın
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)

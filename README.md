@@ -27,12 +27,13 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 ## Features
 
 - ✅ **Exact token counting** using tiktoken (GPT-4 compatible)
+- 🦀 **Multi-language support** - JavaScript, TypeScript, and Rust with method-level analysis
 - 🚫 **Dual ignore system** - respects both `.gitignore` and calculator ignore rules
 - 📋 **Include/Exclude modes** - `.calculatorinclude` takes priority over `.calculatorignore`
 - 📊 **Detailed reporting** - by file type, largest files, statistics
 - 💾 **Optional JSON export** - detailed analysis reports
 - 🔍 **Verbose mode (default)** - shows all included files for transparency
-- 🎯 **Core application focus** - configured to analyze only essential JS files
+- 🎯 **Core application focus** - configured to analyze only essential code files
 - 📈 **Context optimization** - perfect for LLM context window management
 - 🤖 **LLM context export** - generate optimized file lists for LLM consumption
 - 📋 **Clipboard integration** - copy context directly to clipboard
@@ -41,6 +42,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 - 🔗 **Consistent exports** - Clipboard and file exports use identical JSON format
 - 📤 **Interactive export** - Prompts for export choice when no options specified
 - 🔀 **Dual context modes** - compact (default) or detailed format
+- 📄 **GitIngest format** - Generate single-file digest for LLM consumption (inspired by [GitIngest](https://github.com/coderamp-labs/gitingest))
 
 ## Quick Start
 
@@ -58,8 +60,14 @@ context-manager --save-report
 # Generate LLM context file
 context-manager --context-export
 
+# Generate GitIngest-style digest (single file for LLMs)
+context-manager --gitingest
+
 # Method-level analysis
 context-manager --method-level
+
+# Combine multiple exports
+context-manager -g -s  # GitIngest digest + detailed report
 
 # Use detailed context format (legacy)
 context-manager --method-level --detailed-context --context-clipboard
@@ -285,6 +293,97 @@ context-manager --save-report --context-clipboard
 - Automated documentation updates
 - Project health monitoring
 
+## GitIngest Format Export
+
+Context-manager now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption.
+
+### What is GitIngest Format?
+
+GitIngest format consolidates your entire codebase into a single text file with:
+- Project summary and statistics
+- Visual directory tree structure
+- Complete file contents with clear separators
+- Token count estimates
+
+This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitingest), implemented purely in JavaScript with zero additional dependencies.
+
+### Usage
+
+```bash
+# Standard workflow - analyze and generate digest in one step
+context-manager --gitingest
+context-manager -g
+
+# Combine with other exports
+context-manager -g -s  # digest.txt + token-analysis-report.json
+
+# Two-step workflow - generate digest from existing JSON (fast, no re-scan)
+context-manager -s                                    # Step 1: Create report
+context-manager --gitingest-from-report               # Step 2: Generate digest
+
+# Or from LLM context
+context-manager --context-export                      # Step 1: Create context
+context-manager --gitingest-from-context              # Step 2: Generate digest
+
+# With custom filenames
+context-manager --gitingest-from-report my-report.json
+context-manager --gitingest-from-context my-context.json
+```
+
+**Why use JSON-based digest?**
+- ⚡ **Performance**: Instant digest generation without re-scanning
+- 🔄 **Reusability**: Generate multiple digests from one analysis
+- 📦 **Workflow**: Separate analysis from export steps
+- 🎯 **Flexibility**: Use different JSON sources for different purposes
+
+### Output Example
+
+The generated `digest.txt` file looks like:
+
+```
+Directory: my-project
+Files analyzed: 42
+
+Estimated tokens: 15.2k
+Directory structure:
+└── my-project/
+    ├── src/
+    │   ├── index.js
+    │   └── utils.js
+    └── README.md
+
+
+================================================
+FILE: src/index.js
+================================================
+[complete file contents here]
+
+================================================
+FILE: src/utils.js
+================================================
+[complete file contents here]
+```
+
+### Key Features
+
+- **Single File**: Everything in one file for easy LLM ingestion
+- **Tree Visualization**: Clear directory structure
+- **Token Estimates**: Formatted as "1.2k" or "1.5M"
+- **Sorted Output**: Files sorted by token count (largest first)
+- **Filter Compatible**: Respects all `.gitignore` and calculator ignore rules
+
+### Use Cases
+
+1. **LLM Context Windows**: Paste entire codebase as single context
+2. **Code Reviews**: Share complete project snapshot
+3. **Documentation**: Single-file project reference
+4. **AI Analysis**: Perfect for ChatGPT, Claude, or other LLMs
+5. **Archival**: Simple project snapshot format
+
+### Version Tracking
+
+Context-manager implements GitIngest format v0.3.1. See [docs/GITINGEST_VERSION.md](docs/GITINGEST_VERSION.md) for implementation details and version history.
+
 ## Configuration
 
 ### .calculatorignore File (EXCLUDE Mode)
@@ -451,8 +550,8 @@ LLM context manager with method-level filtering and token optimization. The ulti
 
 ## 🚀 Features
 
-✅ **File-level token analysis** - Analyze entire files and directories  
-🔧 **Method-level analysis** - Extract and analyze specific methods from JavaScript/TypeScript  
+✅ **File-level token analysis** - Analyze entire files and directories
+🔧 **Method-level analysis** - Extract and analyze specific methods from JavaScript/TypeScript/Rust/C#/Go/Java
 📋 **Dual filtering system** - Include/exclude files and methods with pattern matching  
 📊 **LLM context optimization** - Generate ultra-compact context for AI assistants  
 🎯 **Exact token counting** - Uses tiktoken for GPT-4 compatible counts  

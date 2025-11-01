@@ -2,9 +2,9 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
-- [bin/cli.js](file://bin/cli.js)
+- [README.md](file://README.md) - *GitIngest format detayları ile güncellendi*
+- [context-manager.js](file://context-manager.js) - *GitIngest oluşturma fonksiyonları eklendi*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Yeni GitIngest formatter uygulaması*
 </cite>
 
 ## İçindekiler
@@ -12,8 +12,9 @@
 2. [Detaylı JSON Raporu](#detaylı-json-raporu)
 3. [LLM Context Formatları](#llm-context-formatları)
 4. [Pano Formatı](#pano-formatı)
-5. [Kullanım Senaryoları ve Performans](#kullanım-senaryoları-ve-performans)
-6. [Parsing Stratejileri](#parsing-stratejileri)
+5. [GitIngest Formatı](#gitingest-formatı)
+6. [Kullanım Senaryoları ve Performans](#kullanım-senaryoları-ve-performans)
+7. [Parsing Stratejileri](#parsing-stratejileri)
 
 ## Giriş
 
@@ -175,6 +176,128 @@ end
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
 - [context-manager.js](file://context-manager.js#L547-L579)
+
+## GitIngest Formatı
+
+context-manager aracı artık yeni bir çıktı formatını desteklemektedir: GitIngest-style digest dosyaları. Bu format, tüm kod tabanı analizini LLM tüketimi için ideal olan tek, prompt-dostu bir metin dosyasında birleştirir.
+
+### GitIngest Format Genel Bakışı
+
+GitIngest formatı, aşağıdaki bileşenlerle kod tabanının kapsamlı, insan tarafından okunabilir bir özetini sağlar:
+- Proje özeti ve istatistikler
+- Görsel dizin ağacı yapısı
+- Net ayırıcılarla tam dosya içerikleri
+- Token sayım tahminleri
+- Etkinleştirildiğinde method seviyesi filtreleme
+
+Bu format, [GitIngest](https://github.com/coderamp-labs/gitingest)'ten ilham alınmıştır ve sıfır ek bağımlılıkla saf JavaScript'te uygulanmıştır.
+
+### Oluşturma Methodları
+
+GitIngest digest birden fazla yoldan oluşturulabilir:
+
+**Doğrudan Oluşturma**
+```
+# Kod tabanı analizinden doğrudan digest oluştur
+context-manager --gitingest
+context-manager -g
+```
+
+**JSON Tabanlı Oluşturma**
+```
+# Mevcut JSON raporundan digest oluştur (anında, yeniden tarama yok)
+context-manager --gitingest-from-report token-analysis-report.json
+
+# LLM context dosyasından digest oluştur
+context-manager --gitingest-from-context llm-context.json
+```
+
+**İki Adımlı İş Akışı**
+```
+# Adım 1: Analiz raporu oluştur
+context-manager --save-report
+
+# Adım 2: Rapordan digest oluştur (anında)
+context-manager --gitingest-from-report token-analysis-report.json
+```
+
+### Çıktı Yapısı
+
+Oluşturulan `digest.txt` dosyası şu yapıyı izler:
+
+```
+Directory: my-project
+Files analyzed: 42
+Method filtering: INCLUDE mode active
+
+Estimated tokens: 15.2k
+Directory structure:
+└── my-project/
+    ├── src/
+    │   ├── index.js
+    │   └── utils.js
+    └── README.md
+
+
+================================================
+FILE: src/index.js
+================================================
+[tam dosya içeriği burada]
+
+================================================
+FILE: src/utils.js
+================================================
+[tam dosya içeriği burada]
+```
+
+### Temel Özellikler
+
+- **Tek Dosya Çıktısı**: Kolay LLM alımı için her şey tek bir dosyada birleştirilir
+- **Ağaç Görselleştirme**: Uygun girintili net dizin yapısı
+- **Token Tahminleri**: Okunabilirlik için "1.2k" veya "1.5M" olarak formatlanmış
+- **Sıralı Çıktı**: Dosyalar token sayısına göre sıralanmış (en büyük önce)
+- **Filtre Uyumluluğu**: Tüm `.gitignore` ve calculator ignore kurallarına saygı gösterir
+- **Method Seviyesi Filtreleme**: Etkinleştirildiğinde, yalnızca filtre kriterlerine uyan methodları içerir
+- **Performans Optimize**: JSON tabanlı oluşturma, yeniden tarama olmadan anındadır
+
+### Method Seviyesi Filtreleme
+
+Method seviyesi analiz etkinleştirildiğinde, GitIngest formatter `.methodinclude` ve `.methodignore` yapılandırma dosyalarına dayalı method filtreleme uygular:
+
+- **INCLUDE Modu**: Yalnızca `.methodinclude`'da belirtilen methodlar dahil edilir
+- **EXCLUDE Modu**: `.methodignore`'da belirtilen methodlar hariç tutulur
+
+Kod dosyaları için, digest'te yalnızca filtrelenmiş methodlar net açıklamalarla birlikte dahil edilir:
+
+```
+// Dosya 15 method içeriyor, 5 filtrelenmiş method gösteriliyor
+
+// Method: calculateTokens (satır 45)
+function calculateTokens(content) {
+    // method implementasyonu
+}
+
+// Method: validateInput (satır 89)
+function validateInput(data) {
+    // method implementasyonu
+}
+```
+
+### Uygulama Detayları
+
+GitIngest formatı, `lib/formatters/gitingest-formatter.js`'deki `GitIngestFormatter` sınıfı aracılığıyla uygulanır. Bu sınıf şunları yönetir:
+- Proje özet oluşturma
+- Dizin ağacı inşası
+- Dosya içeriği çıkarma
+- Method seviyesi filtreleme
+- Çıktı formatlama ve dosya kaydetme
+
+Formatter, method filtreleme yapılandırmasını otomatik olarak algılar ve kod dosyalarını işlerken uygular.
+
+**Bölüm kaynakları**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [context-manager.js](file://context-manager.js#L332-L339)
+- [README.md](file://README.md#L600-L700)
 
 ## Kullanım Senaryoları ve Performans
 

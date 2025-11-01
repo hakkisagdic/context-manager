@@ -2,10 +2,21 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [bin/cli.js](file://bin/cli.js)
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [bin/cli.js](file://bin/cli.js) - *Updated in commit 6f5fea32*
+- [context-manager.js](file://context-manager.js) - *Updated in commit 6f5fea32 and 0b9cbab0*
+- [README.md](file://README.md) - *Updated in both commits*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in commit 6f5fea32*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in commit 6f5fea32*
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Added comprehensive documentation for new GitIngest functionality and JSON-based digest generation
+- Updated available options section with new CLI flags: --gitingest (-g), --gitingest-from-report, and --gitingest-from-context
+- Enhanced method-level analysis documentation with details about method filtering configuration
+- Added new section for GitIngest format export with usage examples and output format details
+- Updated usage examples to include new command combinations
+- Expanded section sources to include newly added formatter and parser files
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -13,10 +24,11 @@
 3. [Available Options](#available-options)
 4. [Interactive Export Selection](#interactive-export-selection)
 5. [Usage Examples](#usage-examples)
-6. [Exit Codes and Error Handling](#exit-codes-and-error-handling)
-7. [Performance Considerations](#performance-considerations)
-8. [Shell Script Integration](#shell-script-integration)
-9. [Troubleshooting Guide](#troubleshooting-guide)
+6. [GitIngest Format Export](#gitingest-format-export)
+7. [Exit Codes and Error Handling](#exit-codes-and-error-handling)
+8. [Performance Considerations](#performance-considerations)
+9. [Shell Script Integration](#shell-script-integration)
+10. [Troubleshooting Guide](#troubleshooting-guide)
 
 ## Introduction
 The context-manager CLI provides a comprehensive tool for analyzing codebases and optimizing context for LLM consumption. It offers method-level filtering, exact token counting, and multiple export formats to support AI-assisted development workflows. The tool respects both .gitignore and custom ignore/include rules, providing flexible configuration options for different analysis scenarios.
@@ -81,6 +93,27 @@ Enables method-level analysis mode.
 
 **Return value**: Includes method-specific information in the output, including method names, line numbers, and token counts.
 
+### --gitingest (-g)
+Generates a GitIngest-style digest file for LLM consumption.
+
+**Behavior**: Creates a single text file (digest.txt) containing project summary, directory structure, and complete file contents with clear separators.
+
+**Return value**: Creates digest.txt file with consolidated codebase information in a prompt-friendly format.
+
+### --gitingest-from-report
+Generates a GitIngest digest from an existing token-analysis-report.json file.
+
+**Behavior**: Reads the JSON report and generates a digest without re-scanning the codebase, enabling fast digest generation.
+
+**Return value**: Creates digest.txt file with content derived from the report data.
+
+### --gitingest-from-context
+Generates a GitIngest digest from an existing llm-context.json file.
+
+**Behavior**: Reads the LLM context file and generates a digest without re-scanning the codebase, enabling fast digest generation.
+
+**Return value**: Creates digest.txt file with content derived from the context data.
+
 ### --help (-h)
 Displays the help message with available options and usage examples.
 
@@ -91,6 +124,7 @@ Displays the help message with available options and usage examples.
 **Section sources**
 - [README.md](file://README.md#L0-L891)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
+- [context-manager.js](file://context-manager.js#L150-L170)
 
 ## Interactive Export Selection
 When the context-manager is run without specifying any export options (--save-report, --context-export, or --context-clipboard), it automatically activates the interactive export selection feature. After completing the analysis, the tool presents a menu with four export options:
@@ -127,8 +161,64 @@ context-manager --method-level --save-report --context-export --verbose
 ```
 This command performs method-level analysis with verbose output while generating both a detailed report and an LLM context file, suitable for CI/CD pipelines and thorough codebase documentation.
 
+### GitIngest digest generation
+```bash
+context-manager --gitingest
+```
+Generates a single digest.txt file containing the entire codebase in a prompt-friendly format for LLM consumption.
+
+### Two-step digest generation
+```bash
+context-manager --save-report
+context-manager --gitingest-from-report token-analysis-report.json
+```
+First analyzes the codebase and saves a report, then quickly generates a digest from the existing report without re-scanning.
+
 **Section sources**
 - [README.md](file://README.md#L0-L891)
+
+## GitIngest Format Export
+The context-manager now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption.
+
+### What is GitIngest Format?
+GitIngest format consolidates your entire codebase into a single text file with:
+- Project summary and statistics
+- Visual directory tree structure
+- Complete file contents with clear separators
+- Token count estimates
+
+This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitingest), implemented purely in JavaScript with zero additional dependencies.
+
+### Usage
+```bash
+# Standard workflow - analyze and generate digest in one step
+context-manager --gitingest
+context-manager -g
+
+# Combine with other exports
+context-manager -g -s  # digest.txt + token-analysis-report.json
+
+# Two-step workflow - generate digest from existing JSON (fast, no re-scan)
+context-manager -s                                    # Step 1: Create report
+context-manager --gitingest-from-report               # Step 2: Generate digest
+
+# Or from LLM context
+context-manager --context-export                      # Step 1: Create context
+context-manager --gitingest-from-context              # Step 2: Generate digest
+```
+
+### Output Format
+The generated `digest.txt` file includes:
+- Project name and file count
+- Directory structure visualization with tree format
+- Estimated token count
+- File contents separated by clear delimiters
+- When method-level filtering is active, only included methods are shown
+
+**Section sources**
+- [README.md](file://README.md#L0-L891)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## Exit Codes and Error Handling
 The context-manager CLI implements robust error handling mechanisms:
@@ -151,6 +241,7 @@ When analyzing large codebases, consider the following performance optimizations
 - Enable method-level analysis to focus on specific functionality
 - Avoid verbose mode for large repositories to reduce output processing
 - Use the compact context format for faster processing and smaller output
+- Utilize JSON-based digest generation (--gitingest-from-report or --gitingest-from-context) for instant digest creation without re-scanning
 
 The tool is optimized for performance with efficient directory scanning and token counting algorithms. For very large codebases, the initial scan may take several seconds, but subsequent analyses benefit from the filtering rules that reduce the number of files processed.
 
@@ -198,6 +289,11 @@ Check if files are excluded by .gitignore or calculator rules. Use verbose mode 
 
 ### Token count discrepancies
 Ensure tiktoken is installed for exact token counting. Without tiktoken, the tool uses estimation based on file type.
+
+### GitIngest digest issues
+- Ensure the required JSON files exist when using --gitingest-from-report or --gitingest-from-context
+- Check file permissions for reading and writing digest.txt
+- Verify the JSON format is valid when generating from existing files
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)

@@ -2,12 +2,23 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
-- [CLAUDE.md](file://CLAUDE.md)
+- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [README.md](file://README.md) - *Updated in recent commit*
+- [CLAUDE.md](file://CLAUDE.md) - *Updated in recent commit*
 - [index.js](file://index.js)
 - [bin/cli.js](file://bin/cli.js)
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js) - *Updated in recent commit*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Updated in recent commit*
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Updated Method Filtering Mechanism section to reflect GitIngest-style formatter integration
+- Added new content about auto-detection of method filtering configuration
+- Enhanced diagram to show GitIngestFormatter integration
+- Updated section sources to reflect actual file changes
+- Added new diagram sources for the updated architecture visualization
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -50,11 +61,11 @@ The extraction process begins with the `extractMethods` function, which applies 
 To retrieve the complete content of a method, the `extractMethodContent` function uses dynamically constructed regex patterns that match the full method body, including nested braces. This allows the tool to extract not just the method signature but the entire implementation for token calculation.
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L15-L45)
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92)
 - [context-manager.js](file://context-manager.js#L61-L72)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L14-L73)
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92)
 
 ## Method Analysis Integration
 
@@ -96,11 +107,11 @@ The integration process begins in the `analyzeFile` method of TokenCalculator, w
 For each included method, the system extracts the method content and calculates tokens using the same mechanism as for entire files. The token calculation uses the tiktoken library for exact GPT-4 compatible counts when available, falling back to estimation based on character counts per file type when tiktoken is not installed.
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L323-L383)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
 - [context-manager.js](file://context-manager.js#L234-L238)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L323-L383)
+- [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
 
 ## Method Filtering Mechanism
 
@@ -130,10 +141,22 @@ class TokenCalculator {
 +analyzeFileMethods(content, filePath) Array
 +generateMethodContext(analysisResults) Object
 }
+class GitIngestFormatter {
++methodFilterEnabled : boolean
++methodAnalyzer : MethodAnalyzer
++methodFilter : MethodFilterParser
++constructor(projectRoot, stats, analysisResults)
++detectMethodFilters() boolean
++initMethodFilter() MethodFilterParser
++generateFilteredFileContent(content, filePath) string
+}
 TokenCalculator --> MethodFilterParser : "uses for filtering"
 TokenCalculator --> MethodAnalyzer : "uses for extraction"
-MethodFilterParser --> "methodinclude file" : "reads"
-MethodFilterParser --> "methodignore file" : "reads"
+MethodFilterParser --> ".methodinclude file" : "reads"
+MethodFilterParser --> ".methodignore file" : "reads"
+GitIngestFormatter --> MethodAnalyzer : "uses for method extraction"
+GitIngestFormatter --> MethodFilterParser : "uses for filtering"
+GitIngestFormatter --> "detects configuration" : "auto-detects .methodinclude/.methodignore"
 ```
 
 The MethodFilterParser reads patterns from `.methodinclude` and `.methodignore` files, converting each line into a case-insensitive regex pattern. The filtering behavior depends on whether an include file exists:
@@ -145,14 +168,18 @@ The `shouldIncludeMethod` function evaluates both the method name and the fully 
 
 The system searches for these configuration files in two locations: the script directory and the project root, with the project root taking precedence. This allows for both global and project-specific configuration.
 
+The GitIngestFormatter class now automatically detects method filtering configuration through the `detectMethodFilters` method in ConfigUtils, which checks for the presence of `.methodinclude` or `.methodignore` files. When method filtering is enabled, the formatter uses the MethodAnalyzer and MethodFilterParser to generate filtered file content that includes only the methods that pass the filter criteria.
+
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L14-L73)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
+- [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L2-L268)
+- [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L48-L52)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 - [README.md](file://README.md#L481-L500)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L2-L268)
 
 ## Method Statistics and Reporting
 

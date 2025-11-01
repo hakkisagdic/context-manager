@@ -2,20 +2,31 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [bin/cli.js](file://bin/cli.js)
-- [index.js](file://index.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [bin/cli.js](file://bin/cli.js) - *Updated in recent commit*
+- [index.js](file://index.js) - *Updated in recent commit*
+- [README.md](file://README.md) - *Updated in recent commit*
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
 </cite>
+
+## Update Summary
+**Changes Made**   
+- Added comprehensive documentation for the new GitIngest-style digest formatter feature
+- Updated architecture section to include the new GitIngestFormatter component
+- Enhanced CLI interface section with new GitIngest export options
+- Added new section on GitIngest digest generation workflow
+- Updated practical use cases to include GitIngest format examples
+- Added new sequence diagram showing GitIngest digest generation
 
 ## Table of Contents
 1. [Tool Overview & Core Value](#tool-overview--core-value)
 2. [Architecture and Component Relationships](#architecture-and-component-relationships)
 3. [CLI Interface and Workflow Orchestration](#cli-interface-and-workflow-orchestration)
-4. [Method-Level Analysis and Filtering](#method-level-analysis-and-filtering)
-5. [Token Counting and Context Generation](#token-counting-and-context-generation)
-6. [Configuration and Filtering Modes](#configuration-and-filtering-modes)
-7. [Practical Use Cases and Examples](#practical-use-cases-and-examples)
+4. [GitIngest Digest Generation](#gitingest-digest-generation)
+5. [Method-Level Analysis and Filtering](#method-level-analysis-and-filtering)
+6. [Token Counting and Context Generation](#token-counting-and-context-generation)
+7. [Configuration and Filtering Modes](#configuration-and-filtering-modes)
+8. [Practical Use Cases and Examples](#practical-use-cases-and-examples)
 
 ## Tool Overview & Core Value
 
@@ -36,8 +47,9 @@ The main components include:
 - **GitIgnoreParser**: Handles file-level filtering based on .gitignore and custom ignore/include rules
 - **MethodAnalyzer**: Extracts methods from JavaScript/TypeScript files using regex patterns
 - **MethodFilterParser**: Applies include/exclude rules to filter methods based on configuration files
+- **GitIngestFormatter**: Generates GitIngest-style digest files for LLM consumption
 
-These components work together in a coordinated manner: the GitIgnoreParser determines which files to include in the analysis, the TokenCalculator processes these files and delegates method extraction to the MethodAnalyzer, and the MethodFilterParser filters the extracted methods based on configuration rules. This modular design allows for independent development and testing of each component while maintaining a cohesive analysis workflow.
+These components work together in a coordinated manner: the GitIgnoreParser determines which files to include in the analysis, the TokenCalculator processes these files and delegates method extraction to the MethodAnalyzer, the MethodFilterParser filters the extracted methods based on configuration rules, and the GitIngestFormatter generates single-file digest outputs. This modular design allows for independent development and testing of each component while maintaining a cohesive analysis workflow.
 
 ```mermaid
 classDiagram
@@ -52,6 +64,7 @@ class TokenCalculator {
 +scanDirectory(dir) string[]
 +analyzeFile(filePath) object
 +generateLLMContext(analysisResults) object
++saveGitIngestDigest(analysisResults) void
 }
 class GitIgnoreParser {
 +patterns object[]
@@ -75,21 +88,34 @@ class MethodFilterParser {
 +shouldIncludeMethod(methodName, fileName) boolean
 +parseMethodFile(filePath) object[]
 }
+class GitIngestFormatter {
++projectRoot string
++stats object
++analysisResults object
++methodFilterEnabled boolean
++generateDigest() string
++generateSummary() string
++generateTree() string
++generateFileContents() string
++saveToFile(outputPath) number
+}
 TokenCalculator --> GitIgnoreParser : "uses"
 TokenCalculator --> MethodAnalyzer : "uses"
 TokenCalculator --> MethodFilterParser : "uses"
-TokenCalculator --> TokenCalculator : "coordinates workflow"
+TokenCalculator --> GitIngestFormatter : "creates and uses"
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [context-manager.js](file://context-manager.js#L14-L109)
 - [context-manager.js](file://context-manager.js#L118-L223)
 - [context-manager.js](file://context-manager.js#L225-L790)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 
 **Section sources**
 - [context-manager.js](file://context-manager.js#L14-L109)
 - [context-manager.js](file://context-manager.js#L118-L223)
 - [context-manager.js](file://context-manager.js#L225-L790)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 
 ## CLI Interface and Workflow Orchestration
 
@@ -101,6 +127,7 @@ The CLI supports several key options that control the analysis behavior:
 - `--context-export`: Generates an LLM context file list
 - `--context-clipboard`: Copies the context directly to the clipboard
 - `--method-level` or `-m`: Enables method-level analysis
+- `--gitingest` or `-g`: Generates GitIngest-style digest file
 - `--help` or `-h`: Displays help information
 
 When no export options are specified, the tool enters interactive mode and prompts the user to choose an export option after completing the analysis. This ensures that users never miss the opportunity to export their analysis results in the desired format. The CLI also handles the initialization of the TokenAnalyzer with the current working directory as the project root and processes the command-line arguments to configure the analysis options.
@@ -110,26 +137,73 @@ sequenceDiagram
 participant User as "User"
 participant CLI as "CLI Interface"
 participant Analyzer as "TokenAnalyzer"
-User->>CLI : Execute command (e.g., context-manager --method-level --context-clipboard)
+User->>CLI : Execute command (e.g., context-manager --method-level --gitingest)
 CLI->>CLI : Parse command-line arguments
 CLI->>CLI : Initialize options object
 CLI->>Analyzer : Create TokenAnalyzer instance with options
 Analyzer->>Analyzer : Scan directory and filter files
 Analyzer->>Analyzer : Analyze files and extract methods (if method-level enabled)
 Analyzer->>Analyzer : Calculate token counts
-Analyzer->>Analyzer : Generate LLM context
+Analyzer->>Analyzer : Generate LLM context or GitIngest digest
 Analyzer->>CLI : Return analysis results
-CLI->>CLI : Export context to clipboard
+CLI->>CLI : Export context to file or clipboard
 CLI->>User : Display completion message
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [bin/cli.js](file://bin/cli.js#L1-L67)
 - [context-manager.js](file://context-manager.js#L225-L790)
 
 **Section sources**
 - [bin/cli.js](file://bin/cli.js#L1-L67)
 - [context-manager.js](file://context-manager.js#L225-L790)
+
+## GitIngest Digest Generation
+
+The context-manager tool now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption. This feature was implemented to provide an alternative format that consolidates the entire codebase into a single file with a clear directory tree structure and complete file contents.
+
+The GitIngestFormatter class is responsible for creating these digest files. It takes the analysis results from the TokenCalculator and formats them into a structured text file that includes:
+- Project summary and statistics
+- Visual directory tree structure using ASCII art
+- Complete file contents with clear separators
+- Token count estimates formatted in a human-readable way (e.g., "1.2k")
+
+The digest generation process respects all filtering rules, including .gitignore and calculator ignore/include rules. When method-level analysis is enabled, the formatter applies method filtering to include only the specified methods in each file, making the digest even more focused and relevant.
+
+The GitIngest digest can be generated in several ways:
+1. Directly from a full analysis: `context-manager --gitingest`
+2. From an existing JSON report: `context-manager --gitingest-from-report token-analysis-report.json`
+3. From an existing LLM context file: `context-manager --gitingest-from-context llm-context.json`
+
+This two-step workflow allows for performance optimization, as the digest can be generated instantly from existing JSON files without re-scanning the entire codebase.
+
+```mermaid
+sequenceDiagram
+participant User as "User"
+participant CLI as "CLI Interface"
+participant Analyzer as "TokenAnalyzer"
+participant Formatter as "GitIngestFormatter"
+User->>CLI : Execute command (e.g., context-manager --gitingest)
+CLI->>CLI : Parse command-line arguments
+CLI->>Analyzer : Create TokenAnalyzer instance
+Analyzer->>Analyzer : Scan and analyze codebase
+Analyzer->>Analyzer : Collect analysis results
+Analyzer->>Formatter : Create GitIngestFormatter with results
+Formatter->>Formatter : Generate digest content
+Formatter->>Formatter : Save digest to digest.txt
+Formatter->>Analyzer : Return digest size
+Analyzer->>CLI : Report completion
+CLI->>User : Display success message with digest size
+```
+
+**Diagram sources**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [context-manager.js](file://context-manager.js#L332-L339)
+
+**Section sources**
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
+- [context-manager.js](file://context-manager.js#L332-L339)
+- [README.md](file://README.md#L600-L700)
 
 ## Method-Level Analysis and Filtering
 
@@ -164,7 +238,7 @@ MoreMethods --> |No| GenerateContext["Generate LLM Context"]
 GenerateContext --> End([End Analysis])
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [context-manager.js](file://context-manager.js#L14-L67)
 - [context-manager.js](file://context-manager.js#L69-L109)
 
@@ -202,7 +276,7 @@ N --> O
 O --> P[Export to Clipboard or File]
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [context-manager.js](file://context-manager.js#L253-L286)
 - [context-manager.js](file://context-manager.js#L639-L665)
 
@@ -251,7 +325,7 @@ Q --> T
 T --> U[Export Results]
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [README.md](file://README.md#L294-L356)
 - [context-manager.js](file://context-manager.js#L253-L286)
 
@@ -270,6 +344,8 @@ Codebase analysis is another key use case, where the tool helps understand proje
 The tool also supports method-level debugging by allowing developers to focus on specific problematic methods. For example, to debug authentication methods, a developer can create a `.methodinclude` file with patterns like `*auth*`, `*login*`, and `*validate*`, then run `context-manager --method-level --context-clipboard`. This isolates the relevant methods and provides a focused context for debugging.
 
 CI/CD integration is facilitated through automated token analysis for monitoring codebase growth and complexity. Scripts can run `context-manager --save-report` daily to track token counts and detect potential issues before they impact LLM context limits. Code quality gates can be implemented by checking if the codebase exceeds token budgets, ensuring that projects remain within manageable limits for AI-assisted development.
+
+A new use case enabled by the GitIngest formatter is creating single-file digests for LLM consumption. Developers can run `context-manager --gitingest` to generate a `digest.txt` file that contains the entire codebase in a structured format perfect for pasting into LLM prompts. This is particularly useful for code reviews, documentation generation, and AI analysis workflows.
 
 ```mermaid
 erDiagram
@@ -299,6 +375,7 @@ USER_REQUIREMENT {
 "Method-Level Debugging" "Focus on specific problematic methods" "context-manager --method-level --verbose" ".methodinclude with *auth*, *login*" "Method context with line numbers"
 "CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".calculatorignore with test/ and docs/" "Detailed analysis for historical tracking"
 "Code Quality Gates" "Ensure code stays within token budgets" "context-manager --method-level --save-report" ".methodinclude with core business logic" "Token count validation"
+"GitIngest Digest" "Create single-file digest for LLM consumption" "context-manager --gitingest" ".methodinclude with core methods" "Single-file text digest (~10-50KB)"
 }
 CONFIG_FILE {
 ".calculatorinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
@@ -311,13 +388,16 @@ OUTPUT_FORMAT {
 "Detailed JSON" "~8.6k chars" "Full paths, categories, importance scores" "Codebase analysis"
 "Method context" "~4.5k chars" "Method names, line numbers, token counts" "Method-level debugging"
 "Detailed report" "~12k chars" "Comprehensive statistics, largest files" "CI/CD integration"
+"GitIngest digest" "~10-50KB" "Directory tree, file contents" "LLM consumption, code reviews"
 }
 ```
 
-**Diagram sources **
+**Diagram sources**
 - [README.md](file://README.md#L499-L542)
 - [README.md](file://README.md#L801-L879)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 
 **Section sources**
 - [README.md](file://README.md#L499-L542)
 - [README.md](file://README.md#L801-L879)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)

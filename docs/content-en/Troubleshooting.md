@@ -2,9 +2,11 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
-- [README.md](file://README.md)
+- [context-manager.js](file://context-manager.js) - *Updated in commit 6f5fea32*
+- [README.md](file://README.md) - *Updated in commit 6f5fea32*
 - [bin/cli.js](file://bin/cli.js)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in commit 6f5fea32*
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in commit 6f5fea32*
 </cite>
 
 ## Table of Contents
@@ -16,6 +18,8 @@
 6. [Performance Issues with Large Codebases](#performance-issues-with-large-codebases)
 7. [Diagnostic Steps](#diagnostic-steps)
 8. [Common Environment Issues](#common-environment-issues)
+9. [GitIngest Digest Generation Issues](#gitingest-digest-generation-issues)
+10. [Method-Level Filtering Problems](#method-level-filtering-problems)
 
 ## Include/Exclude Mode Confusion
 
@@ -139,3 +143,44 @@ Another common issue is running the tool from the wrong directory. The tool anal
 - [context-manager.js](file://context-manager.js#L259-L292)
 - [context-manager.js](file://context-manager.js#L825-L840)
 - [README.md](file://README.md#L294-L356)
+
+## GitIngest Digest Generation Issues
+
+With the implementation of GitIngest-style digest formatting, new issues may arise related to digest generation. The `--gitingest` flag generates a single-file digest for LLM consumption, but users may encounter problems with this feature.
+
+Common issues include:
+- Missing digest.txt output when using `--gitingest` flag
+- Incorrect token estimates in the generated digest
+- Directory tree structure not reflecting actual project structure
+- File contents missing from the digest output
+
+The GitIngestFormatter automatically detects and applies method-level filtering when `.methodinclude` or `.methodignore` files exist. If method filtering is active, the digest will include a note indicating whether INCLUDE or EXCLUDE mode is active for methods.
+
+When generating digests from existing JSON reports using `--gitingest-from-report` or `--gitingest-from-context`, ensure the specified JSON file exists and has the correct structure. The tool will display an error message if the file is not found or has invalid format.
+
+**Section sources**
+- [context-manager.js](file://context-manager.js#L294-L382)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L1-L269)
+- [README.md](file://README.md#L100-L150)
+
+## Method-Level Filtering Problems
+
+Method-level filtering allows users to include or exclude specific methods from analysis using `.methodinclude` and `.methodignore` files. Issues may arise when these files are not properly configured.
+
+The MethodFilterParser processes these files and converts patterns to regular expressions. Patterns support wildcards (`*`) which are converted to `.*` in regex. Patterns are case-insensitive and can match method names or file.method combinations.
+
+Common problems include:
+- Patterns not matching expected methods due to incorrect syntax
+- Negation patterns not working as expected
+- Method filtering not being applied when expected
+
+The tool logs messages when method filter rules are loaded:
+- "🔧 Method include rules loaded: X patterns" when `.methodinclude` is detected
+- "🚫 Method ignore rules loaded: X patterns" when `.methodignore` is detected
+
+Method filtering is automatically detected and applied by the GitIngestFormatter when generating digests, ensuring consistent behavior between regular analysis and digest generation.
+
+**Section sources**
+- [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L1-L51)
+- [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L15-L25)
+- [README.md](file://README.md#L200-L250)
