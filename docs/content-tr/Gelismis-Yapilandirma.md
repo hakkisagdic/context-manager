@@ -29,21 +29,21 @@ context-manager aracı, birden fazla konfigürasyon dosyası mevcut olduğunda d
 
 En yüksekten en düşüğe öncelik sırası:
 
-1. **`.calculatorinclude`** - INCLUDE modu (en yüksek öncelik)
-2. **`.calculatorignore`** - EXCLUDE modu
+1. **`.contextinclude`** - INCLUDE modu (en yüksek öncelik)
+2. **`.contextignore`** - EXCLUDE modu
 3. **`.gitignore`** - Standart git hariç tutmaları (her zaman saygı gösterilir)
 
-`.calculatorinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca bu dosyadaki desenlere uyan dosyalar analiz edilecektir ve `.calculatorignore` tamamen göz ardı edilir. Yalnızca `.calculatorignore` mevcut olduğunda, araç EXCLUDE modunda çalışır, göz ardı desenlerine uyan dosyalar hariç tüm dosyaları analiz eder. `.gitignore` dosyası moddan bağımsız olarak her zaman saygı gösterilir.
+`.contextinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca bu dosyadaki desenlere uyan dosyalar analiz edilecektir ve `.contextignore` tamamen göz ardı edilir. Yalnızca `.contextignore` mevcut olduğunda, araç EXCLUDE modunda çalışır, göz ardı desenlerine uyan dosyalar hariç tüm dosyaları analiz eder. `.gitignore` dosyası moddan bağımsız olarak her zaman saygı gösterilir.
 
 ```mermaid
 graph TD
-A[Analiz Başlat] --> B{.calculatorinclude var mı?}
+A[Analiz Başlat] --> B{.contextinclude var mı?}
 B --> |Evet| C[INCLUDE Modu]
-B --> |Hayır| D{.calculatorignore var mı?}
+B --> |Hayır| D{.contextignore var mı?}
 D --> |Evet| E[EXCLUDE Modu]
 D --> |Hayır| F[Tüm Dosyaları Dahil Et]
-C --> G[Yalnızca .calculatorinclude desenlerine uyan dosyaları analiz et]
-E --> H[.calculatorignore desenlerine uyan dosyalar hariç hepsini analiz et]
+C --> G[Yalnızca .contextinclude desenlerine uyan dosyaları analiz et]
+E --> H[.contextignore desenlerine uyan dosyalar hariç hepsini analiz et]
 F --> I[.gitignore'u dikkate alarak tüm dosyaları analiz et]
 G --> J[.gitignore hariç tutmalarına saygı göster]
 H --> J
@@ -64,14 +64,14 @@ context-manager aracı, hem dosya seviyesinde hem de method seviyesinde filtrele
 
 ### Dosya Seviyesinde Filtreleme
 
-Dosya seviyesinde filtreleme, `.calculatorinclude` ve `.calculatorignore` dosyaları aracılığıyla kontrol edilir. Bu dosyalar esnek dosya seçimi için glob desenlerini destekler:
+Dosya seviyesinde filtreleme, `.contextinclude` ve `.contextignore` dosyaları aracılığıyla kontrol edilir. Bu dosyalar esnek dosya seçimi için glob desenlerini destekler:
 
 - `**/*.md` - Tüm markdown dosyalarını özyinelemeli olarak hariç tut
 - `infrastructure/**` - Tüm infrastructure dizinini hariç tut
 - `utility-mcp/src/**/*.js` - src dizinindeki tüm JavaScript dosyalarını dahil et
 - `!utility-mcp/src/testing/**` - Test dosyalarını hariç tutmak için negasyon deseni
 
-Belirli özellik alanlarına odaklanmak için, istenen dizinleri hedefleyen desenlerle bir `.calculatorinclude` dosyası oluşturun:
+Belirli özellik alanlarına odaklanmak için, istenen dizinleri hedefleyen desenlerle bir `.contextinclude` dosyası oluşturun:
 
 ```bash
 # Yalnızca authentication ile ilgili dosyaları dahil et
@@ -80,7 +80,7 @@ src/middleware/auth.js
 config/auth-config.json
 ```
 
-Legacy kodu hariç tutmak için, `.calculatorinclude`'da negasyon desenleri kullanın:
+Legacy kodu hariç tutmak için, `.contextinclude`'da negasyon desenleri kullanın:
 
 ```bash
 # Tüm core dosyaları dahil et ancak legacy modülleri hariç tut
@@ -205,7 +205,7 @@ Mevcut uygulama açık önbelleğe alma içermese de, performansı şu yollarla 
 - **Toplu işleme**: Alt dizinlere geçmeden önce bir dizindeki tüm dosyaları işler
 - **Minimum I/O işlemleri**: Konfigürasyon dosyalarını yalnızca başlatma sırasında bir kez okur
 
-Büyük projeler için, `.calculatorinclude`'ı yalnızca ilgili alanları hedefleyecek şekilde yapılandırarak analizi belirli dizinlerle sınırlamayı düşünün:
+Büyük projeler için, `.contextinclude`'ı yalnızca ilgili alanları hedefleyecek şekilde yapılandırarak analizi belirli dizinlerle sınırlamayı düşünün:
 
 ```bash
 # Analizi yalnızca core modüllere odakla
@@ -323,7 +323,7 @@ SUMMARY ||--o{ FILE : içerir
 
 ### Performans Değerlendirmeleri
 
-- **Kapsamı sınırlayın**: İlgili kod alanlarına odaklanmak için `.calculatorinclude` kullanın
+- **Kapsamı sınırlayın**: İlgili kod alanlarına odaklanmak için `.contextinclude` kullanın
 - **Aşırı geniş desenlerden kaçının**: Belirli desenler, birçok negasyonlu geniş olanlardan daha verimlidir
 - **Düzenli bakım**: Kod tabanı geliştikçe desenleri periyodik olarak gözden geçirin ve güncelleyin
 - **Sonuçları önbelleğe alın**: CI/CD pipeline'ları için, kaynak dosyalar değişmediğinde analiz sonuçlarını önbelleğe almayı düşünün
@@ -333,7 +333,7 @@ SUMMARY ||--o{ FILE : içerir
 ### Yaygın Sorunlar
 
 - **Desenler çalışmıyor**: Desen dosyalarında satır içi yorum olmadığından ve doğru glob sözdizimi kullandığınızdan emin olun
-- **Yanlış dosyalar dahil edildi**: `.calculatorinclude`'ın var olup olmadığını kontrol edin (`.calculatorignore` üzerinde öncelik alır)
+- **Yanlış dosyalar dahil edildi**: `.contextinclude`'ın var olup olmadığını kontrol edin (`.contextignore` üzerinde öncelik alır)
 - **Performans sorunları**: Hedefli include desenleri kullanarak analizi belirli dizinlerle sınırlayın
 - **Eksik beklenen dosyalar**: Dosyaların `.gitignore` tarafından hariç tutulmadığını doğrulayın (her zaman saygı gösterilir)
 

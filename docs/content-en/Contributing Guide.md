@@ -115,7 +115,7 @@ MethodAnalyzer --> MethodFilterParser : "provides methods for filtering"
 The main components of the system are:
 
 - **TokenCalculator**: The primary orchestrator that manages the analysis process, coordinates file scanning, token counting, and report generation
-- **GitIgnoreParser**: Handles pattern matching for .gitignore, .calculatorignore, and .calculatorinclude files to determine which files to include or exclude from analysis
+- **GitIgnoreParser**: Handles pattern matching for .gitignore, .contextignore, and .contextinclude files to determine which files to include or exclude from analysis
 - **MethodAnalyzer**: Extracts methods from JavaScript/TypeScript files using regex patterns and calculates token counts for individual methods
 - **MethodFilterParser**: Filters methods based on rules defined in .methodinclude and .methodignore configuration files
 

@@ -237,7 +237,7 @@ Araç, eksik konfigürasyon dosyalarını zarif bir şekilde ele alır ve bilgil
 ## Performans Değerlendirmeleri
 Büyük kod tabanlarını analiz ederken, aşağıdaki performans optimizasyonlarını göz önünde bulundurun:
 
-- Analizi yalnızca gerekli dosyalarla sınırlamak için .calculatorinclude kullanın
+- Analizi yalnızca gerekli dosyalarla sınırlamak için .contextinclude kullanın
 - Belirli işlevselliğe odaklanmak için method seviyesinde analizi etkinleştirin
 - Çıktı işlemeyi azaltmak için büyük repolar için verbose modu kullanmaktan kaçının
 - Daha hızlı işleme ve daha küçük çıktı için compact context formatını kullanın

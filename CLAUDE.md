@@ -20,7 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **[context-manager.js](context-manager.js)** - Core analysis engine containing:
 - `TokenCalculator` - Main orchestrator for file scanning, token counting, and reporting
-- `GitIgnoreParser` - Handles .gitignore, .calculatorignore, .calculatorinclude pattern matching
+- `GitIgnoreParser` - Handles .gitignore, .contextignore, .contextinclude pattern matching
 - `MethodAnalyzer` - Extracts methods from 14+ programming languages using regex patterns
 - `GoMethodAnalyzer` - Specialized analyzer for Go functions, methods, and interfaces
 - `MethodFilterParser` - Filters methods based on .methodinclude/.methodignore rules
@@ -33,8 +33,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Priority Order:**
 1. `.gitignore` (always respected)
-2. `.calculatorinclude` (INCLUDE mode - when exists, ignores .calculatorignore)
-3. `.calculatorignore` (EXCLUDE mode - fallback)
+2. `.contextinclude` (INCLUDE mode - when exists, ignores .contextignore)
+3. `.contextignore` (EXCLUDE mode - fallback)
 4. `.methodinclude` (method-level INCLUDE mode)
 5. `.methodignore` (method-level EXCLUDE mode)
 
@@ -75,7 +75,7 @@ npm run prepublishOnly # Runs tests before publish
 ### File-Level Analysis
 1. Scan directory tree recursively
 2. Apply .gitignore rules
-3. Apply calculator include/exclude rules
+3. Apply context include/exclude rules
 4. Calculate tokens for each file
 5. Generate statistics and reports
 

@@ -17,7 +17,7 @@
 
 ## LLM Context Optimization
 
-The context-manager tool enables efficient management of token budgets for AI assistants by generating focused context files and filtering out non-essential code. It supports two primary modes of operation: EXCLUDE mode (via `.calculatorignore`) and INCLUDE mode (via `.calculatorinclude`), with the latter taking precedence. This dual filtering system ensures precise control over which files are included in the analysis, allowing developers to focus exclusively on core application logic.
+The context-manager tool enables efficient management of token budgets for AI assistants by generating focused context files and filtering out non-essential code. It supports two primary modes of operation: EXCLUDE mode (via `.contextignore`) and INCLUDE mode (via `.contextinclude`), with the latter taking precedence. This dual filtering system ensures precise control over which files are included in the analysis, allowing developers to focus exclusively on core application logic.
 
 For LLM context export, the tool provides two formats: an ultra-compact format (~2.3k characters) and a detailed format (~8.6k characters). The compact format generates structured JSON output ideal for programmatic processing and AI consumption, while the detailed format includes additional metadata such as file categories and importance scores. When using the `--context-clipboard` or `--context-export` options, the tool outputs a clean directory structure without token counts, making it suitable for frequent AI interactions.
 
@@ -37,7 +37,7 @@ Key analytical features include:
 - **Directory-level statistics**: Token usage aggregated by top-level directories
 - **Method-level analysis**: Extraction and analysis of individual methods from JavaScript/TypeScript files
 
-The tool generates a detailed report showing total files analyzed, total tokens, average tokens per file, and files ignored due to `.gitignore` or calculator rules. This information is crucial for understanding project complexity and identifying potential refactoring opportunities. The `--save-report` option exports this data to `token-analysis-report.json`, enabling historical tracking and trend analysis.
+The tool generates a detailed report showing total files analyzed, total tokens, average tokens per file, and files ignored due to `.gitignore` or context rules. This information is crucial for understanding project complexity and identifying potential refactoring opportunities. The `--save-report` option exports this data to `token-analysis-report.json`, enabling historical tracking and trend analysis.
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
@@ -63,11 +63,11 @@ The interactive export selection feature prompts users to choose between saving 
 
 Several common challenges arise when using the context-manager tool, particularly around configuration and filtering behavior:
 
-**Include vs Exclude Mode Confusion**: The presence of `.calculatorinclude` takes priority over `.calculatorignore`. If unexpected files are being included or excluded, verify which configuration file exists and remove the unwanted one.
+**Include vs Exclude Mode Confusion**: The presence of `.contextinclude` takes priority over `.contextignore`. If unexpected files are being included or excluded, verify which configuration file exists and remove the unwanted one.
 
 **Pattern Matching Issues**: Ensure no inline comments exist in pattern files, as they can interfere with parsing. Use proper glob patterns (`docs/**` instead of `docs/`) and test configurations with verbose mode to see inclusion/exclusion reasons.
 
-**Token Count Discrepancies**: If token counts appear too high or low, check whether important files are being excluded by `.gitignore` or calculator rules. Use `--verbose` to inspect which files are being processed.
+**Token Count Discrepancies**: If token counts appear too high or low, check whether important files are being excluded by `.gitignore` or context rules. Use `--verbose` to inspect which files are being processed.
 
 **Missing Expected Files**: Files may be excluded due to `.gitignore` rules (always respected) or incorrect pattern syntax. Verify that files are recognized as text files and use verbose mode to determine exclusion reasons.
 
@@ -81,7 +81,7 @@ Several common challenges arise when using the context-manager tool, particularl
 
 To maximize effectiveness when using the context-manager tool, follow these best practices:
 
-**Configuration Management**: Use `.calculatorinclude` for precise control over analysis scope, especially in large repositories. Keep patterns simple and test them incrementally.
+**Configuration Management**: Use `.contextinclude` for precise control over analysis scope, especially in large repositories. Keep patterns simple and test them incrementally.
 
 **Performance Optimization**: The tool is optimized for performance, but analyzing very large codebases may benefit from method-level filtering to reduce processing overhead. Enable method-level analysis only when necessary.
 

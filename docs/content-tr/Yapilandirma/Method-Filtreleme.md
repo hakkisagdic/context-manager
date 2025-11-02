@@ -207,7 +207,7 @@ Method filtrelemeyi yapılandırırken, geliştiriciler birkaç yaygın tuzağı
 
 **Büyük/Küçük Harf Duyarlılığı**: Pattern eşleştirme büyük/küçük harf duyarsız olsa da, geliştiriciler pattern'lerinin yaygın adlandırma varyasyonlarını hesaba kattığından emin olmalıdır. Örneğin, `*test*` kullanımı "testMethod", "TestMethod" ve "isTesting" gibi methodları eşleştirir.
 
-**Dosya Seviyesi Filtreleme ile Etkileşim**: Method filtreleme, dosya seviyesi filtrelemeyi geçmiş dosyalar üzerinde çalışır. Bir dosya `.calculatorignore` veya `.calculatorinclude` kuralları tarafından hariç tutulmuşsa, methodları method seviyesi kurallardan bağımsız olarak analiz edilmez. Bu hiyerarşik filtreleme, method kurallarının yalnızca analiz kapsamına zaten dahil edilmiş dosyalara uygulandığı anlamına gelir.
+**Dosya Seviyesi Filtreleme ile Etkileşim**: Method filtreleme, dosya seviyesi filtrelemeyi geçmiş dosyalar üzerinde çalışır. Bir dosya `.contextignore` veya `.contextinclude` kuralları tarafından hariç tutulmuşsa, methodları method seviyesi kurallardan bağımsız olarak analiz edilmez. Bu hiyerarşik filtreleme, method kurallarının yalnızca analiz kapsamına zaten dahil edilmiş dosyalara uygulandığı anlamına gelir.
 
 **Aşırı Geniş Pattern'ler**: `*` veya `*.*` gibi pattern'leri kullanmak istenmeyen eşleşmelere yol açabilir. Geliştiriciler, amaçlanan filtreleme hedefleriyle uyumlu olmayan methodları dahil etmekten kaçınmak için pattern'leri ile özel olmalıdır.
 

@@ -291,22 +291,22 @@ The context-manager tool supports a flexible configuration system with dual filt
 
 The file-level filtering system uses three configuration files with a clear priority hierarchy:
 1. `.gitignore` (project root) - Standard git exclusions (always respected)
-2. `.calculatorinclude` - INCLUDE mode (highest priority for files)
-3. `.calculatorignore` - EXCLUDE mode (used when no include file exists)
+2. `.contextinclude` - INCLUDE mode (highest priority for files)
+3. `.contextignore` - EXCLUDE mode (used when no include file exists)
 
-When `.calculatorinclude` exists, the tool operates in INCLUDE mode, including only files that match the patterns in this file and ignoring `.calculatorignore`. When only `.calculatorignore` exists, the tool operates in EXCLUDE mode, including all files except those matching the ignore patterns. This dual-mode system provides flexibility for different use cases, from comprehensive codebase analysis to focused examination of specific components.
+When `.contextinclude` exists, the tool operates in INCLUDE mode, including only files that match the patterns in this file and ignoring `.contextignore`. When only `.contextignore` exists, the tool operates in EXCLUDE mode, including all files except those matching the ignore patterns. This dual-mode system provides flexibility for different use cases, from comprehensive codebase analysis to focused examination of specific components.
 
 Method-level filtering follows a similar pattern with `.methodinclude` and `.methodignore` files that control which methods are included in the analysis. These files support pattern matching syntax including exact matches, wildcards (*pattern*), class-specific methods (Class.*), and file-specific methods (file.method). The pattern syntax also supports negation (!pattern) to exclude specific items from broad patterns.
 
 ```mermaid
 graph TD
-A[Start Analysis] --> B{.calculatorinclude Exists?}
+A[Start Analysis] --> B{.contextinclude Exists?}
 B --> |Yes| C[INCLUDE Mode]
-B --> |No| D{.calculatorignore Exists?}
+B --> |No| D{.contextignore Exists?}
 D --> |Yes| E[EXCLUDE Mode]
 D --> |No| F[Include All Files]
-C --> G[Load .calculatorinclude Patterns]
-E --> H[Load .calculatorignore Patterns]
+C --> G[Load .contextinclude Patterns]
+E --> H[Load .contextignore Patterns]
 G --> I[Include Only Matching Files]
 H --> J[Exclude Matching Files]
 I --> K[Apply .gitignore Rules]
@@ -371,15 +371,15 @@ string useCase
 }
 USER_REQUIREMENT {
 "LLM Context Optimization" "Generate minimal context for AI assistants" "context-manager --method-level --context-clipboard" ".methodinclude with *Handler, *Validator" "Ultra-compact JSON (~2.3k chars)"
-"Codebase Analysis" "Understand project complexity and structure" "context-manager --save-report --verbose" ".calculatorinclude with core JS files" "Detailed JSON report (~8.6k chars)"
+"Codebase Analysis" "Understand project complexity and structure" "context-manager --save-report --verbose" ".contextinclude with core JS files" "Detailed JSON report (~8.6k chars)"
 "Method-Level Debugging" "Focus on specific problematic methods" "context-manager --method-level --verbose" ".methodinclude with *auth*, *login*" "Method context with line numbers"
-"CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".calculatorignore with test/ and docs/" "Detailed analysis for historical tracking"
+"CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".contextignore with test/ and docs/" "Detailed analysis for historical tracking"
 "Code Quality Gates" "Ensure code stays within token budgets" "context-manager --method-level --save-report" ".methodinclude with core business logic" "Token count validation"
 "GitIngest Digest" "Create single-file digest for LLM consumption" "context-manager --gitingest" ".methodinclude with core methods" "Single-file text digest (~10-50KB)"
 }
 CONFIG_FILE {
-".calculatorinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
-".calculatorignore" "**/*.md, **/*.json, node_modules/**" "EXCLUDE"
+".contextinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
+".contextignore" "**/*.md, **/*.json, node_modules/**" "EXCLUDE"
 ".methodinclude" "*Handler, *Validator, *Manager" "INCLUDE"
 ".methodignore" "*test*, *debug*, console" "EXCLUDE"
 }

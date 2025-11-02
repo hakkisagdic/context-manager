@@ -256,7 +256,7 @@ FILE: src/utils.js
 - **Tree Visualization**: Clear directory structure with proper indentation
 - **Token Estimates**: Formatted as "1.2k" or "1.5M" for readability
 - **Sorted Output**: Files sorted by token count (largest first)
-- **Filter Compatibility**: Respects all `.gitignore` and calculator ignore rules
+- **Filter Compatibility**: Respects all `.gitignore` and context ignore rules
 - **Method-Level Filtering**: When enabled, only includes methods that match filter criteria
 - **Performance Optimized**: JSON-based generation is instant with no re-scanning
 

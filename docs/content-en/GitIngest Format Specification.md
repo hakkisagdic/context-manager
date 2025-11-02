@@ -281,7 +281,7 @@ Common issues and their solutions when working with the GitIngest format:
 
 ### File Generation Issues
 - **Digest not created**: Ensure the output directory is writable and you have sufficient permissions
-- **Missing files**: Verify that files are not excluded by `.gitignore`, `.calculatorignore`, or other filter rules
+- **Missing files**: Verify that files are not excluded by `.gitignore`, `.contextignore`, or other filter rules
 - **Empty digest**: Check that the analysis found files matching the inclusion criteria
 
 ### Method Filtering Problems

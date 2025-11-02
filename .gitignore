@@ -16,9 +16,9 @@ digest.txt
 token-analysis-report.json
 
 # Configuration files (user-specific)
-.calculatorignore
-.calculatorinclude
-.calculatorinclude.backup
+.contextignore
+.contextinclude
+.contextinclude.backup
 .methodignore
 .methodinclude
 

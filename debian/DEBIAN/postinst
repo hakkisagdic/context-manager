@@ -1,0 +1,41 @@
+#!/bin/bash
+# Post-installation script for context-manager DEB package
+
+set -e
+
+# Create config directory
+CONFIG_DIR="$HOME/.context-manager"
+LOG_DIR="$CONFIG_DIR/logs"
+
+mkdir -p "$CONFIG_DIR"
+mkdir -p "$LOG_DIR"
+
+# Create default config if not exists
+if [ ! -f "$CONFIG_DIR/config.json" ]; then
+    cat > "$CONFIG_DIR/config.json" <<EOF
+{
+  "version": "2.3.5",
+  "updateChannel": "stable",
+  "autoUpdate": false,
+  "logLevel": "info",
+  "telemetry": false,
+  "outputFormat": "toon",
+  "installedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+fi
+
+# Set permissions
+chmod -R 755 "$CONFIG_DIR"
+
+echo ""
+echo "✅ Context Manager installed successfully!"
+echo ""
+echo "🚀 Quick Start:"
+echo "  context-manager --help"
+echo "  context-manager --wizard"
+echo ""
+echo "📚 Documentation: https://github.com/hakkisagdic/context-manager"
+echo ""
+
+exit 0

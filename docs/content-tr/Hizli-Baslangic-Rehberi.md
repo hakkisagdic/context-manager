@@ -286,15 +286,15 @@ end
 context-manager aracı, hangi dosya ve metodların analize dahil edileceğini kontrol etmek için birkaç yapılandırma dosyası kullanır. Bu dosyaları anlamak, aracı özel ihtiyaçlarınıza göre özelleştirmek için gereklidir.
 
 Dosya seviyesi filtreleme için birincil yapılandırma dosyaları:
-- `.calculatorinclude`: Yalnızca belirtilen desenlere uyan dosyaları dahil et (önceliklidir)
-- `.calculatorignore`: Belirtilen desenlere uyan dosyaları hariç tut
+- `.contextinclude`: Yalnızca belirtilen desenlere uyan dosyaları dahil et (önceliklidir)
+- `.contextignore`: Belirtilen desenlere uyan dosyaları hariç tut
 
 Araç, yapılandırma dosyaları için bir öncelik sırası izler:
 1. `.gitignore` (her zaman geçerlidir)
-2. `.calculatorinclude` (dosyalar için en yüksek öncelik)
-3. `.calculatorignore` (include dosyası yokken kullanılır)
+2. `.contextinclude` (dosyalar için en yüksek öncelik)
+3. `.contextignore` (include dosyası yokken kullanılır)
 
-`.calculatorinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca include desenlerine uyan dosyalar analiz edilir (.gitignore tarafından hariç tutulanlar hariç). Yalnızca `.calculatorignore` mevcut olduğunda, araç EXCLUDE modunda çalışır ve ignore desenlerine uyan dosyalar hariç tüm dosyaları analiz eder.
+`.contextinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca include desenlerine uyan dosyalar analiz edilir (.gitignore tarafından hariç tutulanlar hariç). Yalnızca `.contextignore` mevcut olduğunda, araç EXCLUDE modunda çalışır ve ignore desenlerine uyan dosyalar hariç tüm dosyaları analiz eder.
 
 Metod seviyesi analiz için araç şunları kullanır:
 - `.methodinclude`: Yalnızca belirtilen metodları dahil et
@@ -306,8 +306,8 @@ Bu dosyalar, joker karakterlerle (*) desen eşleştirmeyi destekler ve tam metod
 graph TB
 subgraph "Configuration Priority"
 A[".gitignore"]
-B[".calculatorinclude"]
-C[".calculatorignore"]
+B[".contextinclude"]
+C[".contextignore"]
 end
 subgraph "Method Filtering"
 D[".methodinclude"]
@@ -345,7 +345,7 @@ context-manager aracına başlarken birkaç yaygın sorunla karşılaşabilirsin
 npm install tiktoken
 ```
 
-**Yapılandırma dosyası sorunları**: Yaygın bir kafa karışıklığı kaynağı, `.calculatorinclude` ve `.calculatorignore` arasındaki etkileşimdir. Unutmayın ki `.calculatorinclude` önceliklidir - mevcutsa, araç INCLUDE modunda çalışır ve `.calculatorignore`'u göz ardı eder. Beklenen dosyaları görmüyorsanız, bir `.calculatorinclude` dosyasının var olup olmadığını kontrol edin.
+**Yapılandırma dosyası sorunları**: Yaygın bir kafa karışıklığı kaynağı, `.contextinclude` ve `.contextignore` arasındaki etkileşimdir. Unutmayın ki `.contextinclude` önceliklidir - mevcutsa, araç INCLUDE modunda çalışır ve `.contextignore`'u göz ardı eder. Beklenen dosyaları görmüyorsanız, bir `.contextinclude` dosyasının var olup olmadığını kontrol edin.
 
 **Desen eşleştirme sorunları**: Yapılandırma dosyalarında desenler oluştururken, satır içi yorumların olmadığından ve desenlerin doğru sözdizimini kullandığından emin olun. Özyinelemeli eşleştirme için `**`, tek seviyeli eşleştirme için `*` kullanın. Desenlerin beklendiği gibi çalıştığını doğrulamak için verbose çıktı ile test edin.
 

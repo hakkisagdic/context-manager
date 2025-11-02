@@ -115,7 +115,7 @@ MethodAnalyzer --> MethodFilterParser : "filtreleme için methodlar sağlar"
 Sistemin ana bileşenleri şunlardır:
 
 - **TokenCalculator**: Analiz sürecini yöneten, dosya taramayı, token sayımını ve rapor oluşturmayı koordine eden birincil orkestratör
-- **GitIgnoreParser**: Analize hangi dosyaların dahil edileceğini veya hariç tutulacağını belirlemek için .gitignore, .calculatorignore ve .calculatorinclude dosyaları için desen eşleştirmesini yönetir
+- **GitIgnoreParser**: Analize hangi dosyaların dahil edileceğini veya hariç tutulacağını belirlemek için .gitignore, .contextignore ve .contextinclude dosyaları için desen eşleştirmesini yönetir
 - **MethodAnalyzer**: Regex desenleri kullanarak JavaScript/TypeScript dosyalarından methodları çıkarır ve bireysel methodlar için token sayılarını hesaplar
 - **MethodFilterParser**: .methodinclude ve .methodignore konfigürasyon dosyalarında tanımlanan kurallara göre methodları filtreler
 

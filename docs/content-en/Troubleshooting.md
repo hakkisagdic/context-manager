@@ -23,9 +23,9 @@
 
 ## Include/Exclude Mode Confusion
 
-The context-manager tool uses a priority-based system for file inclusion and exclusion. The presence of a `.calculatorinclude` file takes precedence over `.calculatorignore`, which can lead to confusion when users expect files to be included but they're excluded.
+The context-manager tool uses a priority-based system for file inclusion and exclusion. The presence of a `.contextinclude` file takes precedence over `.contextignore`, which can lead to confusion when users expect files to be included but they're excluded.
 
-When `.calculatorinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the patterns in this file will be included in the analysis. This overrides any `.calculatorignore` rules. Users might expect files to be included based on their `.calculatorignore` configuration, but if a `.calculatorinclude` file exists, those expectations will not be met.
+When `.contextinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the patterns in this file will be included in the analysis. This overrides any `.contextignore` rules. Users might expect files to be included based on their `.contextignore` configuration, but if a `.contextinclude` file exists, those expectations will not be met.
 
 The tool clearly indicates which mode is active during execution. In INCLUDE mode, it displays "📅 Found calculator config - using INCLUDE mode", while in EXCLUDE mode it shows "📅 Found calculator config - using EXCLUDE mode". This visual cue helps identify the current filtering mode.
 
@@ -36,7 +36,7 @@ The tool clearly indicates which mode is active during execution. In INCLUDE mod
 
 ## Pattern Matching Issues
 
-Pattern matching in the context-manager tool follows specific syntax rules that users must understand to configure their `.calculatorignore` and `.methodinclude` files correctly. Common issues include incorrect syntax, missing negation patterns, and misunderstanding of wildcard behavior.
+Pattern matching in the context-manager tool follows specific syntax rules that users must understand to configure their `.contextignore` and `.methodinclude` files correctly. Common issues include incorrect syntax, missing negation patterns, and misunderstanding of wildcard behavior.
 
 The tool converts patterns to regular expressions for matching, with specific transformations:
 - `**` becomes `.*` (matches any number of directories)
@@ -72,10 +72,10 @@ These estimates are typically around 95% accurate compared to exact counts. User
 
 Files may be missing from analysis due to the multi-layered filtering system. The tool respects three levels of configuration files in order of priority:
 1. `.gitignore` (always respected)
-2. `.calculatorinclude` (highest priority for inclusion)
-3. `.calculatorignore` (used when no include file exists)
+2. `.contextinclude` (highest priority for inclusion)
+3. `.contextignore` (used when no include file exists)
 
-A file might be missing from analysis if it's excluded by any of these mechanisms. Even if a file is not explicitly mentioned in `.calculatorignore`, it might be excluded by a pattern like `**/*.md` or `node_modules/**`. Users should check all three configuration files to understand why a file is missing.
+A file might be missing from analysis if it's excluded by any of these mechanisms. Even if a file is not explicitly mentioned in `.contextignore`, it might be excluded by a pattern like `**/*.md` or `node_modules/**`. Users should check all three configuration files to understand why a file is missing.
 
 Additionally, the tool only analyzes text files, determined by file extension and basename. Files with extensions not in the recognized text extensions list or basenames not in the text files list will be skipped entirely, even if they're not explicitly ignored.
 
@@ -86,7 +86,7 @@ Additionally, the tool only analyzes text files, determined by file extension an
 
 ## Unexpected File Inclusions
 
-Unexpected file inclusions can occur when users misunderstand the interaction between different configuration files. The most common cause is the presence of a `.calculatorinclude` file when the user expects EXCLUDE mode behavior. In INCLUDE mode, only files matching the patterns in `.calculatorinclude` are included, which might include files the user expected to be excluded.
+Unexpected file inclusions can occur when users misunderstand the interaction between different configuration files. The most common cause is the presence of a `.contextinclude` file when the user expects EXCLUDE mode behavior. In INCLUDE mode, only files matching the patterns in `.contextinclude` are included, which might include files the user expected to be excluded.
 
 Another cause is the use of broad patterns like `**/*.js` without proper negation. For example, if a user wants to include all JavaScript files except those in test directories, they need to explicitly add a negation pattern like `!**/*.test.js` or `!test/**`.
 
@@ -120,11 +120,11 @@ To diagnose issues with the context-manager tool, users should follow these step
 
 3. Use the `--save-report` option to generate a detailed JSON report that includes information about all processed files, their token counts, and which rules were applied.
 
-4. Examine the configuration files (`.gitignore`, `.calculatorignore`, `.calculatorinclude`) for conflicting or incorrect patterns.
+4. Examine the configuration files (`.gitignore`, `.contextignore`, `.contextinclude`) for conflicting or incorrect patterns.
 
 5. Verify that the tiktoken dependency is installed if exact token counts are required.
 
-The tool provides clear visual indicators in its output that help with diagnosis, such as the number of files ignored due to `.gitignore` rules versus calculator rules, and whether exact or estimated token counting is being used.
+The tool provides clear visual indicators in its output that help with diagnosis, such as the number of files ignored due to `.gitignore` rules versus context rules, and whether exact or estimated token counting is being used.
 
 **Section sources**
 - [context-manager.js](file://context-manager.js#L609-L643)

@@ -19,8 +19,8 @@ Bu aracı yararlı buluyorsanız, bana bir kahve ısmarlayabilirsiniz! Desteğin
 ## Dosyalar
 
 - **`context-manager.js`** - Kesin token sayımı ile ana LLM bağlam analiz scripti
-- **`.calculatorignore`** - Token hesaplamadan hariç tutulacak dosyalar (EXCLUDE modu)
-- **`.calculatorinclude`** - Token hesaplamaya dahil edilecek dosyalar (INCLUDE modu)
+- **`.contextignore`** - Token hesaplamadan hariç tutulacak dosyalar (EXCLUDE modu)
+- **`.contextinclude`** - Token hesaplamaya dahil edilecek dosyalar (INCLUDE modu)
 - **`README.md`** - İngilizce dokümantasyon dosyası
 - **`README-tr.md`** - Bu Türkçe dokümantasyon dosyası
 
@@ -28,7 +28,7 @@ Bu aracı yararlı buluyorsanız, bana bir kahve ısmarlayabilirsiniz! Desteğin
 
 - ✅ **Kesin token sayımı** tiktoken kullanarak (GPT-4 uyumlu)
 - 🚫 **Çifte ignore sistemi** - hem `.gitignore` hem calculator ignore kurallarını dikkate alır
-- 📋 **Include/Exclude modları** - `.calculatorinclude` dosyası `.calculatorignore` üzerinde önceliğe sahip
+- 📋 **Include/Exclude modları** - `.contextinclude` dosyası `.contextignore` üzerinde önceliğe sahip
 - 📊 **Detaylı raporlama** - dosya tipine göre, en büyük dosyalar, istatistikler
 - 💾 **İsteğe bağlı JSON dışa aktarım** - detaylı analiz raporları
 - 🔍 **Verbose modu (varsayılan)** - şeffaflık için tüm dahil edilen dosyaları gösterir
@@ -86,7 +86,7 @@ Araç **sadece ana uygulama mantığına** odaklanacak şekilde yapılandırılm
 - Yapılandırma yönetimi
 - Hata işleme ve izleme
 
-### 🚫 Calculator ignore kuralları ile Hariç Tutulanlar
+### 🚫 Context ignore kuralları ile Hariç Tutulanlar
 - Dokümantasyon dosyaları (`.md`, `.txt`)
 - Yapılandırma dosyaları (`.json`, `.yml`)
 - Altyapı ve dağıtım dosyaları
@@ -141,30 +141,30 @@ Bu etkileşimli mod, analiz sonuçlarınızı ihtiyacınız olan formatta dışa
 
 Token calculator iki tamamlayıcı filtreleme modu destekler:
 
-### EXCLUDE Modu (.calculatorignore)
-- Yalnızca `.calculatorignore` mevcut olduğunda **varsayılan mod**
+### EXCLUDE Modu (.contextignore)
+- Yalnızca `.contextignore` mevcut olduğunda **varsayılan mod**
 - Ignore desenlerine uyan dosyalar **hariç** tüm dosyaları dahil eder
 - Geleneksel gitignore tarzı hariç tutma mantığı
 
-### INCLUDE Modu (.calculatorinclude)
-- **Öncelik modu** - `.calculatorinclude` mevcut olduğunda, `.calculatorignore` göz ardı edilir
+### INCLUDE Modu (.contextinclude)
+- **Öncelik modu** - `.contextinclude` mevcut olduğunda, `.contextignore` göz ardı edilir
 - **Yalnızca** include desenlerine uyan dosyaları dahil eder
 - Belirli dosya seçimi için daha kesin kontrol
 - Odaklanmış analiz setleri oluşturmak için mükemmel
 
 ### Mod Önceliği
-1. `.calculatorinclude` mevcutsa → **INCLUDE modu** (`.calculatorignore` göz ardı edilir)
-2. Yalnızca `.calculatorignore` mevcutsa → **EXCLUDE modu**
+1. `.contextinclude` mevcutsa → **INCLUDE modu** (`.contextignore` göz ardı edilir)
+2. Yalnızca `.contextignore` mevcutsa → **EXCLUDE modu**
 3. Hiçbiri mevcut değilse → Tüm dosyaları dahil et (yalnızca `.gitignore` saygı göster)
 
 ### Kullanım Örneği
 ```bash
-# EXCLUDE modu: .calculatorignore'daki desenler hariç herşeyi dahil et
-rm token-analysis/.calculatorinclude  # Include dosyasını kaldır
+# EXCLUDE modu: .contextignore'daki desenler hariç herşeyi dahil et
+rm token-analysis/.contextinclude  # Include dosyasını kaldır
 node token-analysis/token-calculator.js
 
-# INCLUDE modu: Yalnızca .calculatorinclude'daki desenleri dahil et
-# (otomatik olarak .calculatorignore'u göz ardı eder)
+# INCLUDE modu: Yalnızca .contextinclude'daki desenleri dahil et
+# (otomatik olarak .contextignore'u göz ardı eder)
 node token-analysis/token-calculator.js
 ```
 
@@ -288,9 +288,9 @@ context-manager --save-report --context-clipboard
 
 ## Yapılandırma
 
-### .calculatorignore Dosyası (EXCLUDE Modu)
+### .contextignore Dosyası (EXCLUDE Modu)
 
-`.calculatorignore` dosyası ana uygulama analizi için önceden yapılandırılmıştır:
+`.contextignore` dosyası ana uygulama analizi için önceden yapılandırılmıştır:
 
 ```bash
 # Mevcut odak: Sadece utility-mcp/src/ içindeki ana JS dosyaları
@@ -307,9 +307,9 @@ utility-mcp/src/workflows/** # İş akışı JS dosyaları
 utility-mcp/src/testing/**   # Test yardımcıları
 ```
 
-### .calculatorinclude Dosyası (INCLUDE Modu)
+### .contextinclude Dosyası (INCLUDE Modu)
 
-`.calculatorinclude` dosyası kesin dosya seçimi sağlar:
+`.contextinclude` dosyası kesin dosya seçimi sağlar:
 
 ```bash
 # Yalnızca ana JavaScript dosyalarını dahil et
@@ -328,7 +328,7 @@ utility-mcp/src/**/*.js
 
 ### Özel Yapılandırma Oluşturma
 
-**EXCLUDE modu için** (`.calculatorignore` düzenle):
+**EXCLUDE modu için** (`.contextignore` düzenle):
 ```bash
 # Daha fazla dosya tipini dahil etmek için satırları kaldır
 # Belirli dosyaları hariç tutmak için desen ekle
@@ -341,7 +341,7 @@ your-large-file.js
 specific-directory/**
 ```
 
-**INCLUDE modu için** (`.calculatorinclude` oluştur):
+**INCLUDE modu için** (`.contextinclude` oluştur):
 ```bash
 # Belirli dosyaları veya desenleri dahil et
 src/**/*.js          # src'deki tüm JS dosyaları
@@ -357,9 +357,9 @@ src/**/*.js
 ## Yapılandırma Dosyası Önceliği
 
 1. **`.gitignore`** (proje kökü) - Standart git hariç tutmaları (her zaman saygı görülür)
-2. **`.calculatorinclude`** (token-analysis/) - INCLUDE modu (en yüksek öncelik)
-3. **`.calculatorignore`** (token-analysis/) - EXCLUDE modu (include dosyası olmadığında kullanılır)
-4. **`.calculatorignore`** (proje kökü) - Yedek EXCLUDE modu konumu
+2. **`.contextinclude`** (token-analysis/) - INCLUDE modu (en yüksek öncelik)
+3. **`.contextignore`** (token-analysis/) - EXCLUDE modu (include dosyası olmadığında kullanılır)
+4. **`.contextignore`** (proje kökü) - Yedek EXCLUDE modu konumu
 
 ## Kurulum
 
@@ -423,8 +423,8 @@ Bu aracı şunlara entegre edebilirsiniz:
 ## Sorun Giderme
 
 ### Include ve Exclude Mod Sorunları
-- **INCLUDE modu aktif**: EXCLUDE modunu kullanmak için `.calculatorinclude` dosyasını kaldırın
-- **Yanlış dosyalar dahil**: `.calculatorinclude` dosyasının var olup olmadığını kontrol edin (önceliğe sahip)
+- **INCLUDE modu aktif**: EXCLUDE modunu kullanmak için `.contextinclude` dosyasını kaldırın
+- **Yanlış dosyalar dahil**: `.contextinclude` dosyasının var olup olmadığını kontrol edin (önceliğe sahip)
 - **Mod karışıklığı**: Hangi modun aktif olduğunu görmek için verbose modu kullanın
 
 ### Desenler Çalışmıyor
@@ -440,7 +440,7 @@ Bu aracı şunlara entegre edebilirsiniz:
 
 ### Beklenen Dosyalar Eksik
 - Dosyaların `.gitignore` tarafından hariç tutulup tutulmadığını kontrol edin (her zaman saygı görülür)
-- Calculator ignore/include desenlerini doğrulayın
+- Context ignore/include desenlerini doğrulayın
 - Dosyaların metin dosyaları olarak tanındığından emin olun
 - Hariç tutma nedenlerini görmek için verbose modu kullanın
 
@@ -455,7 +455,7 @@ Bu aracı şunlara entegre edebilirsiniz:
 
 ```bash
 # Sadana dokümantasyon analizi için geçici yapılandırma
-# .calculatorignore dosyasını yedekleyin, sadece *.md hariç tutmayı kaldırın
+# .contextignore dosyasını yedekleyin, sadece *.md hariç tutmayı kaldırın
 
 # CI/CD için otomatik rapor
 node token-analysis/token-calculator.js --save-report --no-verbose
@@ -469,7 +469,7 @@ node token-analysis/token-calculator.js --verbose --save-report
 - İlk çalıştırmada tiktoken yüklenir (biraz yavaş olabilir)
 - Büyük projeler için verbose modu devre dışı bırakın
 - JSON raporları büyük projeler için disk alanı kullanır
-- `.calculatorignore` desenlerini optimize edin
+- `.contextignore` desenlerini optimize edin
 
 ---
 

@@ -23,9 +23,9 @@
 
 ## Include/Exclude Mod Karışıklığı
 
-context-manager aracı, dosya dahil etme ve hariç tutma için öncelik tabanlı bir sistem kullanır. Bir `.calculatorinclude` dosyasının varlığı `.calculatorignore` üzerinde öncelik alır, bu da kullanıcılar dosyaların dahil edilmesini beklediğinde ancak hariç tutulduğunda karışıklığa yol açabilir.
+context-manager aracı, dosya dahil etme ve hariç tutma için öncelik tabanlı bir sistem kullanır. Bir `.contextinclude` dosyasının varlığı `.contextignore` üzerinde öncelik alır, bu da kullanıcılar dosyaların dahil edilmesini beklediğinde ancak hariç tutulduğunda karışıklığa yol açabilir.
 
-`.calculatorinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca bu dosyadaki desenlere uyan dosyalar analize dahil edilecektir. Bu, tüm `.calculatorignore` kurallarını geçersiz kılar. Kullanıcılar `.calculatorignore` konfigürasyonlarına göre dosyaların dahil edilmesini bekleyebilirler, ancak bir `.calculatorinclude` dosyası mevcutsa, bu beklentiler karşılanmayacaktır.
+`.contextinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca bu dosyadaki desenlere uyan dosyalar analize dahil edilecektir. Bu, tüm `.contextignore` kurallarını geçersiz kılar. Kullanıcılar `.contextignore` konfigürasyonlarına göre dosyaların dahil edilmesini bekleyebilirler, ancak bir `.contextinclude` dosyası mevcutsa, bu beklentiler karşılanmayacaktır.
 
 Araç, yürütme sırasında hangi modun aktif olduğunu açıkça gösterir. INCLUDE modunda "📅 Found calculator config - using INCLUDE mode" görüntülerken, EXCLUDE modunda "📅 Found calculator config - using EXCLUDE mode" gösterir. Bu görsel ipucu, mevcut filtreleme modunu belirlemeye yardımcı olur.
 
@@ -36,7 +36,7 @@ Araç, yürütme sırasında hangi modun aktif olduğunu açıkça gösterir. IN
 
 ## Desen Eşleştirme Sorunları
 
-context-manager aracındaki desen eşleştirme, kullanıcıların `.calculatorignore` ve `.methodinclude` dosyalarını doğru yapılandırmaları için anlamaları gereken özel sözdizimi kurallarını takip eder. Yaygın sorunlar arasında yanlış sözdizimi, eksik negasyon desenleri ve wildcard davranışının yanlış anlaşılması yer alır.
+context-manager aracındaki desen eşleştirme, kullanıcıların `.contextignore` ve `.methodinclude` dosyalarını doğru yapılandırmaları için anlamaları gereken özel sözdizimi kurallarını takip eder. Yaygın sorunlar arasında yanlış sözdizimi, eksik negasyon desenleri ve wildcard davranışının yanlış anlaşılması yer alır.
 
 Araç, eşleştirme için desenleri regex'lere dönüştürür, belirli dönüşümlerle:
 - `**`, `.*` olur (herhangi bir sayıda dizini eşleştirir)
@@ -72,10 +72,10 @@ Bu tahminler genellikle kesin sayımlara kıyasla yaklaşık %95 doğrudur. Kull
 
 Dosyalar, çok katmanlı filtreleme sistemi nedeniyle analizden eksik olabilir. Araç, öncelik sırasına göre üç seviye konfigürasyon dosyasına saygı gösterir:
 1. `.gitignore` (her zaman saygı gösterilir)
-2. `.calculatorinclude` (dahil etme için en yüksek öncelik)
-3. `.calculatorignore` (include dosyası yoksa kullanılır)
+2. `.contextinclude` (dahil etme için en yüksek öncelik)
+3. `.contextignore` (include dosyası yoksa kullanılır)
 
-Bir dosya, bu mekanizmalardan herhangi biri tarafından hariç tutulmuşsa analizden eksik olabilir. Bir dosya `.calculatorignore`'da açıkça belirtilmemiş olsa bile, `**/*.md` veya `node_modules/**` gibi bir desen tarafından hariç tutulabilir. Kullanıcılar bir dosyanın neden eksik olduğunu anlamak için her üç konfigürasyon dosyasını da kontrol etmelidir.
+Bir dosya, bu mekanizmalardan herhangi biri tarafından hariç tutulmuşsa analizden eksik olabilir. Bir dosya `.contextignore`'da açıkça belirtilmemiş olsa bile, `**/*.md` veya `node_modules/**` gibi bir desen tarafından hariç tutulabilir. Kullanıcılar bir dosyanın neden eksik olduğunu anlamak için her üç konfigürasyon dosyasını da kontrol etmelidir.
 
 Ek olarak, araç yalnızca dosya uzantısı ve basename ile belirlenen metin dosyalarını analiz eder. Tanınan metin uzantıları listesinde olmayan uzantılara veya metin dosyaları listesinde olmayan basename'lere sahip dosyalar, açıkça göz ardı edilmemiş olsalar bile tamamen atlanacaktır.
 
@@ -86,7 +86,7 @@ Ek olarak, araç yalnızca dosya uzantısı ve basename ile belirlenen metin dos
 
 ## Beklenmeyen Dosya Dahil Edilmeleri
 
-Beklenmeyen dosya dahil edilmeleri, kullanıcılar farklı konfigürasyon dosyaları arasındaki etkileşimi yanlış anladıklarında meydana gelebilir. En yaygın neden, kullanıcı EXCLUDE modu davranışı beklediğinde bir `.calculatorinclude` dosyasının varlığıdır. INCLUDE modunda, yalnızca `.calculatorinclude`'daki desenlere uyan dosyalar dahil edilir, bu da kullanıcının hariç tutulmasını beklediği dosyaları dahil edebilir.
+Beklenmeyen dosya dahil edilmeleri, kullanıcılar farklı konfigürasyon dosyaları arasındaki etkileşimi yanlış anladıklarında meydana gelebilir. En yaygın neden, kullanıcı EXCLUDE modu davranışı beklediğinde bir `.contextinclude` dosyasının varlığıdır. INCLUDE modunda, yalnızca `.contextinclude`'daki desenlere uyan dosyalar dahil edilir, bu da kullanıcının hariç tutulmasını beklediği dosyaları dahil edebilir.
 
 Başka bir neden, uygun negasyon olmadan `**/*.js` gibi geniş desenlerin kullanılmasıdır. Örneğin, bir kullanıcı test dizinlerindekiler hariç tüm JavaScript dosyalarını dahil etmek istiyorsa, `!**/*.test.js` veya `!test/**` gibi bir negasyon desenini açıkça eklemesi gerekir.
 
@@ -120,7 +120,7 @@ context-manager aracı ile ilgili sorunları tanılamak için, kullanıcılar ş
 
 3. İşlenen tüm dosyalar, bunların token sayıları ve hangi kuralların uygulandığı hakkında bilgi içeren detaylı bir JSON raporu oluşturmak için `--save-report` seçeneğini kullanın.
 
-4. Çakışan veya yanlış desenler için konfigürasyon dosyalarını (`.gitignore`, `.calculatorignore`, `.calculatorinclude`) inceleyin.
+4. Çakışan veya yanlış desenler için konfigürasyon dosyalarını (`.gitignore`, `.contextignore`, `.contextinclude`) inceleyin.
 
 5. Kesin token sayıları gerekiyorsa tiktoken bağımlılığının yüklendiğini doğrulayın.
 

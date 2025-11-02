@@ -207,7 +207,7 @@ When configuring method filtering, developers should be aware of several common 
 
 **Case Sensitivity**: While the pattern matching is case-insensitive, developers should ensure their patterns account for common naming variations. For example, using `*test*` will match methods like "testMethod", "TestMethod", and "isTesting".
 
-**Interaction with File-Level Filtering**: Method filtering operates on files that have already passed file-level filtering. If a file is excluded by `.calculatorignore` or `.calculatorinclude` rules, its methods will not be analyzed regardless of method-level rules. This hierarchical filtering means that method rules only apply to files that are already included in the analysis scope.
+**Interaction with File-Level Filtering**: Method filtering operates on files that have already passed file-level filtering. If a file is excluded by `.contextignore` or `.contextinclude` rules, its methods will not be analyzed regardless of method-level rules. This hierarchical filtering means that method rules only apply to files that are already included in the analysis scope.
 
 **Overly Broad Patterns**: Using patterns like `*` or `*.*` can lead to unintended matches. Developers should be specific with their patterns to avoid including methods that don't align with their intended filtering goals.
 

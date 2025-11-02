@@ -391,7 +391,7 @@ npm install tiktoken
 
 The performance of the analysis is directly related to the size of the codebase being analyzed. To optimize performance:
 - Limit the analysis to specific directories when possible
-- Use configuration files (.calculatorignore, .calculatorinclude) to exclude irrelevant files
+- Use configuration files (.contextignore, .contextinclude) to exclude irrelevant files
 - Consider the trade-off between analysis depth and execution time
 
 ### Method-Level Analysis
