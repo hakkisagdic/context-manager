@@ -3,6 +3,7 @@
 import { TokenAnalyzer } from '../index.js';
 import FormatRegistry from '../lib/formatters/format-registry.js';
 import FormatConverter from '../lib/utils/format-converter.js';
+import { LLMDetector } from '../lib/utils/llm-detector.js';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -32,6 +33,12 @@ async function main() {
     // Check for format listing
     if (args.includes('--list-formats')) {
         listFormats();
+        return;
+    }
+
+    // Check for LLM model listing (v2.3.7)
+    if (args.includes('--list-llms')) {
+        listLLMs();
         return;
     }
 
@@ -109,6 +116,10 @@ function parseArguments(args) {
         // Format options (v2.3.0)
         outputFormat: getOutputFormat(args),
 
+        // LLM options (v2.3.7)
+        targetModel: getTargetModel(args),
+        autoDetectLLM: args.includes('--auto-detect-llm'),
+
         // UI options (v2.3.0)
         simple: args.includes('--simple'),
         dashboard: args.includes('--dashboard'),
@@ -148,8 +159,62 @@ function getChunkSize(args) {
     return 100000; // Default 100k tokens
 }
 
+function getTargetModel(args) {
+    // Check for explicit model flag
+    const modelIndex = args.findIndex(arg => arg === '--target-model');
+    if (modelIndex !== -1 && args[modelIndex + 1]) {
+        return args[modelIndex + 1];
+    }
+
+    // Check for auto-detect flag
+    if (args.includes('--auto-detect-llm')) {
+        const detected = LLMDetector.detect();
+        if (detected !== 'unknown') {
+            console.log(`✅ Auto-detected LLM: ${LLMDetector.getProfile(detected).name}`);
+            return detected;
+        }
+    }
+
+    return null; // No model specified
+}
+
+function listLLMs() {
+    console.log('\n📋 Supported LLM Models (v2.3.7):\n');
+    console.log('═'.repeat(70));
+
+    const models = LLMDetector.getModelList();
+
+    // Group by vendor
+    const byVendor = {};
+    models.forEach(model => {
+        if (!byVendor[model.vendor]) {
+            byVendor[model.vendor] = [];
+        }
+        byVendor[model.vendor].push(model);
+    });
+
+    // Display by vendor
+    Object.entries(byVendor).forEach(([vendor, models]) => {
+        console.log(`\n${vendor}:`);
+        models.forEach(model => {
+            const contextDisplay = model.contextWindow >= 1000000
+                ? `${(model.contextWindow / 1000000).toFixed(1)}M`
+                : `${Math.floor(model.contextWindow / 1000)}k`;
+            console.log(`  ${model.id.padEnd(25)} ${model.name.padEnd(25)} (${contextDisplay} context)`);
+        });
+    });
+
+    console.log('\n' + '═'.repeat(70));
+    console.log('\nUsage:');
+    console.log('  context-manager --target-model <MODEL_ID>');
+    console.log('  context-manager --auto-detect-llm');
+    console.log('\nExample:');
+    console.log('  context-manager --target-model claude-sonnet-4.5');
+    console.log('  context-manager --auto-detect-llm --cli\n');
+}
+
 function printStartupInfo(options) {
-    console.log('🚀 Context Manager v2.3.5');
+    console.log('🚀 Context Manager v2.3.7');
     console.log('='.repeat(50));
 
     // Only show active options if any are set
@@ -185,7 +250,7 @@ function printStartupInfo(options) {
 }
 
 function printHelp() {
-    console.log('Context Manager v2.3.0 - LLM context optimization with method-level filtering');
+    console.log('Context Manager v2.3.7 - LLM context optimization with automatic model detection');
     console.log();
     console.log('Usage: context-manager [options]');
     console.log();
@@ -215,6 +280,11 @@ function printHelp() {
     console.log('  --chunk                  Enable smart chunking for large repos');
     console.log('  --chunk-strategy TYPE    Chunking strategy (smart, size, file, directory)');
     console.log('  --chunk-size TOKENS      Max tokens per chunk (default: 100000)');
+    console.log();
+    console.log('LLM Optimization (v2.3.7):');
+    console.log('  --target-model MODEL     Optimize for specific LLM (e.g., claude-sonnet-4.5)');
+    console.log('  --auto-detect-llm        Auto-detect LLM from environment variables');
+    console.log('  --list-llms              List all supported LLM models');
     console.log();
     console.log('General Options:');
     console.log('  -h, --help               Show this help');

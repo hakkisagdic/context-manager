@@ -44,6 +44,11 @@ coverage/
 # Logs
 logs/
 *.log
+.context-manager/logs/
+.context-manager/*.log
+
+# Context Manager user configs
+.context-manager/custom-profiles.json
 
 # OS
 Thumbs.db
