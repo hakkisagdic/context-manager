@@ -86,6 +86,38 @@ context-manager --context-export  # Auto CLI (export)
 context-manager --cli -g -s  # GitIngest digest + detailed report
 ```
 
+### 🤖 LLM Optimization (v2.3.7)
+```bash
+# Auto-detect LLM from environment
+export ANTHROPIC_API_KEY=sk-...
+context-manager  # Automatically optimizes for Claude
+
+# Explicit model selection
+context-manager --target-model claude-sonnet-4.5
+context-manager --target-model gpt-4o
+context-manager --target-model gemini-2.0-flash
+
+# List all supported models
+context-manager --list-llms
+
+# Context fit analysis
+context-manager --cli --target-model claude-sonnet-4.5
+# Output:
+# 📊 Context Window Analysis:
+#    Target Model: Claude Sonnet 4.5
+#    Available Context: 200,000 tokens
+#    Your Repository: 181,480 tokens
+#    ✅ PERFECT FIT! Your entire codebase fits in one context.
+```
+
+Supported LLM models (9+ models):
+- **Anthropic**: Claude Sonnet 4.5, Claude Opus 4
+- **OpenAI**: GPT-4 Turbo, GPT-4o, GPT-4o Mini
+- **Google**: Gemini 1.5 Pro, Gemini 2.0 Flash
+- **DeepSeek**: DeepSeek Coder, DeepSeek Chat
+
+Custom models supported via `.context-manager/custom-profiles.json`
+
 ### Wrapper Script Usage
 ```bash
 # Using the NPM package globally

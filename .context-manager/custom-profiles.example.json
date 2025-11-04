@@ -1,0 +1,19 @@
+{
+  "$schema": "./llm-profiles.schema.json",
+  "version": "2.3.7",
+  "description": "Custom LLM profiles - Copy this to custom-profiles.json and add your models",
+  "profiles": {
+    "my-custom-model": {
+      "name": "My Custom Model",
+      "vendor": "Custom",
+      "contextWindow": 100000,
+      "outputWindow": 4096,
+      "overhead": 10000,
+      "maxRecommendedInput": 90000,
+      "preferredFormat": "json",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["custom-feature"]
+    }
+  }
+}

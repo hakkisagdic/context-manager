@@ -1,0 +1,127 @@
+{
+  "$schema": "./llm-profiles.schema.json",
+  "version": "2.3.7",
+  "lastUpdated": "2025-11-05",
+  "profiles": {
+    "claude-sonnet-4.5": {
+      "name": "Claude Sonnet 4.5",
+      "vendor": "Anthropic",
+      "contextWindow": 200000,
+      "outputWindow": 8192,
+      "overhead": 10000,
+      "maxRecommendedInput": 190000,
+      "preferredFormat": "toon",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["long-context", "code-generation", "reasoning"]
+    },
+    "claude-opus-4": {
+      "name": "Claude Opus 4",
+      "vendor": "Anthropic",
+      "contextWindow": 200000,
+      "outputWindow": 8192,
+      "overhead": 10000,
+      "maxRecommendedInput": 190000,
+      "preferredFormat": "toon",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["reasoning", "complex-tasks", "accuracy"]
+    },
+    "gpt-4-turbo": {
+      "name": "GPT-4 Turbo",
+      "vendor": "OpenAI",
+      "contextWindow": 128000,
+      "outputWindow": 4096,
+      "overhead": 8000,
+      "maxRecommendedInput": 120000,
+      "preferredFormat": "json",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["accuracy", "json-mode", "function-calling"]
+    },
+    "gpt-4o": {
+      "name": "GPT-4o",
+      "vendor": "OpenAI",
+      "contextWindow": 128000,
+      "outputWindow": 16384,
+      "overhead": 8000,
+      "maxRecommendedInput": 120000,
+      "preferredFormat": "json",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["speed", "vision", "structured-output", "reasoning"]
+    },
+    "gpt-4o-mini": {
+      "name": "GPT-4o Mini",
+      "vendor": "OpenAI",
+      "contextWindow": 128000,
+      "outputWindow": 16384,
+      "overhead": 5000,
+      "maxRecommendedInput": 123000,
+      "preferredFormat": "json",
+      "chunkStrategy": "file",
+      "supportedLanguages": "all",
+      "strengths": ["speed", "cost-effective", "quick-tasks"]
+    },
+    "gemini-1.5-pro": {
+      "name": "Gemini 1.5 Pro",
+      "vendor": "Google",
+      "contextWindow": 1000000,
+      "outputWindow": 8192,
+      "overhead": 20000,
+      "maxRecommendedInput": 980000,
+      "preferredFormat": "gitingest",
+      "chunkStrategy": "none",
+      "supportedLanguages": "all",
+      "strengths": ["ultra-long-context", "multimodal", "analysis"]
+    },
+    "gemini-2.0-flash": {
+      "name": "Gemini 2.0 Flash",
+      "vendor": "Google",
+      "contextWindow": 1000000,
+      "outputWindow": 8192,
+      "overhead": 15000,
+      "maxRecommendedInput": 985000,
+      "preferredFormat": "gitingest",
+      "chunkStrategy": "none",
+      "supportedLanguages": "all",
+      "strengths": ["ultra-long-context", "speed", "multimodal"]
+    },
+    "deepseek-coder": {
+      "name": "DeepSeek Coder",
+      "vendor": "DeepSeek",
+      "contextWindow": 16000,
+      "outputWindow": 4096,
+      "overhead": 2000,
+      "maxRecommendedInput": 14000,
+      "preferredFormat": "json",
+      "chunkStrategy": "file",
+      "supportedLanguages": "all",
+      "strengths": ["code-completion", "efficiency", "cost-effective"]
+    },
+    "deepseek-chat": {
+      "name": "DeepSeek Chat",
+      "vendor": "DeepSeek",
+      "contextWindow": 64000,
+      "outputWindow": 4096,
+      "overhead": 5000,
+      "maxRecommendedInput": 59000,
+      "preferredFormat": "json",
+      "chunkStrategy": "smart",
+      "supportedLanguages": "all",
+      "strengths": ["reasoning", "analysis", "cost-effective"]
+    }
+  },
+  "default": {
+    "name": "Unknown Model",
+    "vendor": "Unknown",
+    "contextWindow": 100000,
+    "outputWindow": 4096,
+    "overhead": 10000,
+    "maxRecommendedInput": 90000,
+    "preferredFormat": "json",
+    "chunkStrategy": "smart",
+    "supportedLanguages": "all",
+    "strengths": []
+  }
+}
