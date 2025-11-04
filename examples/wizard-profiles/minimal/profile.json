@@ -1,0 +1,26 @@
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "icon": "🎯",
+  "description": "Extremely focused context for token-limited scenarios",
+  "tokenBudget": {
+    "small": "5K-10K",
+    "medium": "10K-25K",
+    "large": "25K-50K"
+  },
+  "includes": {
+    "files": ["Core source code only", "Main entry point", "Essential configuration"],
+    "methods": ["Entry points", "Primary operations", "Essential CRUD"]
+  },
+  "excludes": {
+    "files": ["Tests", "Documentation", "Build artifacts", "All non-essential files"],
+    "methods": ["Helper methods", "Test methods", "Internal utilities"]
+  },
+  "bestFor": [
+    "Quick bug fixes",
+    "Small feature additions",
+    "Token-limited LLM contexts",
+    "Fast responses from AI",
+    "Focus on specific functionality"
+  ]
+}

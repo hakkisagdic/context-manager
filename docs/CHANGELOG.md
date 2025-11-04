@@ -2,6 +2,157 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [2.3.8] - 2025-11-05
+
+### 🎯 Wizard Profiles System - Named Configurations & Profile Management
+
+This release introduces a powerful wizard profiles system that enables multiple analysis configurations to coexist, with named configurations and easy profile switching.
+
+#### Added
+
+**Wizard Profiles System:**
+- ✨ **6 pre-configured analysis profiles** with comprehensive filter sets:
+  - 👀 **Code Review** - For reviewing code changes and PRs (~20K-80K tokens)
+  - 🔒 **Security Audit** - For security assessments and vulnerability analysis (~15K-60K tokens)
+  - 💡 **LLM Explain** - For explaining architecture to AI assistants (~25K-100K tokens)
+  - 📚 **Documentation** - For generating API docs and guides (~18K-70K tokens)
+  - 🎯 **Minimal** - For quick queries and focused debugging (~5K-25K tokens)
+  - 📦 **Full** - For comprehensive codebase analysis (~50K-500K+ tokens)
+
+**Each Profile Contains:**
+- `profile.json` - Metadata (name, description, icon, token budgets, best practices)
+- `.contextinclude` - File-level include filters
+- `.contextignore` - File-level exclude filters
+- `.methodinclude` - Method-level include filters
+- `.methodignore` - Method-level exclude filters
+
+**Named Configuration System:**
+- 📋 **Profile-specific configs**: `.contextinclude-code-review`, `.methodinclude-security-audit`
+- 🔄 **Multiple profiles coexist**: Switch between profiles without losing configurations
+- ✅ **Active configs**: `.contextinclude` → active profile's configuration
+- 🎨 **Custom profiles**: Users can create their own profiles easily
+
+**Wizard Integration:**
+- 🧙 **Dynamic profile discovery** - Automatically detects profiles from `.context-manager/wizard-profiles/`
+- 📊 **Profile metadata display** - Shows token budgets, descriptions, and best practices
+- ⚙️ **Custom option** - Uses existing root config files for one-off analyses
+- ✅ **Visual feedback** - Shows copied and active configuration files
+
+**Directory Structure:**
+```
+.context-manager/
+  └── wizard-profiles/         # Active profiles (editable)
+      ├── code-review/
+      │   ├── profile.json
+      │   ├── .contextinclude
+      │   ├── .contextignore
+      │   ├── .methodinclude
+      │   └── .methodignore
+      ├── security-audit/
+      ├── llm-explain/
+      ├── documentation/
+      ├── minimal/
+      └── full/
+
+examples/
+  ├── wizard-profiles/         # Reference backups (restore if needed)
+  ├── custom-llm-profiles.example.json
+  └── README.md
+```
+
+**Profile Switching Workflow:**
+```bash
+# Run wizard
+context-manager --wizard
+
+# Select "Code Review" profile
+# System creates:
+#   .contextinclude-code-review
+#   .contextignore-code-review
+#   .methodinclude-code-review
+#   .methodignore-code-review
+#
+# And activates them:
+#   .contextinclude   (copy of .contextinclude-code-review)
+#   .contextignore    (copy of .contextignore-code-review)
+#   .methodinclude    (copy of .methodinclude-code-review)
+#   .methodignore     (copy of .methodignore-code-review)
+
+# Later, select "Security Audit" profile
+# System creates security-audit named configs
+# And switches active configs to security-audit
+```
+
+**Manual Profile Management:**
+```bash
+# Restore default profiles
+cp -r examples/wizard-profiles/* .context-manager/wizard-profiles/
+
+# Create custom profile
+cp -r .context-manager/wizard-profiles/code-review .context-manager/wizard-profiles/my-profile
+# Edit profile.json and filter files
+```
+
+#### Technical Implementation
+
+**New Directories:**
+- `.context-manager/wizard-profiles/` - Active wizard profiles (6 profiles × 5 files = 30 files)
+- `examples/wizard-profiles/` - Reference backup profiles
+
+**New Files:**
+- `examples/custom-llm-profiles.example.json` - Moved from .context-manager/
+- `examples/README.md` - Comprehensive profile management guide
+
+**Enhanced Files:**
+- `lib/ui/wizard.js` - Profile discovery, metadata parsing, named config copying
+- `package.json` - Version bump to 2.3.8, includes .context-manager/ and examples/
+- `.gitignore` - Ignores named configs (.contextinclude-*, .methodinclude-*)
+
+**New Functions:**
+- `discoverProfiles()` - Scans .context-manager/wizard-profiles/ for profiles
+- `copyProfileFiles(profilePath, profileId, projectRoot)` - Creates named configs
+- Profile metadata loading from profile.json
+
+#### Benefits
+
+**vs Simple File Copying:**
+- ✅ **Multiple profiles coexist** - Keep code-review AND security-audit configs simultaneously
+- ✅ **Easy switching** - Change profiles without losing previous configurations
+- ✅ **Named configs** - Clear which profile each config belongs to
+- ✅ **Full control** - Both include AND ignore filters for fine-grained control
+
+**vs Preset System:**
+- ✅ **No complex runtime** - Simple file copying, no preset engine needed
+- ✅ **Transparent** - Users see exactly what filters are active
+- ✅ **Customizable** - Profiles are just files, easy to modify
+- ✅ **Versionable** - Profiles can be committed to git for team sharing
+
+**vs Manual Configuration:**
+- ✅ **Faster setup** - Pre-configured best practices for common scenarios
+- ✅ **Educational** - profile.json documents why filters are chosen
+- ✅ **Restorable** - examples/ directory provides backup/reference
+
+#### Token Budget Guidelines
+
+| Profile | Small Project | Medium Project | Large Project |
+|---------|---------------|----------------|---------------|
+| Minimal | 5K-10K | 10K-25K | 25K-50K |
+| Code Review | 20K-40K | 40K-80K | 80K-150K |
+| Security Audit | 15K-30K | 30K-60K | 60K-120K |
+| Documentation | 18K-35K | 35K-70K | 70K-140K |
+| LLM Explain | 25K-50K | 50K-100K | 100K-200K |
+| Full | 50K-100K | 100K-250K | 250K-500K+ |
+
+#### Migration
+
+No migration needed. Existing workflows continue to work:
+- Existing `.contextinclude`/`.contextignore` files are respected
+- Wizard's "Custom" option uses existing root configurations
+- Profiles are optional, not required
+- Named configs (`.contextinclude-*`) are automatically ignored by git
+
+---
+
 ## [2.3.7] - 2025-11-05
 
 ### 🤖 LLM Model Auto-Detection & Optimization

@@ -15,13 +15,6 @@ llm-context.json
 digest.txt
 token-analysis-report.json
 
-# Configuration files (user-specific)
-.contextignore
-.contextinclude
-.contextinclude.backup
-.methodignore
-.methodinclude
-
 # Environment variables
 .env
 .env.local
@@ -49,6 +42,18 @@ logs/
 
 # Context Manager user configs
 .context-manager/custom-profiles.json
+
+# Named profile configs (user-specific)
+.contextinclude-*
+.contextignore-*
+.methodinclude-*
+.methodignore-*
+
+# Active config files (optional - users can version control these)
+# .contextinclude
+# .contextignore
+# .methodinclude
+# .methodignore
 
 # OS
 Thumbs.db

@@ -1,0 +1,26 @@
+{
+  "id": "code-review",
+  "name": "Code Review",
+  "icon": "👀",
+  "description": "Optimized for reviewing code changes and PRs",
+  "tokenBudget": {
+    "small": "20K-40K",
+    "medium": "40K-80K",
+    "large": "80K-150K"
+  },
+  "includes": {
+    "files": ["Source code", "Tests", "Configuration files"],
+    "methods": ["Public APIs", "Handlers", "Business logic", "Error handlers"]
+  },
+  "excludes": {
+    "files": ["Build artifacts", "Dependencies", "Minified files"],
+    "methods": ["Private internal methods", "Test setup/teardown"]
+  },
+  "bestFor": [
+    "Pull request reviews",
+    "Understanding new codebases",
+    "Identifying code patterns and anti-patterns",
+    "Security review preparation",
+    "Architecture understanding"
+  ]
+}

@@ -1,0 +1,36 @@
+# Security Audit Profile - File Level Ignore Filters
+# Exclude non-security-related code
+
+# Tests (focus on production code)
+test/**
+tests/**
+__tests__/**
+**/*.test.*
+**/*.spec.*
+
+# Documentation
+docs/**
+**/*.md
+!SECURITY.md
+
+# Dependencies
+node_modules/**
+vendor/**
+
+# Build artifacts
+dist/**
+build/**
+out/**
+
+# Frontend assets (usually not security-critical)
+public/**
+static/**
+assets/**
+**/*.css
+**/*.scss
+**/*.less
+
+# Mock/example data
+mocks/**
+fixtures/**
+examples/**

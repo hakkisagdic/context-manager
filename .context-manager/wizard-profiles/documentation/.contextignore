@@ -1,0 +1,21 @@
+# Documentation Profile - File Level Ignore Filters
+
+# Internal/private code
+**/internal/**
+**/private/**
+
+# Tests
+__tests__/**
+test/**
+tests/**
+**/*.test.*
+**/*.spec.*
+
+# Dependencies
+node_modules/**
+vendor/**
+
+# Build artifacts
+dist/**
+build/**
+coverage/**

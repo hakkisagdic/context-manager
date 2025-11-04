@@ -1,0 +1,34 @@
+{
+  "id": "security-audit",
+  "name": "Security Audit",
+  "icon": "🔒",
+  "description": "Focus on security-critical code and potential vulnerabilities",
+  "tokenBudget": {
+    "small": "15K-30K",
+    "medium": "30K-60K",
+    "large": "60K-120K"
+  },
+  "includes": {
+    "files": ["Auth modules", "API endpoints", "Middleware", "Database code", "Security configs"],
+    "methods": ["Authentication", "Validation", "Cryptography", "Database queries", "File operations"]
+  },
+  "excludes": {
+    "files": ["Tests", "Documentation", "Build artifacts"],
+    "methods": ["Test methods", "Mock/stub helpers"]
+  },
+  "bestFor": [
+    "Pre-deployment security reviews",
+    "Vulnerability assessments",
+    "Compliance audits",
+    "Penetration testing preparation",
+    "Security-focused code reviews"
+  ],
+  "securityFocus": [
+    "SQL Injection",
+    "XSS",
+    "Authentication Issues",
+    "Path Traversal",
+    "Information Disclosure",
+    "Cryptography"
+  ]
+}

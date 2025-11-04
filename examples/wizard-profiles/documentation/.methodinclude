@@ -1,0 +1,44 @@
+# Documentation Profile - Method Level Include Filters
+
+# Public class methods
+constructor
+initialize
+init*
+
+# Public API methods
+*Handler
+*Controller
+*Service
+*Manager
+*Provider
+*Factory
+*Builder
+
+# CRUD operations
+create*
+read*
+update*
+delete*
+get*
+set*
+find*
+save*
+remove*
+
+# Configuration methods
+configure*
+setup*
+register*
+
+# Utility methods (public)
+format*
+parse*
+validate*
+convert*
+transform*
+
+# Event handlers (public)
+on*
+emit*
+subscribe*
+unsubscribe*

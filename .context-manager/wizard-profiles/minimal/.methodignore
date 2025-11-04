@@ -1,0 +1,22 @@
+# Minimal Profile - Method Level Ignore Filters
+# Ignore most helper and utility methods
+
+# Private/internal
+_*
+*Private*
+*Internal*
+__*
+
+# Helpers
+*Helper
+*Util
+*Utils
+
+# Tests
+test*
+it
+describe
+
+# Getters/setters
+get *
+set *

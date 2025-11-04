@@ -1,0 +1,37 @@
+# Security Audit Profile - File Level Include Filters
+# Focus on security-critical code
+
+# Authentication & Authorization
+**/auth/**
+**/authentication/**
+**/authorization/**
+**/security/**
+**/guards/**
+**/middleware/**
+
+# API & Route handlers
+**/routes/**
+**/api/**
+**/controllers/**
+**/handlers/**
+**/endpoints/**
+
+# Database layer
+**/models/**
+**/schemas/**
+**/repositories/**
+**/migrations/**
+**/queries/**
+
+# Configuration (may contain security settings)
+*.config.js
+*.config.ts
+.env.example
+config/**/*.js
+config/**/*.ts
+
+# Security utilities
+**/validators/**
+**/sanitizers/**
+**/crypto/**
+**/encryption/**

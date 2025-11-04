@@ -1,0 +1,48 @@
+# LLM Explain Profile - Method Level Include Filters
+
+# Constructors and initialization
+constructor
+initialize
+init*
+setup*
+
+# Public APIs
+*Handler
+*Controller
+*Service
+*Manager
+*Provider
+*Factory
+
+# Core business logic
+process*
+handle*
+execute*
+run*
+start*
+create*
+update*
+delete*
+get*
+set*
+
+# Data transformation
+transform*
+convert*
+parse*
+format*
+serialize*
+
+# Async operations
+async *
+*Async
+
+# Event handling
+on*
+emit*
+trigger*
+
+# Lifecycle methods
+mount*
+unmount*
+render

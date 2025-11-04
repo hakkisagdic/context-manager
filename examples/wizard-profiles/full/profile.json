@@ -1,0 +1,28 @@
+{
+  "id": "full",
+  "name": "Full",
+  "icon": "📦",
+  "description": "Comprehensive analysis including everything",
+  "tokenBudget": {
+    "small": "50K-100K",
+    "medium": "100K-250K",
+    "large": "250K-500K+"
+  },
+  "includes": {
+    "files": ["All source code", "All tests", "All documentation", "All configuration"],
+    "methods": ["All methods (no filtering)"]
+  },
+  "excludes": {
+    "files": ["Only build artifacts and dependencies"],
+    "methods": ["None (includes everything)"]
+  },
+  "bestFor": [
+    "Complete codebase analysis",
+    "Large-scale refactoring",
+    "Architecture overhauls",
+    "Comprehensive documentation generation",
+    "Full system understanding",
+    "Migration projects"
+  ],
+  "warning": "High token usage - requires large context window LLMs"
+}

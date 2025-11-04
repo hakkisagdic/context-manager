@@ -1,0 +1,23 @@
+# Full Profile - File Level Ignore Filters
+# Only exclude build artifacts and dependencies
+
+# Dependencies
+node_modules/**
+vendor/**
+
+# Build artifacts
+dist/**
+build/**
+out/**
+target/**
+
+# Coverage
+coverage/**
+.nyc_output/**
+
+# Git metadata
+.git/**
+
+# OS files
+.DS_Store
+Thumbs.db

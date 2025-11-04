@@ -1,0 +1,27 @@
+# Minimal Profile - File Level Ignore Filters
+# Exclude everything non-essential
+
+# Tests
+test/**
+tests/**
+__tests__/**
+**/*.test.*
+**/*.spec.*
+
+# Dependencies
+node_modules/**
+vendor/**
+
+# Build artifacts
+dist/**
+build/**
+coverage/**
+
+# Documentation
+docs/**
+**/*.md
+
+# All config files except package.json
+*.config.js
+*.config.ts
+tsconfig.json

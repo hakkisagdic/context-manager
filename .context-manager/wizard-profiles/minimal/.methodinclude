@@ -1,0 +1,18 @@
+# Minimal Profile - Method Level Include Filters
+
+# Core entry points
+main
+init*
+setup*
+
+# Primary operations
+process*
+handle*
+execute*
+run*
+
+# Essential CRUD
+create*
+get*
+update*
+delete*

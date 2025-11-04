@@ -1,0 +1,41 @@
+# Code Review Profile - File Level Ignore Filters
+# Exclude non-essential files
+
+# Dependencies
+node_modules/**
+vendor/**
+packages/**/node_modules/**
+
+# Build artifacts
+dist/**
+build/**
+out/**
+.next/**
+.nuxt/**
+
+# Minified files
+**/*.min.js
+**/*.min.css
+
+# Coverage reports
+coverage/**
+.nyc_output/**
+
+# Logs
+**/*.log
+logs/**
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/**
+.idea/**
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

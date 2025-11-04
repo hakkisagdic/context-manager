@@ -1,0 +1,33 @@
+# LLM Explain Profile - File Level Include Filters
+# Balanced view for explaining code to AI
+
+# Core source code
+src/**/*.js
+src/**/*.ts
+src/**/*.jsx
+src/**/*.tsx
+lib/**/*.js
+lib/**/*.ts
+
+# Entry points
+index.js
+index.ts
+main.*
+app.js
+app.ts
+server.js
+server.ts
+
+# Type definitions
+**/*.d.ts
+**/types/**
+**/interfaces/**
+
+# Configuration
+package.json
+tsconfig.json
+
+# Documentation
+README.md
+ARCHITECTURE.md
+API.md

@@ -1,0 +1,26 @@
+# Code Review Profile - Method Level Ignore Filters
+# Exclude internal/private methods and test setup
+
+# Private methods
+_*
+*Private*
+*Internal*
+__*
+
+# Test setup/teardown
+beforeEach
+afterEach
+beforeAll
+afterAll
+setUp
+tearDown
+
+# Mock/stub helpers
+mock*
+stub*
+fake*
+spy*
+
+# Getters/setters (too verbose)
+get *
+set *

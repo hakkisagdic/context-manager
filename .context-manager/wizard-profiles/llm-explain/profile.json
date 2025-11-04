@@ -1,0 +1,27 @@
+{
+  "id": "llm-explain",
+  "name": "LLM Explain",
+  "icon": "💡",
+  "description": "Balanced view for explaining code architecture and implementation to AI",
+  "tokenBudget": {
+    "small": "25K-50K",
+    "medium": "50K-100K",
+    "large": "100K-200K"
+  },
+  "includes": {
+    "files": ["Core source code", "Entry points", "Types/interfaces", "Documentation"],
+    "methods": ["Constructors", "Public APIs", "Business logic", "Lifecycle methods"]
+  },
+  "excludes": {
+    "files": ["Tests", "Build artifacts"],
+    "methods": ["Private methods", "Test helpers"]
+  },
+  "bestFor": [
+    "Understanding unfamiliar codebases",
+    "Onboarding new team members",
+    "Generating architectural documentation",
+    "AI-assisted refactoring",
+    "Pair programming with AI",
+    "Learning from existing implementations"
+  ]
+}

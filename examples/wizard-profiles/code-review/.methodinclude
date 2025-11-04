@@ -1,0 +1,47 @@
+# Code Review Profile - Method Level Include Filters
+# Focus on public APIs and core business logic
+
+# Public API methods
+*Handler
+*Controller
+*Service
+*Manager
+*Provider
+*Repository
+*Factory
+*Builder
+
+# Business logic
+process*
+handle*
+validate*
+calculate*
+transform*
+execute*
+perform*
+
+# Async operations
+async *
+*Async
+*Promise
+
+# Error handling
+*Error
+*Exception
+catch*
+handle*Error
+
+# CRUD operations
+create*
+read*
+update*
+delete*
+get*
+set*
+find*
+save*
+
+# Test methods (for context)
+test*
+it
+describe

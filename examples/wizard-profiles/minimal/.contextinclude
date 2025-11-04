@@ -1,0 +1,14 @@
+# Minimal Profile - File Level Include Filters
+
+# Only core source files
+src/**/*.js
+src/**/*.ts
+lib/**/*.js
+lib/**/*.ts
+
+# Main entry point
+index.js
+index.ts
+
+# Essential configuration
+package.json

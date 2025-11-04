@@ -1,0 +1,27 @@
+{
+  "id": "documentation",
+  "name": "Documentation",
+  "icon": "📚",
+  "description": "Focus on public APIs and documentation-worthy code",
+  "tokenBudget": {
+    "small": "18K-35K",
+    "medium": "35K-70K",
+    "large": "70K-140K"
+  },
+  "includes": {
+    "files": ["Public APIs", "Type definitions", "Exports", "Existing documentation"],
+    "methods": ["Public methods", "CRUD operations", "Configuration methods"]
+  },
+  "excludes": {
+    "files": ["Internal/private code", "Tests"],
+    "methods": ["Private methods", "Test helpers"]
+  },
+  "bestFor": [
+    "Generating API documentation",
+    "Creating user guides",
+    "Writing technical specifications",
+    "Onboarding documentation",
+    "README updates",
+    "JSDoc/TSDoc generation"
+  ]
+}

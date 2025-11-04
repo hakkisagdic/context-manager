@@ -1,0 +1,38 @@
+# Full Profile - File Level Include Filters
+# Include everything
+
+# All source code (14+ languages)
+**/*.js
+**/*.ts
+**/*.jsx
+**/*.tsx
+**/*.py
+**/*.java
+**/*.go
+**/*.rs
+**/*.php
+**/*.rb
+**/*.kt
+**/*.swift
+**/*.c
+**/*.cpp
+**/*.cs
+**/*.scala
+
+# Configuration files
+*.json
+*.yaml
+*.yml
+*.toml
+*.config.js
+*.config.ts
+
+# Documentation
+**/*.md
+docs/**
+
+# Tests
+**/*.test.*
+**/*.spec.*
+test/**
+tests/**

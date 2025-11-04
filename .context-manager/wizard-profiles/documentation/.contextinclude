@@ -1,0 +1,24 @@
+# Documentation Profile - File Level Include Filters
+
+# Source code (public APIs)
+src/**/*.js
+src/**/*.ts
+lib/**/*.js
+lib/**/*.ts
+
+# Public exports
+**/index.js
+**/index.ts
+
+# Type definitions
+**/*.d.ts
+**/types/**
+**/interfaces/**
+
+# Existing documentation
+README.md
+docs/**/*.md
+*.md
+
+# Configuration
+package.json

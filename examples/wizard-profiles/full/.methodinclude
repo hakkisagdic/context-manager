@@ -1,0 +1,5 @@
+# Full Profile - Method Level Include Filters
+# Include all methods (no filtering)
+
+# Include everything with wildcard
+*

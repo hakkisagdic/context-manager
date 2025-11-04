@@ -1,0 +1,25 @@
+# LLM Explain Profile - File Level Ignore Filters
+
+# Tests (reduce noise)
+test/**
+tests/**
+__tests__/**
+**/*.test.*
+**/*.spec.*
+
+# Dependencies
+node_modules/**
+vendor/**
+
+# Build artifacts
+dist/**
+build/**
+out/**
+.next/**
+
+# Coverage
+coverage/**
+
+# Minified files
+**/*.min.js
+**/*.min.css

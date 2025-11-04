@@ -1,0 +1,60 @@
+# Security Audit Profile - Method Level Include Filters
+# Focus on security-critical functions
+
+# Authentication & Authorization
+auth*
+*Auth
+login*
+logout*
+verify*
+*Token
+*Session
+*Permission
+*Role
+authorize*
+authenticate*
+check*Access
+
+# Data validation and sanitization
+validate*
+sanitize*
+escape*
+clean*
+filter*
+*Validator
+
+# Input/Output handling
+parse*
+*Input
+*Output
+encode*
+decode*
+
+# Cryptography
+encrypt*
+decrypt*
+hash*
+*Hash
+sign*
+*Signature
+*Crypto
+
+# Database queries (SQL injection risks)
+query*
+execute*
+*Query
+*SQL
+*Database
+
+# File operations (path traversal risks)
+read*
+write*
+upload*
+download*
+*File
+*Path
+
+# Error handling (information disclosure)
+*Error
+*Exception
+handle*Error

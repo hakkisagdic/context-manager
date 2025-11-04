@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
-  "version": "2.3.7",
-  "description": "Universal LLM context manager with automatic model detection supporting 14+ languages, method-level filtering, TOON format (40-50% token reduction), Ink Terminal UI, smart chunking, and format conversion utilities",
+  "version": "2.3.8",
+  "description": "Universal LLM context manager with automatic model detection supporting 14+ languages, method-level filtering, TOON format (40-50% token reduction), Ink Terminal UI, smart chunking, use case templates, and format conversion utilities",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -87,6 +87,8 @@
     "context-manager.js",
     "lib/",
     "bin/",
+    ".context-manager/",
+    "examples/",
     "README.md",
     "LICENSE"
   ],

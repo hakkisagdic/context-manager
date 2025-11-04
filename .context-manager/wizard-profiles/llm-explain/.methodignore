@@ -1,0 +1,19 @@
+# LLM Explain Profile - Method Level Ignore Filters
+
+# Private methods
+_*
+*Private*
+*Internal*
+__*
+
+# Test methods
+test*
+it
+describe
+beforeEach
+afterEach
+
+# Mock/stub helpers
+mock*
+stub*
+fake*

@@ -1,0 +1,29 @@
+# Security Audit Profile - Method Level Ignore Filters
+# Exclude non-security methods
+
+# Test methods
+test*
+it
+describe
+beforeEach
+afterEach
+beforeAll
+afterAll
+
+# Mock/stub helpers
+mock*
+stub*
+fake*
+spy*
+
+# UI/presentation methods
+render*
+display*
+show*
+hide*
+
+# Logging (unless it's audit logging)
+log*
+debug*
+!auditLog*
+!securityLog*
