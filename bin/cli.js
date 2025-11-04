@@ -1,71 +1,421 @@
 #!/usr/bin/env node
 
-const { TokenAnalyzer } = require('../index.js');
+import { TokenAnalyzer } from '../index.js';
+import FormatRegistry from '../lib/formatters/format-registry.js';
+import FormatConverter from '../lib/utils/format-converter.js';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import { readFileSync } from 'fs';
 
-function main() {
+// ESM equivalents for __dirname and __filename
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load package.json
+const pkg = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
+
+async function main() {
     const args = process.argv.slice(2);
-    
+
     if (args.includes('--help') || args.includes('-h')) {
         printHelp();
         return;
     }
-    
-    const options = {
-        saveReport: args.includes('--save-report') || args.includes('-s'),
-        verbose: args.includes('--verbose') || args.includes('-v'),
-        contextExport: args.includes('--context-export'),
-        contextToClipboard: args.includes('--context-clipboard'),
-        methodLevel: args.includes('--method-level') || args.includes('-m'),
-        gitingest: args.includes('--gitingest') || args.includes('-g'),
-        projectRoot: process.cwd()
-    };
-    
-    printStartupInfo();
-    
+
+    // Check for version flag
+    if (args.includes('--version')) {
+        console.log(`Context Manager v${pkg.version}`);
+        return;
+    }
+
+    // Check for format listing
+    if (args.includes('--list-formats')) {
+        listFormats();
+        return;
+    }
+
+    // Check for format conversion mode (v2.3.2)
+    if (args.includes('convert')) {
+        runFormatConversion(args);
+        return;
+    }
+
+    // Check for GitHub GitIngest mode (v2.3.6+)
+    if (args.includes('github') || args.includes('git')) {
+        const commandPath = resolve(__dirname, './cm-gitingest.js');
+        const gitArgs = args.filter(arg => arg !== 'github' && arg !== 'git');
+        execSync(`node "${commandPath}" ${gitArgs.join(' ')}`, { stdio: 'inherit' });
+        return;
+    }
+
+    // Check for explicit dashboard mode
+    if (args.includes('--dashboard')) {
+        try {
+            await runDashboard();
+            return;
+        } catch (error) {
+            console.error('⚠️  Live dashboard failed.');
+            console.error('   Error:', error.message);
+            console.error('   Falling back to standard mode...\n');
+        }
+    }
+
+    // Check if CLI mode is explicitly requested OR any analysis flags are present
+    const hasAnalysisFlags = args.some(arg =>
+        arg.startsWith('-') &&
+        arg !== '--cli' &&
+        arg !== '--wizard' &&
+        arg !== '--dashboard'
+    );
+
+    const cliMode = args.includes('--cli') || hasAnalysisFlags;
+
+    // DEFAULT: Run wizard mode unless --cli flag or other flags are present
+    if (!cliMode) {
+        try {
+            await runWizard();
+            return;
+        } catch (error) {
+            // If wizard fails, fall through to normal mode
+            console.error('⚠️  Interactive wizard mode failed.');
+            console.error('   Error:', error.message);
+            console.error('   Falling back to CLI mode...\n');
+            console.error('   Tip: Use --cli flag to skip wizard mode\n');
+        }
+    }
+
+    // CLI Mode: Run traditional command-line analysis
+    const options = parseArguments(args);
+
+    printStartupInfo(options);
+
     const analyzer = new TokenAnalyzer(options.projectRoot, options);
     analyzer.run();
 }
 
-function printStartupInfo() {
-    console.log('🚀 Context Manager by Hakkı Sağdıç');
+function parseArguments(args) {
+    return {
+        // Output options
+        saveReport: args.includes('--save-report') || args.includes('-s'),
+        verbose: args.includes('--verbose') || args.includes('-v'),
+        contextExport: args.includes('--context-export'),
+        contextToClipboard: args.includes('--context-clipboard'),
+
+        // Analysis options
+        methodLevel: args.includes('--method-level') || args.includes('-m'),
+        gitingest: args.includes('--gitingest') || args.includes('-g'),
+
+        // Format options (v2.3.0)
+        outputFormat: getOutputFormat(args),
+
+        // UI options (v2.3.0)
+        simple: args.includes('--simple'),
+        dashboard: args.includes('--dashboard'),
+
+        // Chunking options (v2.3.0)
+        chunking: {
+            enabled: args.includes('--chunk'),
+            strategy: getChunkStrategy(args),
+            maxTokensPerChunk: getChunkSize(args)
+        },
+
+        projectRoot: process.cwd()
+    };
+}
+
+function getOutputFormat(args) {
+    const formatIndex = args.findIndex(arg => arg === '--output' || arg === '-o');
+    if (formatIndex !== -1 && args[formatIndex + 1]) {
+        return args[formatIndex + 1];
+    }
+    return 'toon'; // Default to TOON format in v2.3.0
+}
+
+function getChunkStrategy(args) {
+    const strategyIndex = args.findIndex(arg => arg === '--chunk-strategy');
+    if (strategyIndex !== -1 && args[strategyIndex + 1]) {
+        return args[strategyIndex + 1];
+    }
+    return 'smart'; // Default strategy
+}
+
+function getChunkSize(args) {
+    const sizeIndex = args.findIndex(arg => arg === '--chunk-size');
+    if (sizeIndex !== -1 && args[sizeIndex + 1]) {
+        return parseInt(args[sizeIndex + 1], 10);
+    }
+    return 100000; // Default 100k tokens
+}
+
+function printStartupInfo(options) {
+    console.log('🚀 Context Manager v2.3.5');
     console.log('='.repeat(50));
-    console.log('📋 Available options:');
-    console.log('  --save-report, -s     Save detailed JSON report');
-    console.log('  --verbose, -v         Show included files and directories');
-    console.log('  --context-export      Generate LLM context file list');
-    console.log('  --context-clipboard   Copy context to clipboard');
-    console.log('  --method-level, -m    Enable method-level analysis');
-    console.log('  --gitingest, -g       Generate GitIngest-style digest');
-    console.log('  --help, -h           Show this help message');
-    console.log();
+
+    // Only show active options if any are set
+    const hasOptions = options.outputFormat || options.methodLevel || options.chunking?.enabled ||
+                       options.saveReport || options.verbose || options.contextExport ||
+                       options.contextToClipboard || options.gitingest;
+
+    if (hasOptions) {
+        console.log('📋 Active options:');
+        if (options.outputFormat) {
+            console.log(`  Output format: ${options.outputFormat}`);
+        }
+        if (options.methodLevel) {
+            console.log('  Method-level analysis: enabled');
+        }
+        if (options.saveReport) {
+            console.log('  Save report: enabled');
+        }
+        if (options.gitingest) {
+            console.log('  GitIngest format: enabled');
+        }
+        if (options.contextExport) {
+            console.log('  Context export: enabled');
+        }
+        if (options.contextToClipboard) {
+            console.log('  Copy to clipboard: enabled');
+        }
+        if (options.chunking?.enabled) {
+            console.log(`  Chunking: ${options.chunking.strategy} (${options.chunking.maxTokensPerChunk.toLocaleString()} tokens/chunk)`);
+        }
+        console.log();
+    }
 }
 
 function printHelp() {
-    console.log('Context Manager - LLM context optimization with method-level filtering');
+    console.log('Context Manager v2.3.0 - LLM context optimization with method-level filtering');
     console.log();
     console.log('Usage: context-manager [options]');
     console.log();
-    console.log('Options:');
+    console.log('Default Mode:');
+    console.log('  context-manager          Launch interactive wizard (DEFAULT)');
+    console.log('  --cli                    Use CLI mode instead of wizard');
+    console.log();
+    console.log('Analysis Options:');
     console.log('  -s, --save-report        Save detailed JSON report');
     console.log('  -v, --verbose            Show all included files');
-    console.log('  --context-export         Generate LLM context file');
-    console.log('  --context-clipboard      Copy context to clipboard');
     console.log('  -m, --method-level       Enable method-level analysis');
     console.log('  -g, --gitingest          Generate GitIngest-style digest');
-    console.log('  -h, --help               Show this help');
     console.log();
-    console.log('Method-level Configuration:');
+    console.log('Output Options (v2.3.0):');
+    console.log('  -o, --output FORMAT      Output format (default: toon)');
+    console.log('                           Formats: toon, json, yaml, csv, xml, markdown, gitingest');
+    console.log('  --context-export         Generate LLM context file');
+    console.log('  --context-clipboard      Copy context to clipboard');
+    console.log('  --list-formats           List all available output formats');
+    console.log();
+    console.log('UI Options (v2.3.0):');
+    console.log('  --simple                 Simple text-based output (no fancy UI)');
+    console.log('  --dashboard              Live dashboard mode');
+    console.log('  --wizard                 Force interactive wizard mode');
+    console.log();
+    console.log('Chunking Options (v2.3.0):');
+    console.log('  --chunk                  Enable smart chunking for large repos');
+    console.log('  --chunk-strategy TYPE    Chunking strategy (smart, size, file, directory)');
+    console.log('  --chunk-size TOKENS      Max tokens per chunk (default: 100000)');
+    console.log();
+    console.log('General Options:');
+    console.log('  -h, --help               Show this help');
+    console.log('  --version                Show version number');
+    console.log();
+    console.log('Configuration Files:');
+    console.log('  .contextinclude          Include only specified files');
+    console.log('  .contextignore           Exclude specified files');
     console.log('  .methodinclude           Include only specified methods');
     console.log('  .methodignore            Exclude specified methods');
     console.log();
+    console.log('Format Conversion (v2.3.2):');
+    console.log('  convert INPUT --from FORMAT --to FORMAT');
+    console.log('                           Convert between formats');
+    console.log('  Examples:');
+    console.log('    context-manager convert report.json --from json --to toon');
+    console.log('    context-manager convert data.toon --from toon --to yaml');
+    console.log('    context-manager convert context.yaml --from yaml --to json');
+    console.log();
+    console.log('GitHub Integration (v2.3.6+):');
+    console.log('  github URL [options]     Generate GitIngest from GitHub repository');
+    console.log('  git URL [options]        Alias for github command');
+    console.log('  Examples:');
+    console.log('    context-manager github facebook/react');
+    console.log('    context-manager github https://github.com/vercel/next.js --branch canary');
+    console.log('    context-manager git angular/angular -o docs/angular.txt');
+    console.log();
     console.log('Examples:');
-    console.log('  context-manager                          # Interactive analysis');
-    console.log('  context-manager --save-report            # Save detailed report');
-    console.log('  context-manager --gitingest              # Generate digest.txt');
-    console.log('  context-manager --method-level --context-export  # Method-level LLM context');
-    console.log('  context-manager -g -s -v                 # GitIngest + report + verbose');
+    console.log('  context-manager                                  # Launch interactive wizard (DEFAULT)');
+    console.log('  context-manager --cli                            # Use CLI mode');
+    console.log('  context-manager --cli -o json --save-report      # CLI: JSON format + save report');
+    console.log('  context-manager --cli -o toon --context-clipboard   # CLI: TOON to clipboard');
+    console.log('  context-manager --cli --gitingest --chunk        # CLI: GitIngest with chunking');
+    console.log('  context-manager --cli -m -o yaml                 # CLI: Method-level + YAML format');
+    console.log('  context-manager --cli --chunk --chunk-strategy smart   # CLI: Smart chunking');
+    console.log('  context-manager convert data.json --from json --to toon  # Convert formats');
+    console.log();
+    console.log('Format Comparison (token efficiency):');
+    console.log('  TOON:     40-50% reduction (most efficient)');
+    console.log('  JSON:     Standard format (baseline)');
+    console.log('  YAML:     Human-readable (5-10% larger than JSON)');
+    console.log('  Markdown: Documentation-friendly (20-30% larger)');
+    console.log();
+    console.log('For more information: https://github.com/hakkisagdic/context-manager');
 }
 
-if (require.main === module) {
-    main();
+function listFormats() {
+    const registry = new FormatRegistry();
+    const formats = registry.getAllInfo();
+
+    console.log('📋 Available Output Formats:\n');
+    console.log('Format'.padEnd(15) + 'Description'.padEnd(50) + 'Extension');
+    console.log('='.repeat(80));
+
+    for (const [name, info] of Object.entries(formats)) {
+        console.log(
+            name.padEnd(15) +
+            info.description.substring(0, 48).padEnd(50) +
+            info.extension
+        );
+    }
+
+    console.log();
+    console.log('Usage: context-manager --output <format>');
+    console.log('Example: context-manager --output toon --context-clipboard');
 }
+
+async function runWizard() {
+    try {
+        // Dynamic imports for ESM modules
+        const ReactModule = await import('react');
+        const React = ReactModule.default || ReactModule;
+        const { render } = await import('ink');
+        const Wizard = (await import('../lib/ui/wizard.js')).default;
+
+        // Clear screen for clean wizard display
+        console.clear();
+        console.log('🧙 Starting interactive wizard...\n');
+
+        const instance = render(
+            React.createElement(Wizard, {
+                onComplete: (answers) => {
+                    instance.unmount();
+
+                    console.log('\n✨ Wizard complete! Running analysis with your configuration...\n');
+
+                    // Run analyzer with wizard configuration
+                    const options = {
+                        outputFormat: answers.outputFormat,
+                        useCase: answers.useCase,
+                        targetModel: answers.targetModel,
+                        projectRoot: process.cwd(),
+                        simple: true,      // No export menu
+                        contextExport: true // Auto-export to file
+                    };
+
+                    const analyzer = new TokenAnalyzer(options.projectRoot, options);
+                    analyzer.run();
+
+                    console.log('\n✅ Analysis complete! Context exported to llm-context.json\n');
+                }
+            })
+        );
+    } catch (error) {
+        throw error; // Re-throw to be caught by main()
+    }
+}
+
+async function runDashboard() {
+    try {
+        // Dynamic imports for ESM modules
+        const ReactModule = await import('react');
+        const React = ReactModule.default || ReactModule;
+        const { render } = await import('ink');
+        const Dashboard = (await import('../lib/ui/dashboard.js')).default;
+
+        // Clear console and show loading message
+        console.clear();
+        console.log('📊 Analyzing project for dashboard...\n');
+
+        // Run analyzer silently (no console output)
+        const originalLog = console.log;
+        const logs = [];
+        console.log = (...args) => logs.push(args); // Capture logs
+
+        const analyzer = new TokenAnalyzer(process.cwd(), {
+            simple: true,
+            verbose: false,
+            dashboard: true // Skip export handling
+        });
+        const stats = analyzer.run();
+
+        console.log = originalLog; // Restore console.log
+
+        // Clear and render dashboard
+        console.clear();
+
+        const instance = render(
+            React.createElement(Dashboard, {
+                stats,
+                topFiles: stats.largestFiles || [],
+                status: 'complete',
+                onExit: () => {
+                    instance.unmount();
+                    process.exit(0);
+                }
+            })
+        );
+    } catch (error) {
+        throw error; // Re-throw to be caught by main()
+    }
+}
+
+function runFormatConversion(args) {
+    // v2.3.2: Format conversion utility
+    const converter = new FormatConverter();
+
+    // Parse arguments
+    const fromIndex = args.findIndex(arg => arg === '--from');
+    const toIndex = args.findIndex(arg => arg === '--to');
+    const inputIndex = args.findIndex(arg => arg === 'convert') + 1;
+
+    if (fromIndex === -1 || toIndex === -1) {
+        console.error('❌ Format conversion requires --from and --to flags');
+        console.error('   Usage: context-manager convert input.json --from json --to toon');
+        process.exit(1);
+    }
+
+    const inputFile = args[inputIndex];
+    const fromFormat = args[fromIndex + 1];
+    const toFormat = args[toIndex + 1];
+
+    if (!inputFile) {
+        console.error('❌ No input file specified');
+        process.exit(1);
+    }
+
+    // Generate output filename
+    const outputFile = inputFile.replace(/\.[^.]+$/, `.${toFormat}`);
+
+    console.log('🔄 Converting formats...');
+    console.log(`   Input:  ${inputFile} (${fromFormat})`);
+    console.log(`   Output: ${outputFile} (${toFormat})`);
+    console.log();
+
+    try {
+        const result = converter.convertFile(inputFile, outputFile, fromFormat, toFormat);
+
+        console.log('✅ Conversion successful!');
+        console.log(`   Input size:  ${result.inputSize.toLocaleString()} chars`);
+        console.log(`   Output size: ${result.outputSize.toLocaleString()} chars`);
+        console.log(`   Savings:     ${result.savingsPercent} (${result.savings} chars)`);
+        console.log(`   Output file: ${result.outputFile}`);
+    } catch (error) {
+        console.error('❌ Conversion failed:', error.message);
+        process.exit(1);
+    }
+}
+
+// ESM entry point
+main().catch(error => {
+    console.error('❌ Error:', error.message);
+    process.exit(1);
+});

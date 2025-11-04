@@ -331,7 +331,7 @@ npm install tiktoken
 
 Analizin performansı, analiz edilen kod tabanının boyutuyla doğrudan ilgilidir. Performansı optimize etmek için:
 - Mümkün olduğunda analizi belirli dizinlerle sınırlayın
-- İlgisiz dosyaları hariç tutmak için konfigürasyon dosyalarını (.calculatorignore, .calculatorinclude) kullanın
+- İlgisiz dosyaları hariç tutmak için konfigürasyon dosyalarını (.contextignore, .contextinclude) kullanın
 - Analiz derinliği ile yürütme süresi arasındaki dengeyi göz önünde bulundurun
 
 ### Method Seviyesinde Analiz

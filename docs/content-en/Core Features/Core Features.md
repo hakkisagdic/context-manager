@@ -33,7 +33,7 @@ The context-manager tool implements a comprehensive file-level analysis system t
 
 The file scanning process is implemented in the `scanDirectory` method of the `TokenCalculator` class, which examines each file and directory in the project. During this process, the tool applies a hierarchical filtering system that respects both `.gitignore` patterns and custom configuration files. Files are only included in the analysis if they pass all filtering criteria and are identified as text files through the `isTextFile` method, which checks file extensions and base names against a predefined list of text-based formats.
 
-The filtering system prioritizes configuration files in a specific order: `.gitignore` rules are always respected, followed by `.calculatorinclude` (which takes precedence in INCLUDE mode), and then `.calculatorignore` (used in EXCLUDE mode when no include file exists). This multi-layered approach ensures that developers can precisely control which files are analyzed, allowing for focused examination of core application logic while excluding documentation, configuration, and test files.
+The filtering system prioritizes configuration files in a specific order: `.gitignore` rules are always respected, followed by `.contextinclude` (which takes precedence in INCLUDE mode), and then `.contextignore` (used in EXCLUDE mode when no include file exists). This multi-layered approach ensures that developers can precisely control which files are analyzed, allowing for focused examination of core application logic while excluding documentation, configuration, and test files.
 
 **Section sources**
 - [context-manager.js](file://context-manager.js#L376-L406)

@@ -1,24 +1,46 @@
 {
   "name": "@hakkisagdic/context-manager",
-  "version": "2.2.0",
-  "description": "Universal LLM context manager supporting 14+ languages with method-level filtering, token optimization, and GitIngest format support",
+  "version": "2.3.5",
+  "description": "Universal LLM context manager supporting 14+ languages with method-level filtering, TOON format (40-50% token reduction), Ink Terminal UI, smart chunking, and format conversion utilities",
+  "type": "module",
   "main": "index.js",
   "bin": {
     "context-manager": "bin/cli.js"
   },
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "node test/test.js",
-    "test:all": "node test/test-suite.js",
+    "test:all": "node test/run-all-tests.js",
     "test:unit": "node test/unit-tests.js",
+    "test:v2.3": "node test/test-v2.3-features.js",
+    "test:cli": "node test/test-cli-integration.js",
+    "test:toon": "node test/test-toon-format.js",
     "test:gitingest": "node test/test-gitingest.js",
     "test:gitingest-json": "node test/test-gitingest-json.js",
     "test:rust": "node test/test-rust.js",
-    "test:comprehensive": "npm run test && npm run test:unit && npm run test:gitingest && npm run test:gitingest-json && npm run test:rust",
+    "test:ink": "node test/test-ink-ui.js",
+    "test:wizard": "node test/test-wizard.js",
+    "test:dashboard": "node test/test-dashboard.js",
+    "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest",
     "analyze": "node bin/cli.js",
-    "analyze:methods": "node bin/cli.js --method-level",
-    "analyze:gitingest": "node bin/cli.js --gitingest",
+    "analyze:cli": "node bin/cli.js --cli",
+    "analyze:methods": "node bin/cli.js --cli --method-level",
+    "analyze:gitingest": "node bin/cli.js --cli --gitingest",
+    "github": "node bin/cm-gitingest.js",
+    "install:local": "bash scripts/install.sh",
+    "uninstall:local": "bash scripts/uninstall.sh",
+    "install:windows": "powershell -ExecutionPolicy Bypass -File scripts/install.ps1",
+    "uninstall:windows": "powershell -ExecutionPolicy Bypass -File scripts/uninstall.ps1",
+    "update:check": "node bin/cm-update.js check",
+    "update:install": "node bin/cm-update.js install",
+    "update:rollback": "node bin/cm-update.js rollback",
+    "update:channel": "node bin/cm-update.js channel",
     "build": "echo 'No build step required'",
-    "prepublishOnly": "npm test"
+    "build:deb": "make build-deb",
+    "prepublishOnly": "npm test",
+    "postinstall": "node -e \"console.log('\\n✅ Context Manager installed! Run: context-manager --help\\n')\""
   },
   "keywords": [
     "code",
@@ -48,12 +70,15 @@
   "author": "Hakkı Sağdıç",
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
-    "tiktoken": "^1.0.0"
+    "@toon-format/toon": "^0.7.0",
+    "ink": "^6.4.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
+    "react": "^19.2.0"
   },
-  "devDependencies": {},
   "optionalDependencies": {
     "tiktoken": "^1.0.0"
   },

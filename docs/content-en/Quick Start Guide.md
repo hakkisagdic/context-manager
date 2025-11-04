@@ -84,7 +84,7 @@ The main report includes:
 - Total files analyzed and total token count
 - Total size in MB and total lines of code
 - Average tokens per file
-- Number of files ignored by .gitignore and calculator rules
+- Number of files ignored by .gitignore and context rules
 - Breakdown by file type (extension), showing files, tokens, size, and lines
 - Top 5 largest files by token count
 - Top 5 largest directories by token count
@@ -286,15 +286,15 @@ end
 The context-manager tool uses several configuration files to control which files and methods are included in the analysis. Understanding these files is essential for customizing the tool to your specific needs.
 
 The primary configuration files for file-level filtering are:
-- `.calculatorinclude`: Include only files matching the specified patterns (takes priority)
-- `.calculatorignore`: Exclude files matching the specified patterns
+- `.contextinclude`: Include only files matching the specified patterns (takes priority)
+- `.contextignore`: Exclude files matching the specified patterns
 
 The tool follows a priority order for configuration files:
 1. `.gitignore` (always respected)
-2. `.calculatorinclude` (highest priority for files)
-3. `.calculatorignore` (used when no include file exists)
+2. `.contextinclude` (highest priority for files)
+3. `.contextignore` (used when no include file exists)
 
-When `.calculatorinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the include patterns are analyzed (except those excluded by .gitignore). When only `.calculatorignore` exists, the tool operates in EXCLUDE mode, analyzing all files except those matching the ignore patterns.
+When `.contextinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the include patterns are analyzed (except those excluded by .gitignore). When only `.contextignore` exists, the tool operates in EXCLUDE mode, analyzing all files except those matching the ignore patterns.
 
 For method-level analysis, the tool uses:
 - `.methodinclude`: Include only specified methods
@@ -306,8 +306,8 @@ These files support pattern matching with wildcards (*) and can specify exact me
 graph TB
 subgraph "Configuration Priority"
 A[".gitignore"]
-B[".calculatorinclude"]
-C[".calculatorignore"]
+B[".contextinclude"]
+C[".contextignore"]
 end
 subgraph "Method Filtering"
 D[".methodinclude"]
@@ -345,7 +345,7 @@ When getting started with the context-manager tool, you may encounter a few comm
 npm install tiktoken
 ```
 
-**Configuration file issues**: A common source of confusion is the interaction between `.calculatorinclude` and `.calculatorignore`. Remember that `.calculatorinclude` takes priority - if it exists, the tool operates in INCLUDE mode and ignores `.calculatorignore`. If you're not seeing expected files, check whether a `.calculatorinclude` file exists.
+**Configuration file issues**: A common source of confusion is the interaction between `.contextinclude` and `.contextignore`. Remember that `.contextinclude` takes priority - if it exists, the tool operates in INCLUDE mode and ignores `.contextignore`. If you're not seeing expected files, check whether a `.contextinclude` file exists.
 
 **Pattern matching problems**: When creating patterns in configuration files, ensure there are no inline comments and that patterns use the correct syntax. Use `**` for recursive matching and `*` for single-level matching. Test patterns with verbose output to verify they work as expected.
 

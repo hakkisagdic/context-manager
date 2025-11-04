@@ -277,22 +277,22 @@ context-manager aracı, hangi dosya ve metodların analize dahil edileceği üze
 
 Dosya seviyesi filtreleme sistemi, net bir öncelik hiyerarşisi ile üç yapılandırma dosyası kullanır:
 1. `.gitignore` (proje kök dizini) - Standart git hariç tutmaları (her zaman geçerlidir)
-2. `.calculatorinclude` - INCLUDE modu (dosyalar için en yüksek öncelik)
-3. `.calculatorignore` - EXCLUDE modu (include dosyası yokken kullanılır)
+2. `.contextinclude` - INCLUDE modu (dosyalar için en yüksek öncelik)
+3. `.contextignore` - EXCLUDE modu (include dosyası yokken kullanılır)
 
-`.calculatorinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yalnızca bu dosyadaki desenlere uyan dosyaları dahil eder ve `.calculatorignore`'u göz ardı eder. Yalnızca `.calculatorignore` mevcut olduğunda, araç EXCLUDE modunda çalışır ve ignore desenlerine uyan dosyalar hariç tüm dosyaları dahil eder. Bu dual-mod sistemi, kapsamlı kod tabanı analizinden belirli bileşenlerin odaklanmış incelemesine kadar farklı kullanım durumları için esneklik sağlar.
+`.contextinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yalnızca bu dosyadaki desenlere uyan dosyaları dahil eder ve `.contextignore`'u göz ardı eder. Yalnızca `.contextignore` mevcut olduğunda, araç EXCLUDE modunda çalışır ve ignore desenlerine uyan dosyalar hariç tüm dosyaları dahil eder. Bu dual-mod sistemi, kapsamlı kod tabanı analizinden belirli bileşenlerin odaklanmış incelemesine kadar farklı kullanım durumları için esneklik sağlar.
 
 Metod seviyesi filtreleme, analize hangi metodların dahil edileceğini kontrol eden `.methodinclude` ve `.methodignore` dosyalarıyla benzer bir deseni takip eder. Bu dosyalar, tam eşleşmeler, joker karakterler (*pattern*), sınıfa özgü metodlar (Class.*) ve dosyaya özgü metodlar (file.method) dahil olmak üzere desen eşleştirme sözdizimini destekler. Desen sözdizimi ayrıca geniş desenlerden belirli öğeleri hariç tutmak için olumsuzlama (!pattern) destekler.
 
 ```mermaid
 graph TD
-A[Start Analysis] --> B{.calculatorinclude Exists?}
+A[Start Analysis] --> B{.contextinclude Exists?}
 B --> |Yes| C[INCLUDE Mode]
-B --> |No| D{.calculatorignore Exists?}
+B --> |No| D{.contextignore Exists?}
 D --> |Yes| E[EXCLUDE Mode]
 D --> |No| F[Include All Files]
-C --> G[Load .calculatorinclude Patterns]
-E --> H[Load .calculatorignore Patterns]
+C --> G[Load .contextinclude Patterns]
+E --> H[Load .contextignore Patterns]
 G --> I[Include Only Matching Files]
 H --> J[Exclude Matching Files]
 I --> K[Apply .gitignore Rules]
@@ -357,15 +357,15 @@ string useCase
 }
 USER_REQUIREMENT {
 "LLM Context Optimization" "Generate minimal context for AI assistants" "context-manager --method-level --context-clipboard" ".methodinclude with *Handler, *Validator" "Ultra-compact JSON (~2.3k chars)"
-"Codebase Analysis" "Understand project complexity and structure" "context-manager --save-report --verbose" ".calculatorinclude with core JS files" "Detailed JSON report (~8.6k chars)"
+"Codebase Analysis" "Understand project complexity and structure" "context-manager --save-report --verbose" ".contextinclude with core JS files" "Detailed JSON report (~8.6k chars)"
 "Method-Level Debugging" "Focus on specific problematic methods" "context-manager --method-level --verbose" ".methodinclude with *auth*, *login*" "Method context with line numbers"
-"CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".calculatorignore with test/ and docs/" "Detailed analysis for historical tracking"
+"CI/CD Integration" "Monitor codebase growth and complexity" "context-manager --save-report" ".contextignore with test/ and docs/" "Detailed analysis for historical tracking"
 "Code Quality Gates" "Ensure code stays within token budgets" "context-manager --method-level --save-report" ".methodinclude with core business logic" "Token count validation"
 "GitIngest Digest" "Create single-file digest for LLM consumption" "context-manager --gitingest" ".methodinclude with core methods" "Single-file text digest (~10-50KB)"
 }
 CONFIG_FILE {
-".calculatorinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
-".calculatorignore" "**/*.md, **/*.json, node_modules/**" "EXCLUDE"
+".contextinclude" "**/*.js, !test/**, !docs/**" "INCLUDE"
+".contextignore" "**/*.md, **/*.json, node_modules/**" "EXCLUDE"
 ".methodinclude" "*Handler, *Validator, *Manager" "INCLUDE"
 ".methodignore" "*test*, *debug*, console" "EXCLUDE"
 }

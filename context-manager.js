@@ -5,11 +5,11 @@
  * LLM context optimization with method-level filtering and GitIngest support
  */
 
-const fs = require('fs');
-const path = require('path');
-const TokenCalculator = require('./lib/analyzers/token-calculator');
-const GitIngestFormatter = require('./lib/formatters/gitingest-formatter');
-const TokenUtils = require('./lib/utils/token-utils');
+import fs from 'fs';
+import path from 'path';
+import TokenCalculator from './lib/analyzers/token-calculator.js';
+import GitIngestFormatter from './lib/formatters/gitingest-formatter.js';
+import TokenUtils from './lib/utils/token-utils.js';
 
 /**
  * Generate GitIngest digest from token-analysis-report.json
@@ -225,11 +225,12 @@ function printHelp() {
     console.log('                                       # Step 2: Generate digest (instant)');
 }
 
-if (require.main === module) {
+// ESM entry point check
+if (import.meta.url === `file://${process.argv[1]}`) {
     main();
 }
 
-module.exports = {
+export {
     TokenCalculator,
     generateDigestFromReport,
     generateDigestFromContext

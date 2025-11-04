@@ -1,0 +1,23 @@
+Package: context-manager
+Version: 2.3.5
+Section: devel
+Priority: optional
+Architecture: all
+Depends: nodejs (>= 14.0.0), npm (>= 6.0.0)
+Maintainer: Hakkı Sağdıç <hakkisagdic@gmail.com>
+Homepage: https://github.com/hakkisagdic/context-manager
+Description: Universal LLM context manager with method-level filtering
+ Context Manager is a universal LLM context optimization tool with
+ method-level filtering and exact token counting. It analyzes codebases
+ in 14+ programming languages and generates optimized file/method lists
+ for AI assistant consumption.
+ .
+ Key Features:
+  * TOON format with 40-50% token reduction
+  * 8 output formats (TOON, JSON, YAML, CSV, XML, Markdown, GitIngest)
+  * Smart GitIngest chunking for large repositories
+  * Interactive wizard and live dashboard (with Ink dependencies)
+  * Method-level analysis for 14+ programming languages
+  * Exact token counting with tiktoken
+  * Format conversion utilities
+  * Enterprise logging and auto-update system

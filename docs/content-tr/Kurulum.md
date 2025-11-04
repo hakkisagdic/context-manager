@@ -98,7 +98,7 @@ context-manager aracı, dosya ve metod dahil etme/hariç tutma kontrolü için t
 
 ### Dosya Seviyesi Yapılandırma
 
-#### .calculatorignore (EXCLUDE Modu)
+#### .contextignore (EXCLUDE Modu)
 Bu dosya, analizden hariç tutulacak dosyalar için desenler içerir. gitignore-tarzı sözdizimi kullanır:
 ```bash
 **/*.md              # Tüm dokümantasyon
@@ -106,8 +106,8 @@ Bu dosya, analizden hariç tutulacak dosyalar için desenler içerir. gitignore-
 infrastructure/**    # Altyapı kodu
 ```
 
-#### .calculatorinclude (INCLUDE Modu)
-Bu dosya, analize dahil edilecek dosyalar için desenler belirtir ve .calculatorignore'dan önceliklidir:
+#### .contextinclude (INCLUDE Modu)
+Bu dosya, analize dahil edilecek dosyalar için desenler belirtir ve .contextignore'dan önceliklidir:
 ```bash
 utility-mcp/src/**/*.js
 !utility-mcp/src/workflows/**
@@ -136,12 +136,12 @@ console
 Araç, hangi dosya ve metodların analiz edileceğini belirlerken katı bir öncelik sırası izler:
 
 1. **`.gitignore`** - Her zaman geçerlidir (proje kök dizini)
-2. **`.calculatorinclude`** - Dosyalar için en yüksek öncelik (INCLUDE modu)
-3. **`.calculatorignore`** - Include dosyası yokken kullanılır (EXCLUDE modu)
+2. **`.contextinclude`** - Dosyalar için en yüksek öncelik (INCLUDE modu)
+3. **`.contextignore`** - Include dosyası yokken kullanılır (EXCLUDE modu)
 4. **`.methodinclude`** - Metodlar için en yüksek öncelik (INCLUDE modu)
 5. **`.methodignore`** - Method include dosyası yokken kullanılır (EXCLUDE modu)
 
-Hem .calculatorinclude hem de .calculatorignore mevcut olduğunda, include dosyası önceliklidir ve ignore dosyası göz ardı edilir. Bu, analiz kapsamı üzerinde hassas kontrol sağlar.
+Hem .contextinclude hem de .contextignore mevcut olduğunda, include dosyası önceliklidir ve ignore dosyası göz ardı edilir. Bu, analiz kapsamı üzerinde hassas kontrol sağlar.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L145-L184)
@@ -268,7 +268,7 @@ npm install tiktoken
 ### Yapılandırma Sorunları
 #### Include vs Exclude Mod Karışıklığı
 - **Problem**: Beklenmeyen dosyalar dahil edildi/hariç tutuldu
-- **Çözüm**: .calculatorinclude dosyasının varlığını kontrol edin, çünkü .calculatorignore'dan önceliklidir
+- **Çözüm**: .contextinclude dosyasının varlığını kontrol edin, çünkü .contextignore'dan önceliklidir
 
 #### Desen Eşleştirme Sorunları
 - Desenlerin satır içi yorumları olmadığından emin olun

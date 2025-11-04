@@ -17,7 +17,7 @@
 
 ## LLM Context Optimizasyonu
 
-context-manager aracı, odaklanmış context dosyaları oluşturarak ve gerekli olmayan kodu filtreleyerek AI asistanları için token bütçelerinin verimli yönetimini sağlar. İki temel operasyon modunu destekler: EXCLUDE modu (`.calculatorignore` aracılığıyla) ve INCLUDE modu (`.calculatorinclude` aracılığıyla), ikincisi öncelik alır. Bu ikili filtreleme sistemi, hangi dosyaların analize dahil edileceği üzerinde kesin kontrol sağlar ve geliştiricilerin yalnızca temel uygulama mantığına odaklanmalarına izin verir.
+context-manager aracı, odaklanmış context dosyaları oluşturarak ve gerekli olmayan kodu filtreleyerek AI asistanları için token bütçelerinin verimli yönetimini sağlar. İki temel operasyon modunu destekler: EXCLUDE modu (`.contextignore` aracılığıyla) ve INCLUDE modu (`.contextinclude` aracılığıyla), ikincisi öncelik alır. Bu ikili filtreleme sistemi, hangi dosyaların analize dahil edileceği üzerinde kesin kontrol sağlar ve geliştiricilerin yalnızca temel uygulama mantığına odaklanmalarına izin verir.
 
 LLM context export'u için araç iki format sağlar: ultra-compact format (~2.3k karakter) ve detailed format (~8.6k karakter). Compact format, programatik işleme ve AI tüketimi için ideal yapılandırılmış JSON çıktısı oluştururken, detailed format dosya kategorileri ve önem skorları gibi ek metadata içerir. `--context-clipboard` veya `--context-export` seçenekleri kullanıldığında, araç token sayıları olmadan temiz bir dizin yapısı çıktısı verir, sık AI etkileşimleri için uygundur.
 
@@ -63,7 +63,7 @@ Interactive export seçimi özelliği, kullanıcılardan detaylı JSON raporu ka
 
 context-manager aracını kullanırken, özellikle konfigürasyon ve filtreleme davranışı etrafında birkaç yaygın zorluk ortaya çıkar:
 
-**Include vs Exclude Mod Karışıklığı**: `.calculatorinclude`'ın varlığı `.calculatorignore` üzerinde öncelik alır. Beklenmeyen dosyalar dahil ediliyorsa veya hariç tutuluyorsa, hangi konfigürasyon dosyasının mevcut olduğunu doğrulayın ve istenmeyen olanı kaldırın.
+**Include vs Exclude Mod Karışıklığı**: `.contextinclude`'ın varlığı `.contextignore` üzerinde öncelik alır. Beklenmeyen dosyalar dahil ediliyorsa veya hariç tutuluyorsa, hangi konfigürasyon dosyasının mevcut olduğunu doğrulayın ve istenmeyen olanı kaldırın.
 
 **Desen Eşleştirme Sorunları**: Desen dosyalarında satır içi yorumların bulunmadığından emin olun, çünkü bunlar parse etmeyi engelleyebilir. Doğru glob desenlerini kullanın (`docs/` yerine `docs/**`) ve verbose mod ile konfigürasyonları test ederek dahil etme/hariç tutma nedenlerini görün.
 
@@ -81,7 +81,7 @@ context-manager aracını kullanırken, özellikle konfigürasyon ve filtreleme 
 
 context-manager aracını kullanırken verimliliği maksimize etmek için şu en iyi uygulamaları izleyin:
 
-**Konfigürasyon Yönetimi**: Özellikle büyük repolarda analiz kapsamı üzerinde kesin kontrol için `.calculatorinclude` kullanın. Desenleri basit tutun ve bunları aşamalı olarak test edin.
+**Konfigürasyon Yönetimi**: Özellikle büyük repolarda analiz kapsamı üzerinde kesin kontrol için `.contextinclude` kullanın. Desenleri basit tutun ve bunları aşamalı olarak test edin.
 
 **Performans Optimizasyonu**: Araç performans için optimize edilmiştir, ancak çok büyük kod tabanlarını analiz etmek, işleme yükünü azaltmak için method seviyesinde filtrelemeden faydalanabilir. Method seviyesinde analizi yalnızca gerekli olduğunda etkinleştirin.
 

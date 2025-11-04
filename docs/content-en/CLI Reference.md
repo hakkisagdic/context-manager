@@ -237,7 +237,7 @@ The tool gracefully handles missing configuration files and provides informative
 ## Performance Considerations
 When analyzing large codebases, consider the following performance optimizations:
 
-- Use .calculatorinclude to restrict analysis to essential files only
+- Use .contextinclude to restrict analysis to essential files only
 - Enable method-level analysis to focus on specific functionality
 - Avoid verbose mode for large repositories to reduce output processing
 - Use the compact context format for faster processing and smaller output
@@ -285,7 +285,7 @@ Verify the option names and syntax. Use --help to see valid options.
 On some systems, clipboard operations may require additional permissions. The tool automatically falls back to file output when clipboard access is denied.
 
 ### Missing expected files
-Check if files are excluded by .gitignore or calculator rules. Use verbose mode to see which files are being processed.
+Check if files are excluded by .gitignore or context rules. Use verbose mode to see which files are being processed.
 
 ### Token count discrepancies
 Ensure tiktoken is installed for exact token counting. Without tiktoken, the tool uses estimation based on file type.

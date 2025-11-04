@@ -250,10 +250,10 @@ test('Configuration - .methodignore exists', () => {
 });
 
 // Test 19: Configuration file existence
-test('Configuration - .calculatorinclude exists', () => {
-    const filePath = path.join(__dirname, '..', '.calculatorinclude');
+test('Configuration - .contextinclude exists', () => {
+    const filePath = path.join(__dirname, '..', '.contextinclude');
     if (!fs.existsSync(filePath)) {
-        console.log('   ⚠️  Warning: .calculatorinclude not found (optional)');
+        console.log('   ⚠️  Warning: .contextinclude not found (optional)');
     }
     // Pass test regardless - it's optional
 });

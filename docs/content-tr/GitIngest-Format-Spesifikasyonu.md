@@ -281,7 +281,7 @@ GitIngest formatı ile çalışırken yaygın sorunlar ve çözümleri:
 
 ### Dosya Oluşturma Sorunları
 - **Digest oluşturulmadı**: Çıktı dizininin yazılabilir olduğundan ve yeterli izinlere sahip olduğunuzdan emin olun
-- **Eksik dosyalar**: Dosyaların `.gitignore`, `.calculatorignore` veya diğer filtre kuralları tarafından hariç tutulmadığını doğrulayın
+- **Eksik dosyalar**: Dosyaların `.gitignore`, `.contextignore` veya diğer filtre kuralları tarafından hariç tutulmadığını doğrulayın
 - **Boş digest**: Analizin dahil etme kriterlerine uyan dosyaları bulduğunu kontrol edin
 
 ### Method Filtreleme Sorunları

@@ -98,7 +98,7 @@ The context-manager tool uses several configuration files to control file and me
 
 ### File-Level Configuration
 
-#### .calculatorignore (EXCLUDE Mode)
+#### .contextignore (EXCLUDE Mode)
 This file contains patterns for files to exclude from analysis. It follows gitignore-style syntax:
 ```bash
 **/*.md              # All documentation
@@ -106,8 +106,8 @@ This file contains patterns for files to exclude from analysis. It follows gitig
 infrastructure/**    # Infrastructure code
 ```
 
-#### .calculatorinclude (INCLUDE Mode)
-This file specifies patterns for files to include in analysis, taking priority over .calculatorignore:
+#### .contextinclude (INCLUDE Mode)
+This file specifies patterns for files to include in analysis, taking priority over .contextignore:
 ```bash
 utility-mcp/src/**/*.js
 !utility-mcp/src/workflows/**
@@ -136,12 +136,12 @@ console
 The tool follows a strict priority order when determining which files and methods to analyze:
 
 1. **`.gitignore`** - Always respected (project root)
-2. **`.calculatorinclude`** - Highest priority for files (INCLUDE mode)
-3. **`.calculatorignore`** - Used when no include file exists (EXCLUDE mode)  
+2. **`.contextinclude`** - Highest priority for files (INCLUDE mode)
+3. **`.contextignore`** - Used when no include file exists (EXCLUDE mode)  
 4. **`.methodinclude`** - Highest priority for methods (INCLUDE mode)
 5. **`.methodignore`** - Used when no method include file exists (EXCLUDE mode)
 
-When both .calculatorinclude and .calculatorignore exist, the include file takes precedence and the ignore file is ignored. This allows for precise control over analysis scope.
+When both .contextinclude and .contextignore exist, the include file takes precedence and the ignore file is ignored. This allows for precise control over analysis scope.
 
 **Section sources**
 - [README.md](file://README.md#L145-L184)
@@ -268,7 +268,7 @@ npm install tiktoken
 ### Configuration Issues
 #### Include vs Exclude Mode Confusion
 - **Problem**: Unexpected files included/excluded
-- **Solution**: Check for .calculatorinclude file presence, as it takes priority over .calculatorignore
+- **Solution**: Check for .contextinclude file presence, as it takes priority over .contextignore
 
 #### Pattern Matching Problems
 - Ensure patterns don't have inline comments

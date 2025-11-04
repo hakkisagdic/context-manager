@@ -29,21 +29,21 @@ The context-manager tool implements a well-defined priority hierarchy for config
 
 The priority order from highest to lowest is:
 
-1. **`.calculatorinclude`** - INCLUDE mode (highest priority)
-2. **`.calculatorignore`** - EXCLUDE mode 
+1. **`.contextinclude`** - INCLUDE mode (highest priority)
+2. **`.contextignore`** - EXCLUDE mode 
 3. **`.gitignore`** - Standard git exclusions (always respected)
 
-When `.calculatorinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the patterns in this file will be analyzed, and `.calculatorignore` is completely ignored. When only `.calculatorignore` exists, the tool operates in EXCLUDE mode, analyzing all files except those matching the ignore patterns. The `.gitignore` file is always respected regardless of the mode.
+When `.contextinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the patterns in this file will be analyzed, and `.contextignore` is completely ignored. When only `.contextignore` exists, the tool operates in EXCLUDE mode, analyzing all files except those matching the ignore patterns. The `.gitignore` file is always respected regardless of the mode.
 
 ```mermaid
 graph TD
-A[Start Analysis] --> B{.calculatorinclude exists?}
+A[Start Analysis] --> B{.contextinclude exists?}
 B --> |Yes| C[INCLUDE Mode]
-B --> |No| D{.calculatorignore exists?}
+B --> |No| D{.contextignore exists?}
 D --> |Yes| E[EXCLUDE Mode]
 D --> |No| F[Include All Files]
-C --> G[Analyze only files matching .calculatorinclude patterns]
-E --> H[Analyze all except files matching .calculatorignore patterns]
+C --> G[Analyze only files matching .contextinclude patterns]
+E --> H[Analyze all except files matching .contextignore patterns]
 F --> I[Analyze all files, respecting .gitignore]
 G --> J[Respect .gitignore exclusions]
 H --> J
@@ -64,14 +64,14 @@ The context-manager tool supports creating custom filter patterns for specialize
 
 ### File-Level Filtering
 
-File-level filtering is controlled through `.calculatorinclude` and `.calculatorignore` files. These files support glob patterns for flexible file selection:
+File-level filtering is controlled through `.contextinclude` and `.contextignore` files. These files support glob patterns for flexible file selection:
 
 - `**/*.md` - Exclude all markdown files recursively
 - `infrastructure/**` - Exclude entire infrastructure directory
 - `utility-mcp/src/**/*.js` - Include all JavaScript files in src directory
 - `!utility-mcp/src/testing/**` - Negation pattern to exclude testing files
 
-For focusing on specific feature areas, create a `.calculatorinclude` file with patterns targeting the desired directories:
+For focusing on specific feature areas, create a `.contextinclude` file with patterns targeting the desired directories:
 
 ```bash
 # Include only authentication-related files
@@ -80,7 +80,7 @@ src/middleware/auth.js
 config/auth-config.json
 ```
 
-For excluding legacy code, use negation patterns in `.calculatorinclude`:
+For excluding legacy code, use negation patterns in `.contextinclude`:
 
 ```bash
 # Include all core files but exclude legacy modules
@@ -205,7 +205,7 @@ While the current implementation doesn't include explicit caching, it optimizes 
 - **Batch processing**: Processes all files in a directory before moving to subdirectories
 - **Minimal I/O operations**: Reads configuration files only once at initialization
 
-For large projects, consider limiting analysis to specific directories by configuring `.calculatorinclude` to target only the relevant areas:
+For large projects, consider limiting analysis to specific directories by configuring `.contextinclude` to target only the relevant areas:
 
 ```bash
 # Focus analysis on core modules only
@@ -323,7 +323,7 @@ SUMMARY ||--o{ FILE : contains
 
 ### Performance Considerations
 
-- **Limit scope**: Use `.calculatorinclude` to focus on relevant code areas
+- **Limit scope**: Use `.contextinclude` to focus on relevant code areas
 - **Avoid overly broad patterns**: Specific patterns are more efficient than broad ones with many negations
 - **Regular maintenance**: Periodically review and update patterns as the codebase evolves
 - **Cache results**: For CI/CD pipelines, consider caching analysis results when source files haven't changed
@@ -333,7 +333,7 @@ SUMMARY ||--o{ FILE : contains
 ### Common Issues
 
 - **Patterns not working**: Ensure no inline comments in pattern files and use proper glob syntax
-- **Wrong files included**: Check if `.calculatorinclude` exists (takes priority over `.calculatorignore`)
+- **Wrong files included**: Check if `.contextinclude` exists (takes priority over `.contextignore`)
 - **Performance issues**: Limit analysis to specific directories using targeted include patterns
 - **Missing expected files**: Verify files are not excluded by `.gitignore` (always respected)
 

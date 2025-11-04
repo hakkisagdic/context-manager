@@ -19,58 +19,71 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 ## Files
 
 - **`context-manager.js`** - Main LLM context analysis script with exact token counting
-- **`.calculatorignore`** - Files to exclude from token calculation (EXCLUDE mode)
-- **`.calculatorinclude`** - Files to include in token calculation (INCLUDE mode)
+- **`.contextignore`** - Files to exclude from token calculation (EXCLUDE mode)
+- **`.contextinclude`** - Files to include in token calculation (INCLUDE mode)
 - **`README.md`** - This documentation file
 - **`README-tr.md`** - Turkish documentation (Türkçe dokümantasyon)
 
 ## Features
 
+### 🎨 User Interface
+- 🧙 **Interactive Wizard Mode** - User-friendly guided setup (default)
+- 💻 **CLI Mode** - Traditional command-line interface (--cli flag)
+- 📤 **Interactive export** - Prompts for export choice when no options specified
+
+### 🔢 Token Analysis
 - ✅ **Exact token counting** using tiktoken (GPT-4 compatible)
 - 🌍 **Multi-language support** - 14+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala
-- 🚫 **Dual ignore system** - respects both `.gitignore` and calculator ignore rules
-- 📋 **Include/Exclude modes** - `.calculatorinclude` takes priority over `.calculatorignore`
+- 🎯 **Method-level analysis** - Analyze tokens per function/method
 - 📊 **Detailed reporting** - by file type, largest files, statistics
-- 💾 **Optional JSON export** - detailed analysis reports
-- 🔍 **Verbose mode (default)** - shows all included files for transparency
+
+### 🎯 Filtering & Configuration
+- 🚫 **Dual ignore system** - respects both `.gitignore` and context ignore rules
+- 📋 **Include/Exclude modes** - `.contextinclude` takes priority over `.contextignore`
+- 🔍 **Method filtering** - `.methodinclude` and `.methodignore` for granular control
 - 🎯 **Core application focus** - configured to analyze only essential code files
-- 📈 **Context optimization** - perfect for LLM context window management
+
+### 📤 Export Options
 - 🤖 **LLM context export** - generate optimized file lists for LLM consumption
 - 📋 **Clipboard integration** - copy context directly to clipboard
-- ⚡ **JSON format** - Structured clipboard output identical to llm-context.json file
-- 🎯 **LLM-optimized** - Clean directory structure without token counts
-- 🔗 **Consistent exports** - Clipboard and file exports use identical JSON format
-- 📤 **Interactive export** - Prompts for export choice when no options specified
+- 💾 **JSON/YAML/CSV/XML exports** - multiple format options
+- 📄 **GitIngest format** - Single-file digest for LLM consumption (inspired by [GitIngest](https://github.com/coderamp-labs/gitingest))
+- 🎯 **TOON format** - Ultra-compact format (40-50% token reduction)
 - 🔀 **Dual context modes** - compact (default) or detailed format
-- 📄 **GitIngest format** - Generate single-file digest for LLM consumption (inspired by [GitIngest](https://github.com/coderamp-labs/gitingest))
 
 ## Quick Start
 
-### Core Application Analysis (Default)
+### 🧙 Interactive Wizard Mode (Default)
 ```bash
-# Interactive analysis with export selection
+# Launch interactive wizard (guides you through options)
 context-manager
+```
 
-# Analyze with minimal LLM context format
-context-manager --context-clipboard
+The wizard provides a user-friendly interface to:
+- Select your use case (Bug Fix, Feature, Code Review, etc.)
+- Choose target LLM (Claude, GPT-4, Gemini, etc.)
+- Pick output format (TOON, JSON, YAML, etc.)
 
-# Save detailed report
-context-manager --save-report
+**Note:** Wizard mode uses Ink terminal UI. If you experience visual artifacts, use CLI mode with `--cli` flag.
 
-# Generate LLM context file
-context-manager --context-export
+### 💻 CLI Mode
+```bash
+# Use CLI mode instead of wizard
+context-manager --cli
 
-# Generate GitIngest-style digest (single file for LLMs)
-context-manager --gitingest
+# CLI mode with options
+context-manager --cli --save-report
+context-manager --cli --context-clipboard
+context-manager --cli --gitingest
+context-manager --cli --method-level
 
-# Method-level analysis
-context-manager --method-level
+# Any analysis flag automatically enables CLI mode
+context-manager -s              # Auto CLI (save report)
+context-manager -m              # Auto CLI (method-level)
+context-manager --context-export  # Auto CLI (export)
 
 # Combine multiple exports
-context-manager -g -s  # GitIngest digest + detailed report
-
-# Use detailed context format (legacy)
-context-manager --method-level --detailed-context --context-clipboard
+context-manager --cli -g -s  # GitIngest digest + detailed report
 ```
 
 ### Wrapper Script Usage
@@ -94,7 +107,7 @@ The tool is configured to focus on **core application logic only**:
 - Configuration management
 - Error handling and monitoring
 
-### 🚫 Excluded via calculator ignore rules
+### 🚫 Excluded via context ignore rules
 - Documentation files (`.md`, `.txt`)
 - Configuration files (`.json`, `.yml`)
 - Infrastructure and deployment files
@@ -148,30 +161,30 @@ This interactive mode ensures you never miss the opportunity to export your anal
 
 The token calculator supports two complementary filtering modes:
 
-### EXCLUDE Mode (.calculatorignore)
-- **Default mode** when only `.calculatorignore` exists
+### EXCLUDE Mode (.contextignore)
+- **Default mode** when only `.contextignore` exists
 - Includes all files **except** those matching ignore patterns
 - Traditional gitignore-style exclusion logic
 
-### INCLUDE Mode (.calculatorinclude) 
-- **Priority mode** - when `.calculatorinclude` exists, `.calculatorignore` is ignored
+### INCLUDE Mode (.contextinclude) 
+- **Priority mode** - when `.contextinclude` exists, `.contextignore` is ignored
 - Includes **only** files matching include patterns
 - More precise control for specific file selection
 - Perfect for creating focused analysis sets
 
 ### Mode Priority
-1. If `.calculatorinclude` exists → **INCLUDE mode** (ignore `.calculatorignore`)
-2. If only `.calculatorignore` exists → **EXCLUDE mode**
+1. If `.contextinclude` exists → **INCLUDE mode** (ignore `.contextignore`)
+2. If only `.contextignore` exists → **EXCLUDE mode**
 3. If neither exists → Include all files (respect `.gitignore` only)
 
 ### Example Usage
 ```bash
-# EXCLUDE mode: Include everything except patterns in .calculatorignore
-rm .calculatorinclude  # Remove include file
+# EXCLUDE mode: Include everything except patterns in .contextignore
+rm .contextinclude  # Remove include file
 context-manager
 
-# INCLUDE mode: Include only patterns in .calculatorinclude
-# (automatically ignores .calculatorignore)
+# INCLUDE mode: Include only patterns in .contextinclude
+# (automatically ignores .contextignore)
 context-manager
 ```
 
@@ -370,7 +383,7 @@ FILE: src/utils.js
 - **Tree Visualization**: Clear directory structure
 - **Token Estimates**: Formatted as "1.2k" or "1.5M"
 - **Sorted Output**: Files sorted by token count (largest first)
-- **Filter Compatible**: Respects all `.gitignore` and calculator ignore rules
+- **Filter Compatible**: Respects all `.gitignore` and context ignore rules
 
 ### Use Cases
 
@@ -386,9 +399,9 @@ Context-manager implements GitIngest format v0.3.1. See [docs/GITINGEST_VERSION.
 
 ## Configuration
 
-### .calculatorignore File (EXCLUDE Mode)
+### .contextignore File (EXCLUDE Mode)
 
-The `.calculatorignore` file is pre-configured for core application analysis:
+The `.contextignore` file is pre-configured for core application analysis:
 
 ```bash
 # Current focus: Only core JS files in utility-mcp/src/
@@ -405,9 +418,9 @@ utility-mcp/src/workflows/** # Workflow JS files
 utility-mcp/src/testing/**   # Testing utilities
 ```
 
-### .calculatorinclude File (INCLUDE Mode)
+### .contextinclude File (INCLUDE Mode)
 
-The `.calculatorinclude` file provides precise file selection:
+The `.contextinclude` file provides precise file selection:
 
 ```bash
 # Include only core JavaScript files
@@ -426,7 +439,7 @@ utility-mcp/src/**/*.js
 
 ### Creating Custom Configurations
 
-**For EXCLUDE mode** (edit `.calculatorignore`):
+**For EXCLUDE mode** (edit `.contextignore`):
 ```bash
 # Remove lines to include more file types
 # Add patterns to exclude specific files
@@ -439,7 +452,7 @@ your-large-file.js
 specific-directory/**
 ```
 
-**For INCLUDE mode** (create `.calculatorinclude`):
+**For INCLUDE mode** (create `.contextinclude`):
 ```bash
 # Include specific files or patterns
 src/**/*.js          # All JS files in src
@@ -455,9 +468,9 @@ src/**/*.js
 ## Configuration File Priority
 
 1. **`.gitignore`** (project root) - Standard git exclusions (always respected)
-2. **`.calculatorinclude`** (token-analysis/) - INCLUDE mode (highest priority)
-3. **`.calculatorignore`** (token-analysis/) - EXCLUDE mode (used when no include file)
-4. **`.calculatorignore`** (project root) - Fallback EXCLUDE mode location
+2. **`.contextinclude`** (token-analysis/) - INCLUDE mode (highest priority)
+3. **`.contextignore`** (token-analysis/) - EXCLUDE mode (used when no include file)
+4. **`.contextignore`** (project root) - Fallback EXCLUDE mode location
 
 ## Installation
 
@@ -521,8 +534,8 @@ You can integrate this tool into:
 ## Troubleshooting
 
 ### Include vs Exclude Mode Issues
-- **INCLUDE mode active**: Remove `.calculatorinclude` to use EXCLUDE mode
-- **Wrong files included**: Check if `.calculatorinclude` exists (takes priority)
+- **INCLUDE mode active**: Remove `.contextinclude` to use EXCLUDE mode
+- **Wrong files included**: Check if `.contextinclude` exists (takes priority)
 - **Mode confusion**: Use verbose mode to see which mode is active
 
 ### Patterns Not Working
@@ -657,10 +670,10 @@ analyzer.run();
 
 **Priority Order:**
 1. `.gitignore` (project root) - Standard git exclusions (always respected)
-2. `.calculatorinclude` - INCLUDE mode (highest priority for files)
-3. `.calculatorignore` - EXCLUDE mode (fallback for files)
+2. `.contextinclude` - INCLUDE mode (highest priority for files)
+3. `.contextignore` - EXCLUDE mode (fallback for files)
 
-**`.calculatorinclude`** - Include only these files:
+**`.contextinclude`** - Include only these files:
 ```bash
 # Include only core JavaScript files
 utility-mcp/src/**/*.js
@@ -668,7 +681,7 @@ utility-mcp/src/**/*.js
 !utility-mcp/src/workflows/**
 ```
 
-**`.calculatorignore`** - Exclude these files:  
+**`.contextignore`** - Exclude these files:  
 ```bash
 # Exclude documentation and config
 **/*.md

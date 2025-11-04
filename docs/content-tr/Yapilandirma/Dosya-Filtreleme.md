@@ -17,7 +17,7 @@
 
 ## Giriş
 
-context-manager aracı, LLM (Large Language Model) context oluşturma için kod analizini optimize etmek üzere tasarlanmış gelişmiş bir dosya filtreleme mekanizması uygular. Bu sistem, `.calculatorignore` ve `.calculatorinclude` yapilandirma dosyalarını kullanan çift modlu bir yaklaşım aracılığıyla hangi dosyaların analize dahil edildiği veya hariç tutulduğu üzerinde hassas kontrol sağlar. Filtreleme sistemi, mevcut `.gitignore` kurallarına saygı gösterirken, belirli kod bileşenlerinin odaklanmış analizi için ek kontrol katmanları sağlar. Bu dokümantasyon, kod analizi ve token hesaplamasında optimal sonuçlar elde etmek için dosya filtreleme sistemini yapılandırmanın implementasyonunu, kullanımını ve en iyi uygulamalarını detaylandırır.
+context-manager aracı, LLM (Large Language Model) context oluşturma için kod analizini optimize etmek üzere tasarlanmış gelişmiş bir dosya filtreleme mekanizması uygular. Bu sistem, `.contextignore` ve `.contextinclude` yapilandirma dosyalarını kullanan çift modlu bir yaklaşım aracılığıyla hangi dosyaların analize dahil edildiği veya hariç tutulduğu üzerinde hassas kontrol sağlar. Filtreleme sistemi, mevcut `.gitignore` kurallarına saygı gösterirken, belirli kod bileşenlerinin odaklanmış analizi için ek kontrol katmanları sağlar. Bu dokümantasyon, kod analizi ve token hesaplamasında optimal sonuçlar elde etmek için dosya filtreleme sistemini yapılandırmanın implementasyonunu, kullanımını ve en iyi uygulamalarını detaylandırır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
@@ -25,27 +25,27 @@ context-manager aracı, LLM (Large Language Model) context oluşturma için kod 
 
 ## Çift Modlu Filtreleme Sistemi
 
-context-manager aracı, iki tamamlayıcı yapilandirma dosyası aracılığıyla çalışan çift modlu bir filtreleme sistemi kullanır: EXCLUDE modu için `.calculatorignore` ve INCLUDE modu için `.calculatorinclude`. Bu modlar, proje gereksinimlerine göre dosya seçimi için esnek yaklaşımlar sağlar.
+context-manager aracı, iki tamamlayıcı yapilandirma dosyası aracılığıyla çalışan çift modlu bir filtreleme sistemi kullanır: EXCLUDE modu için `.contextignore` ve INCLUDE modu için `.contextinclude`. Bu modlar, proje gereksinimlerine göre dosya seçimi için esnek yaklaşımlar sağlar.
 
-### EXCLUDE Modu (.calculatorignore)
+### EXCLUDE Modu (.contextignore)
 
-EXCLUDE modu, geleneksel bir ignore sistemi olarak çalışır; burada tüm dosyalar varsayılan olarak dahil edilir, `.calculatorignore` dosyasında belirtilen pattern'lerle eşleşenler hariç. Bu mod, çoğu dosyanın analiz edilmesi gereken ancak belirli türlerin veya dizinlerin hariç tutulması gereken projeler için idealdir. Yapilandirma, gitignore tarzı sözdizimi takip eder ve kullanıcıların analizden filtrelenmesi gereken dosyalarla eşleşen pattern'leri belirtmesine olanak tanır.
+EXCLUDE modu, geleneksel bir ignore sistemi olarak çalışır; burada tüm dosyalar varsayılan olarak dahil edilir, `.contextignore` dosyasında belirtilen pattern'lerle eşleşenler hariç. Bu mod, çoğu dosyanın analiz edilmesi gereken ancak belirli türlerin veya dizinlerin hariç tutulması gereken projeler için idealdir. Yapilandirma, gitignore tarzı sözdizimi takip eder ve kullanıcıların analizden filtrelenmesi gereken dosyalarla eşleşen pattern'leri belirtmesine olanak tanır.
 
-### INCLUDE Modu (.calculatorinclude)
+### INCLUDE Modu (.contextinclude)
 
-INCLUDE modu, belirtim yoluyla dahil etme prensibi üzerine çalışır; burada yalnızca `.calculatorinclude` dosyasındaki pattern'lerle eşleşen dosyalar işlenir. Bu mod, analiz kapsamı üzerinde hassas kontrol sağlar ve yalnızca açıkça tanımlanan dosyaların dahil edilmesini garanti eder. Dokümantasyon, testler veya yapilandirma dosyaları gibi çevresel dosyaları hariç tutarken core uygulama bileşenlerine analizi odaklamak için özellikle yararlıdır.
+INCLUDE modu, belirtim yoluyla dahil etme prensibi üzerine çalışır; burada yalnızca `.contextinclude` dosyasındaki pattern'lerle eşleşen dosyalar işlenir. Bu mod, analiz kapsamı üzerinde hassas kontrol sağlar ve yalnızca açıkça tanımlanan dosyaların dahil edilmesini garanti eder. Dokümantasyon, testler veya yapilandirma dosyaları gibi çevresel dosyaları hariç tutarken core uygulama bileşenlerine analizi odaklamak için özellikle yararlıdır.
 
-Sistem, yapilandirma dosyalarının varlığına göre hangi modun kullanılacağını otomatik olarak belirler. Hem `.calculatorinclude` hem de `.calculatorignore` mevcut olduğunda, INCLUDE modu önceliğe sahiptir ve daha kısıtlayıcı dahil etme kurallarının uygulanmasını sağlar.
+Sistem, yapilandirma dosyalarının varlığına göre hangi modun kullanılacağını otomatik olarak belirler. Hem `.contextinclude` hem de `.contextignore` mevcut olduğunda, INCLUDE modu önceliğe sahiptir ve daha kısıtlayıcı dahil etme kurallarının uygulanmasını sağlar.
 
 ```mermaid
 graph TD
-A[Start Analysis] --> B{.calculatorinclude exists?}
+A[Start Analysis] --> B{.contextinclude exists?}
 B --> |Yes| C[Activate INCLUDE Mode]
-B --> |No| D{.calculatorignore exists?}
+B --> |No| D{.contextignore exists?}
 D --> |Yes| E[Activate EXCLUDE Mode]
 D --> |No| F[Include All Files<br>Respect .gitignore Only]
-C --> G[Process Only Files Matching<br>.calculatorinclude Patterns]
-E --> H[Process All Files Except Those Matching<br>.calculatorignore Patterns]
+C --> G[Process Only Files Matching<br>.contextinclude Patterns]
+E --> H[Process All Files Except Those Matching<br>.contextignore Patterns]
 ```
 
 **Diagram kaynakları**
@@ -135,14 +135,14 @@ Dosya filtreleme sistemi, farklı yapilandirma kaynakları arasındaki potansiye
 Sistem, dosya dahil edilmesini değerlendirirken katı bir öncelik sırası takip eder:
 
 1. **`.gitignore`** - Standart git hariç tutmaları her zaman saygı gösterilir ve dosya filtreleme için temel oluşturur
-2. **`.calculatorinclude`** - INCLUDE modu kuralları dosya seçimi için en yüksek önceliğe sahiptir
-3. **`.calculatorignore`** - EXCLUDE modu kuralları, INCLUDE modu yapılandırması olmadığında uygulanır
+2. **`.contextinclude`** - INCLUDE modu kuralları dosya seçimi için en yüksek önceliğe sahiptir
+3. **`.contextignore`** - EXCLUDE modu kuralları, INCLUDE modu yapılandırması olmadığında uygulanır
 
-Bu hiyerarşi, git tarafından ignore edilen dosyaların analize asla dahil edilmemesini sağlarken, yalnızca belirli dosyaları dahil etme (`.calculatorinclude` ile) veya belirli dosyaları hariç tutma (`.calculatorignore` ile) esnekliği sağlar.
+Bu hiyerarşi, git tarafından ignore edilen dosyaların analize asla dahil edilmemesini sağlarken, yalnızca belirli dosyaları dahil etme (`.contextinclude` ile) veya belirli dosyaları hariç tutma (`.contextignore` ile) esnekliği sağlar.
 
 ### Öncelik Mantığının Implementasyonu
 
-Öncelik kuralları, `GitIgnoreParser` class'ının `loadPatterns` methodunda uygulanır. Hem `.calculatorinclude` hem de `.calculatorignore` dosyaları mevcut olduğunda, sistem INCLUDE modu yapılandırmasını önceliklendirir. `hasIncludeFile` flag'i, bir `.calculatorinclude` dosyası tespit edildiğinde true olarak ayarlanır ve bu, `isIgnored` methodunda filtreleme davranışını etkiler.
+Öncelik kuralları, `GitIgnoreParser` class'ının `loadPatterns` methodunda uygulanır. Hem `.contextinclude` hem de `.contextignore` dosyaları mevcut olduğunda, sistem INCLUDE modu yapılandırmasını önceliklendirir. `hasIncludeFile` flag'i, bir `.contextinclude` dosyası tespit edildiğinde true olarak ayarlanır ve bu, `isIgnored` methodunda filtreleme davranışını etkiler.
 
 Implementasyon, INCLUDE modu kurallarının EXCLUDE modu kurallarını tamamen geçersiz kılmasını sağlayarak dosya seçiminde herhangi bir belirsizliği önler. Bu tasarım seçimi, genişlik üzerinde hassasiyeti vurgular ve kullanıcıların gerektiğinde sıkı odaklanmış analiz kapsamları oluşturmasına olanak tanır.
 
@@ -151,8 +151,8 @@ graph TD
 A[File Path] --> B[Check .gitignore]
 B --> |Matched| C[Exclude File]
 B --> |Not Matched| D{hasIncludeFile?}
-D --> |True| E[Check .calculatorinclude]
-D --> |False| F[Check .calculatorignore]
+D --> |True| E[Check .contextinclude]
+D --> |False| F[Check .contextignore]
 E --> |Matched & Not Negated| G[Include File]
 E --> |Not Matched or Negated| H[Exclude File]
 F --> |Matched & Not Negated| H[Exclude File]
@@ -173,13 +173,13 @@ Dosya filtreleme mekanizması, pattern yükleme, ayrıştırma ve dosya hariç t
 
 ### Pattern Yükleme ve Başlatma
 
-Filtreleme sistemi, uygun yapilandirma dosyalarını bulan ve yükleyen `TokenCalculator` class'ındaki `initGitIgnore` methodu aracılığıyla başlatılır. Sistem, esnek yapilandirma yerleşimine olanak tanıyarak hem araç dizininde hem de proje kökünde `.calculatorignore` ve `.calculatorinclude` dosyalarını arar.
+Filtreleme sistemi, uygun yapilandirma dosyalarını bulan ve yükleyen `TokenCalculator` class'ındaki `initGitIgnore` methodu aracılığıyla başlatılır. Sistem, esnek yapilandirma yerleşimine olanak tanıyarak hem araç dizininde hem de proje kökünde `.contextignore` ve `.contextinclude` dosyalarını arar.
 
 Yapilandirma dosyaları bulunduğunda, pattern'leri verimli eşleştirme için regular expression'lara ayrıştırılır. `parsePatternFile` methodu, yapilandirma dosyasının her satırını işler, yorumları ve boş satırları ignore eder, ardından her pattern'i `convertToRegex` methodunu kullanarak bir regex nesnesine dönüştürür.
 
 ### Dosya Hariç Tutma Mantığı
 
-Core filtreleme mantığı, belirli bir dosyanın analizden hariç tutulup tutulmayacağını belirleyen `isIgnored` methodunda bulunur. INCLUDE modu için, method önce dosyanın `.calculatorinclude` dosyasındaki herhangi bir pattern ile eşleşip eşleşmediğini kontrol eder. Eşleşen pattern bulunamazsa (veya bir negasyon pattern'i eşleşirse), dosya hariç tutulur. EXCLUDE modu için, dosyalar `.calculatorignore` dosyasındaki herhangi bir pattern ile eşleşirlerse hariç tutulur.
+Core filtreleme mantığı, belirli bir dosyanın analizden hariç tutulup tutulmayacağını belirleyen `isIgnored` methodunda bulunur. INCLUDE modu için, method önce dosyanın `.contextinclude` dosyasındaki herhangi bir pattern ile eşleşip eşleşmediğini kontrol eder. Eşleşen pattern bulunamazsa (veya bir negasyon pattern'i eşleşirse), dosya hariç tutulur. EXCLUDE modu için, dosyalar `.contextignore` dosyasındaki herhangi bir pattern ile eşleşirlerse hariç tutulur.
 
 Sistem ayrıca, INCLUDE modu pattern'lerine göre dizinlerin geçilip geçilmemesi gerektiğini kontrol ederek dizin geçişini verimli bir şekilde yönetir ve gereksiz dosya sistemi keşfini önler.
 
@@ -232,7 +232,7 @@ Sık karşılaşılan bir sorun, özellikle wildcard'lar ve negasyon ile ilgili 
 
 ### Beklenmeyen Dosya Dahil Edilmeleri
 
-Beklenmeyen dosya dahil edilmeleri genellikle öncelik kuralı yanlış anlamalarından kaynaklanır. Hem `.calculatorinclude` hem de `.calculatorignore` dosyaları mevcut olduğunda, yalnızca INCLUDE modu kuralları uygulanır. EXCLUDE modu davranışı bekleyen kullanıcılar, dosyaların `.calculatorignore` kurallarının aksine dahil edildiğini veya hariç tutulduğunu görünce şaşırabilir. Konsol çıktısının etkin mod için kontrol edilmesi bu sorunu teşhis etmeye yardımcı olabilir.
+Beklenmeyen dosya dahil edilmeleri genellikle öncelik kuralı yanlış anlamalarından kaynaklanır. Hem `.contextinclude` hem de `.contextignore` dosyaları mevcut olduğunda, yalnızca INCLUDE modu kuralları uygulanır. EXCLUDE modu davranışı bekleyen kullanıcılar, dosyaların `.contextignore` kurallarının aksine dahil edildiğini veya hariç tutulduğunu görünce şaşırabilir. Konsol çıktısının etkin mod için kontrol edilmesi bu sorunu teşhis etmeye yardımcı olabilir.
 
 ### Performans Etkileri
 

@@ -17,7 +17,7 @@
 
 ## Introduction
 
-The context-manager tool implements a sophisticated file filtering mechanism designed to optimize code analysis for LLM (Large Language Model) context generation. This system enables precise control over which files are included or excluded from analysis through a dual-mode approach using `.calculatorignore` and `.calculatorinclude` configuration files. The filtering system respects existing `.gitignore` rules while providing additional layers of control for focused analysis of specific code components. This documentation details the implementation, usage, and best practices for configuring the file filtering system to achieve optimal results in code analysis and token calculation.
+The context-manager tool implements a sophisticated file filtering mechanism designed to optimize code analysis for LLM (Large Language Model) context generation. This system enables precise control over which files are included or excluded from analysis through a dual-mode approach using `.contextignore` and `.contextinclude` configuration files. The filtering system respects existing `.gitignore` rules while providing additional layers of control for focused analysis of specific code components. This documentation details the implementation, usage, and best practices for configuring the file filtering system to achieve optimal results in code analysis and token calculation.
 
 **Section sources**
 - [README.md](file://README.md#L544-L610)
@@ -25,27 +25,27 @@ The context-manager tool implements a sophisticated file filtering mechanism des
 
 ## Dual-Mode Filtering System
 
-The context-manager tool employs a dual-mode filtering system that operates through two complementary configuration files: `.calculatorignore` for EXCLUDE mode and `.calculatorinclude` for INCLUDE mode. These modes provide flexible approaches to file selection based on project requirements.
+The context-manager tool employs a dual-mode filtering system that operates through two complementary configuration files: `.contextignore` for EXCLUDE mode and `.contextinclude` for INCLUDE mode. These modes provide flexible approaches to file selection based on project requirements.
 
-### EXCLUDE Mode (.calculatorignore)
+### EXCLUDE Mode (.contextignore)
 
-EXCLUDE mode functions as a traditional ignore system, where all files are included by default except those matching patterns specified in the `.calculatorignore` file. This mode is ideal for projects where most files should be analyzed, but specific types or directories need to be excluded. The configuration follows gitignore-style syntax, allowing users to specify patterns that match files to be filtered out from analysis.
+EXCLUDE mode functions as a traditional ignore system, where all files are included by default except those matching patterns specified in the `.contextignore` file. This mode is ideal for projects where most files should be analyzed, but specific types or directories need to be excluded. The configuration follows gitignore-style syntax, allowing users to specify patterns that match files to be filtered out from analysis.
 
-### INCLUDE Mode (.calculatorinclude)
+### INCLUDE Mode (.contextinclude)
 
-INCLUDE mode operates on the principle of inclusion by specification, where only files matching patterns in the `.calculatorinclude` file are processed. This mode provides precise control over analysis scope, ensuring that only explicitly defined files are included. It is particularly useful for focusing analysis on core application components while excluding peripheral files like documentation, tests, or configuration files.
+INCLUDE mode operates on the principle of inclusion by specification, where only files matching patterns in the `.contextinclude` file are processed. This mode provides precise control over analysis scope, ensuring that only explicitly defined files are included. It is particularly useful for focusing analysis on core application components while excluding peripheral files like documentation, tests, or configuration files.
 
-The system automatically determines which mode to use based on the presence of configuration files. When both `.calculatorinclude` and `.calculatorignore` exist, INCLUDE mode takes precedence, ensuring that the more restrictive inclusion rules are applied.
+The system automatically determines which mode to use based on the presence of configuration files. When both `.contextinclude` and `.contextignore` exist, INCLUDE mode takes precedence, ensuring that the more restrictive inclusion rules are applied.
 
 ```mermaid
 graph TD
-A[Start Analysis] --> B{.calculatorinclude exists?}
+A[Start Analysis] --> B{.contextinclude exists?}
 B --> |Yes| C[Activate INCLUDE Mode]
-B --> |No| D{.calculatorignore exists?}
+B --> |No| D{.contextignore exists?}
 D --> |Yes| E[Activate EXCLUDE Mode]
 D --> |No| F[Include All Files<br>Respect .gitignore Only]
-C --> G[Process Only Files Matching<br>.calculatorinclude Patterns]
-E --> H[Process All Files Except Those Matching<br>.calculatorignore Patterns]
+C --> G[Process Only Files Matching<br>.contextinclude Patterns]
+E --> H[Process All Files Except Those Matching<br>.contextignore Patterns]
 ```
 
 **Diagram sources**
@@ -135,14 +135,14 @@ The file filtering system implements a clear hierarchy of precedence to resolve 
 The system follows a strict priority order when evaluating file inclusion:
 
 1. **`.gitignore`** - Standard git exclusions are always respected and form the baseline for file filtering
-2. **`.calculatorinclude`** - INCLUDE mode rules take highest priority for file selection
-3. **`.calculatorignore`** - EXCLUDE mode rules are applied when no INCLUDE mode configuration exists
+2. **`.contextinclude`** - INCLUDE mode rules take highest priority for file selection
+3. **`.contextignore`** - EXCLUDE mode rules are applied when no INCLUDE mode configuration exists
 
-This hierarchy ensures that git-ignored files are never included in analysis, while providing the flexibility to either include only specific files (via `.calculatorinclude`) or exclude specific files (via `.calculatorignore`).
+This hierarchy ensures that git-ignored files are never included in analysis, while providing the flexibility to either include only specific files (via `.contextinclude`) or exclude specific files (via `.contextignore`).
 
 ### Implementation of Precedence Logic
 
-The precedence rules are implemented in the `loadPatterns` method of the `GitIgnoreParser` class. When both `.calculatorinclude` and `.calculatorignore` files exist, the system prioritizes the INCLUDE mode configuration. The `hasIncludeFile` flag is set to true when a `.calculatorinclude` file is detected, which subsequently influences the filtering behavior in the `isIgnored` method.
+The precedence rules are implemented in the `loadPatterns` method of the `GitIgnoreParser` class. When both `.contextinclude` and `.contextignore` files exist, the system prioritizes the INCLUDE mode configuration. The `hasIncludeFile` flag is set to true when a `.contextinclude` file is detected, which subsequently influences the filtering behavior in the `isIgnored` method.
 
 The implementation ensures that INCLUDE mode rules completely override EXCLUDE mode rules, preventing any ambiguity in file selection. This design choice emphasizes precision over breadth, allowing users to create tightly focused analysis scopes when needed.
 
@@ -151,8 +151,8 @@ graph TD
 A[File Path] --> B[Check .gitignore]
 B --> |Matched| C[Exclude File]
 B --> |Not Matched| D{hasIncludeFile?}
-D --> |True| E[Check .calculatorinclude]
-D --> |False| F[Check .calculatorignore]
+D --> |True| E[Check .contextinclude]
+D --> |False| F[Check .contextignore]
 E --> |Matched & Not Negated| G[Include File]
 E --> |Not Matched or Negated| H[Exclude File]
 F --> |Matched & Not Negated| H[Exclude File]
@@ -173,13 +173,13 @@ The file filtering mechanism is implemented through the `GitIgnoreParser` class,
 
 ### Pattern Loading and Initialization
 
-The filtering system initializes through the `initGitIgnore` method in the `TokenCalculator` class, which locates and loads the appropriate configuration files. The system searches for `.calculatorignore` and `.calculatorinclude` files in both the tool directory and project root, allowing for flexible configuration placement.
+The filtering system initializes through the `initGitIgnore` method in the `TokenCalculator` class, which locates and loads the appropriate configuration files. The system searches for `.contextignore` and `.contextinclude` files in both the tool directory and project root, allowing for flexible configuration placement.
 
 When configuration files are found, their patterns are parsed into regular expressions for efficient matching. The `parsePatternFile` method processes each line of the configuration file, ignoring comments and empty lines, then converts each pattern into a regex object using the `convertToRegex` method.
 
 ### File Exclusion Logic
 
-The core filtering logic resides in the `isIgnored` method, which determines whether a given file should be excluded from analysis. For INCLUDE mode, the method first checks if the file matches any pattern in the `.calculatorinclude` file. If no matching pattern is found (or if a negation pattern matches), the file is excluded. For EXCLUDE mode, files are excluded if they match any pattern in the `.calculatorignore` file.
+The core filtering logic resides in the `isIgnored` method, which determines whether a given file should be excluded from analysis. For INCLUDE mode, the method first checks if the file matches any pattern in the `.contextinclude` file. If no matching pattern is found (or if a negation pattern matches), the file is excluded. For EXCLUDE mode, files are excluded if they match any pattern in the `.contextignore` file.
 
 The system also handles directory traversal efficiently by checking if directories should be traversed based on INCLUDE mode patterns, preventing unnecessary file system exploration.
 
@@ -232,7 +232,7 @@ One frequent issue is incorrect pattern syntax, particularly with wildcards and 
 
 ### Unexpected File Inclusions
 
-Unexpected file inclusions often occur due to precedence rule misunderstandings. When both `.calculatorinclude` and `.calculatorignore` files exist, only the INCLUDE mode rules are applied. Users expecting EXCLUDE mode behavior may be surprised to find files included or excluded contrary to their `.calculatorignore` rules. Checking the console output for the active mode can help diagnose this issue.
+Unexpected file inclusions often occur due to precedence rule misunderstandings. When both `.contextinclude` and `.contextignore` files exist, only the INCLUDE mode rules are applied. Users expecting EXCLUDE mode behavior may be surprised to find files included or excluded contrary to their `.contextignore` rules. Checking the console output for the active mode can help diagnose this issue.
 
 ### Performance Impacts
 
