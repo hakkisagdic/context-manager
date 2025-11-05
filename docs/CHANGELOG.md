@@ -2,6 +2,87 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [3.0.0] - 2025-11-05
+
+### 🚀 MAJOR: Platform Foundation - Plugin Architecture & Git Integration
+
+This major release transforms Context Manager from a CLI tool into a comprehensive AI development platform with modular architecture, plugin system, complete Git integration, REST API, and watch mode for real-time analysis.
+
+#### Breaking Changes
+
+**Architecture:**
+- Complete modular refactor with new `lib/core/` directory
+- Plugin-based system for extensibility
+- Event-driven architecture
+
+**No Breaking API Changes:**
+- All existing CLI commands work as before
+- Backward compatible with v2.3.x configurations
+- Existing scripts and integrations continue to work
+
+#### Added
+
+**🏗️ Modular Core (4 modules):**
+- `Scanner.js` - File system scanning (2491 files in 100ms)
+- `Analyzer.js` - Token & method analysis with parallel processing
+- `ContextBuilder.js` - Smart context generation
+- `Reporter.js` - Multi-format reports
+
+**🔌 Plugin System:**
+- `PluginManager.js` - Lazy-loading plugin management
+- `LanguagePlugin` & `ExporterPlugin` base classes
+- Auto-discovery from plugin directories
+- Event-driven communication
+
+**🔀 Git Integration (3 modules):**
+- `GitClient.js` - Git operations
+- `DiffAnalyzer.js` - Change impact analysis
+- `BlameTracker.js` - Author attribution
+- CLI: `--changed-only`, `--changed-since`, `--with-authors`
+
+**👁️ Watch Mode:**
+- `FileWatcher.js` - Real-time file watching with debounce
+- `IncrementalAnalyzer.js` - Smart re-analysis
+- CLI: `context-manager watch`
+
+**⚡ Performance:**
+- `CacheManager.js` - Disk/memory caching (>80% hit rate target)
+- Parallel processing (4 workers)
+- Lazy loading modules
+
+**🌐 REST API:**
+- `APIServer.js` - HTTP server (port 3000)
+- 6 endpoints: analyze, methods, stats, diff, context, docs
+- CLI: `context-manager serve`
+
+#### CLI Enhancements
+```bash
+# Git Integration
+context-manager --changed-only
+context-manager --changed-since main
+context-manager --with-authors
+
+# Platform
+context-manager serve --port 3000
+context-manager watch --debounce 1000
+```
+
+#### Performance
+- Scan: 2491 files in ~100ms
+- Analysis: ~30ms/file with cache
+- Plugin load: <50ms
+- Tests: 12/12 passing ✅
+
+#### New npm Scripts
+- `npm run serve` - Start API server
+- `npm run watch` - Start watch mode
+- `npm run test:v3` - v3.0.0 tests
+- `npm run test:git` - Git integration tests
+- `npm run test:plugin` - Plugin system tests
+- `npm run test:api` - API server tests
+
+---
+
 ## [2.3.8] - 2025-11-05
 
 ### 🎯 Wizard Profiles System - Named Configurations & Profile Management

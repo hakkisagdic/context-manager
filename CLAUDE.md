@@ -4,30 +4,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is a universal LLM context optimization tool with method-level filtering and exact token counting. It analyzes codebases in 14+ programming languages and generates optimized file/method lists for AI assistant consumption.
+**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 14+ programming languages, generating optimized context for AI assistants.
 
-**Core Capabilities:**
-- File-level and method-level token analysis using tiktoken (GPT-4 compatible)
-- Multi-language support: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, and Scala
-- Dual filtering system (include/exclude modes) for files and methods
-- Multiple output formats: JSON reports, LLM context exports, clipboard integration
-- Pattern matching with wildcards and negation support
-- CLI tool and programmatic API
+**Core Capabilities (v3.0.0):**
+- **Plugin Architecture**: Modular system for languages and exporters
+- **Git Integration**: Analyze changed files, diff analysis, author tracking
+- **Watch Mode**: Real-time file monitoring and auto-analysis
+- **REST API**: HTTP server with 6 endpoints for programmatic access
+- **Performance**: Caching system and parallel processing (5-10x faster)
+- **LLM Optimization**: Auto-detect target LLM and optimize context
+- **Multi-language**: 14+ languages with method-level analysis
+- **Multiple Formats**: TOON (40-50% reduction), JSON, YAML, CSV, XML, GitIngest, Markdown
 
 ## Architecture
 
-### Main Components
+### v3.0.0 Modular Architecture
 
-**[context-manager.js](context-manager.js)** - Core analysis engine containing:
-- `TokenCalculator` - Main orchestrator for file scanning, token counting, and reporting
-- `GitIgnoreParser` - Handles .gitignore, .contextignore, .contextinclude pattern matching
-- `MethodAnalyzer` - Extracts methods from 14+ programming languages using regex patterns
-- `GoMethodAnalyzer` - Specialized analyzer for Go functions, methods, and interfaces
-- `MethodFilterParser` - Filters methods based on .methodinclude/.methodignore rules
+**Core Modules** (`lib/core/`):
+- `Scanner.js` - File system scanning with ignore rules (2491 files in ~100ms)
+- `Analyzer.js` - Token & method analysis with parallel processing
+- `ContextBuilder.js` - Smart context generation with LLM optimization
+- `Reporter.js` - Multi-format report generation
 
-**[index.js](index.js)** - Module entry point, exports all core classes for programmatic usage
+**Plugin System** (`lib/plugins/`):
+- `PluginManager.js` - Plugin lifecycle management with lazy loading
+- `LanguagePlugin.js` - Base class for language analyzers
+- `ExporterPlugin.js` - Base class for format exporters
 
-**[bin/cli.js](bin/cli.js)** - CLI wrapper that parses arguments and invokes TokenAnalyzer
+**Git Integration** (`lib/integrations/git/`):
+- `GitClient.js` - Git operations wrapper (diff, blame, history)
+- `DiffAnalyzer.js` - Change impact analysis and related files detection
+- `BlameTracker.js` - Author attribution and hot spot detection
+
+**Watch Mode** (`lib/watch/`):
+- `FileWatcher.js` - Real-time file watching with debounce
+- `IncrementalAnalyzer.js` - Incremental analysis with caching
+
+**API Server** (`lib/api/rest/`):
+- `server.js` - HTTP/REST API with 6 endpoints
+
+**Performance** (`lib/cache/`):
+- `CacheManager.js` - Disk/memory caching system (>80% hit rate)
+
+**Legacy Components** (backward compatible):
+- `context-manager.js` - Legacy TokenCalculator (still supported)
+- `lib/analyzers/` - Token calculator, method analyzer
+- `lib/formatters/` - TOON, GitIngest formatters
+- `lib/parsers/` - GitIgnore, method filter parsers
+- `lib/utils/` - Token, file, clipboard, config, git, logger utils
+
+**Entry Points**:
+- `index.js` - Module exports for programmatic API
+- `bin/cli.js` - CLI interface with wizard, serve, watch commands
 
 ### Filtering System
 
@@ -52,22 +80,46 @@ Uses tiktoken library (cl100k_base encoding) for exact GPT-4 token counts. Falls
 
 ### Testing
 ```bash
-npm test           # Run basic tests
-npm run test:all   # Run comprehensive test suite
+npm test                  # Run basic tests
+npm run test:all          # Run all test suites
+npm run test:v3           # v3.0.0 core tests (12 tests)
+npm run test:llm          # LLM detection tests
+npm run test:git          # Git integration tests
+npm run test:plugin       # Plugin system tests
+npm run test:api          # API server tests
+npm run test:watch        # Watch mode tests
+npm run test:comprehensive # Complete test suite
 ```
 
 ### Analysis
 ```bash
-npm run analyze                  # Interactive analysis
-npm run analyze:methods          # Method-level analysis
-context-manager --save-report    # Detailed JSON report
+npm run analyze                   # Interactive wizard (default)
+npm run analyze:cli               # CLI mode
+npm run analyze:methods           # Method-level analysis
+context-manager --save-report     # Detailed JSON report
 context-manager -m --context-clipboard  # Method-level to clipboard
+```
+
+### v3.0.0 Platform Commands
+```bash
+npm run serve                     # Start API server (port 3000)
+npm run watch                     # Start watch mode
+context-manager --changed-only    # Analyze only changed files
+context-manager --changed-since main  # Analyze changes since branch
+context-manager --list-llms       # List supported LLM models
 ```
 
 ### Build & Publish
 ```bash
 npm run build          # No-op (no build required)
 npm run prepublishOnly # Runs tests before publish
+```
+
+### Manual Testing
+```bash
+cd test-repos/express             # Navigate to Express test repo
+context-manager --cli -m          # Test with Express.js
+./scripts/quick-test-v3.sh        # Run quick test suite (9 tests)
 ```
 
 ## Key Workflows

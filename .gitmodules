@@ -1,0 +1,3 @@
+[submodule "test-repos/express"]
+	path = test-repos/express
+	url = https://github.com/expressjs/express.git
