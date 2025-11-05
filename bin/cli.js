@@ -4,6 +4,10 @@ import { TokenAnalyzer } from '../index.js';
 import FormatRegistry from '../lib/formatters/format-registry.js';
 import FormatConverter from '../lib/utils/format-converter.js';
 import { LLMDetector } from '../lib/utils/llm-detector.js';
+import APIServer from '../lib/api/rest/server.js';
+import FileWatcher from '../lib/watch/FileWatcher.js';
+import IncrementalAnalyzer from '../lib/watch/IncrementalAnalyzer.js';
+import DiffAnalyzer from '../lib/integrations/git/DiffAnalyzer.js';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -56,6 +60,18 @@ async function main() {
         return;
     }
 
+    // Check for API server mode (v3.0.0)
+    if (args.includes('serve')) {
+        await runAPIServer(args);
+        return;
+    }
+
+    // Check for watch mode (v3.0.0)
+    if (args.includes('watch')) {
+        await runWatchMode(args);
+        return;
+    }
+
     // Check for explicit dashboard mode
     if (args.includes('--dashboard')) {
         try {
@@ -95,6 +111,12 @@ async function main() {
     // CLI Mode: Run traditional command-line analysis
     const options = parseArguments(args);
 
+    // Git integration: Filter to changed files only (v3.0.0)
+    if (options.changedOnly || options.changedSince) {
+        await runChangedFilesAnalysis(options);
+        return;
+    }
+
     printStartupInfo(options);
 
     const analyzer = new TokenAnalyzer(options.projectRoot, options);
@@ -119,6 +141,12 @@ function parseArguments(args) {
         // LLM options (v2.3.7)
         targetModel: getTargetModel(args),
         autoDetectLLM: args.includes('--auto-detect-llm'),
+
+        // Git options (v3.0.0)
+        changedOnly: args.includes('--changed-only'),
+        changedSince: getChangedSince(args),
+        withAuthors: args.includes('--with-authors'),
+        withHistory: args.includes('--with-history'),
 
         // UI options (v2.3.0)
         simple: args.includes('--simple'),
@@ -214,7 +242,7 @@ function listLLMs() {
 }
 
 function printStartupInfo(options) {
-    console.log('🚀 Context Manager v2.3.7');
+    console.log('🚀 Context Manager v3.0.0');
     console.log('='.repeat(50));
 
     // Only show active options if any are set
@@ -250,7 +278,7 @@ function printStartupInfo(options) {
 }
 
 function printHelp() {
-    console.log('Context Manager v2.3.7 - LLM context optimization with automatic model detection');
+    console.log('Context Manager v3.0.0 - AI Development Platform with Plugin Architecture and Git Integration');
     console.log();
     console.log('Usage: context-manager [options]');
     console.log();
@@ -285,6 +313,19 @@ function printHelp() {
     console.log('  --target-model MODEL     Optimize for specific LLM (e.g., claude-sonnet-4.5)');
     console.log('  --auto-detect-llm        Auto-detect LLM from environment variables');
     console.log('  --list-llms              List all supported LLM models');
+    console.log();
+    console.log('Git Integration (v3.0.0):');
+    console.log('  --changed-only           Analyze only files with uncommitted changes');
+    console.log('  --changed-since REF      Analyze files changed since commit/branch');
+    console.log('  --with-authors           Include author information');
+    console.log('  --with-history           Include commit history');
+    console.log();
+    console.log('Platform Features (v3.0.0):');
+    console.log('  serve [options]          Start REST API server');
+    console.log('    --port PORT            Server port (default: 3000)');
+    console.log('    --auth-token TOKEN     API authentication token');
+    console.log('  watch [options]          Watch mode with auto-analysis');
+    console.log('    --debounce MS          Debounce delay (default: 1000ms)');
     console.log();
     console.log('General Options:');
     console.log('  -h, --help               Show this help');
@@ -350,6 +391,110 @@ function listFormats() {
     console.log();
     console.log('Usage: context-manager --output <format>');
     console.log('Example: context-manager --output toon --context-clipboard');
+}
+
+function getChangedSince(args) {
+    const sinceIndex = args.findIndex(arg => arg === '--changed-since');
+    if (sinceIndex !== -1 && args[sinceIndex + 1]) {
+        return args[sinceIndex + 1];
+    }
+    return null;
+}
+
+async function runAPIServer(args) {
+    const portIndex = args.findIndex(arg => arg === '--port');
+    const port = portIndex !== -1 && args[portIndex + 1]
+        ? parseInt(args[portIndex + 1], 10)
+        : 3000;
+
+    const authTokenIndex = args.findIndex(arg => arg === '--auth-token');
+    const authToken = authTokenIndex !== -1 && args[authTokenIndex + 1]
+        ? args[authTokenIndex + 1]
+        : null;
+
+    const server = new APIServer({ port, authToken });
+
+    // Handle shutdown
+    process.on('SIGINT', () => {
+        console.log('\n\n🛑 Shutting down server...');
+        server.stop();
+        process.exit(0);
+    });
+
+    server.start();
+}
+
+async function runChangedFilesAnalysis(options) {
+    console.log('🔀 Git Integration - Analyzing Changed Files');
+    console.log('═'.repeat(60));
+    console.log();
+
+    const diffAnalyzer = new DiffAnalyzer(options.projectRoot);
+    const changes = diffAnalyzer.analyzeChanges(options.changedSince);
+
+    console.log(`📝 Found ${changes.totalChangedFiles} changed files`);
+    if (options.changedSince) {
+        console.log(`   Since: ${options.changedSince}`);
+    }
+    console.log(`   Impact: ${changes.impact.level.toUpperCase()} (score: ${changes.impact.score})`);
+    console.log();
+
+    if (changes.totalChangedFiles === 0) {
+        console.log('✅ No changed files to analyze');
+        return;
+    }
+
+    // Analyze only changed files
+    const analyzer = new TokenAnalyzer(options.projectRoot, {
+        ...options,
+        fileFilter: (filePath) => changes.changedFiles.includes(filePath)
+    });
+
+    analyzer.run();
+}
+
+async function runWatchMode(args) {
+    console.log('👁️  Starting watch mode...\n');
+
+    const projectRoot = process.cwd();
+    const debounce = args.includes('--debounce')
+        ? parseInt(args[args.indexOf('--debounce') + 1], 10) || 1000
+        : 1000;
+
+    const watcher = new FileWatcher(projectRoot, { debounce });
+    const analyzer = new IncrementalAnalyzer({ methodLevel: args.includes('-m') });
+
+    // Handle file changes
+    watcher.on('file:changed', async (event) => {
+        console.log(`\n📝 File ${event.type}: ${event.relativePath}`);
+        await analyzer.analyzeChange(event);
+    });
+
+    // Handle analysis complete
+    analyzer.on('analysis:complete', (event) => {
+        console.log(`   ✅ Analysis complete: ${event.analysis.tokens} tokens (${event.elapsed}ms)`);
+
+        const stats = analyzer.getStats();
+        console.log(`   📊 Total: ${stats.totalFiles} files, ${stats.totalTokens.toLocaleString()} tokens`);
+    });
+
+    // Handle file deletion
+    analyzer.on('file:deleted', (event) => {
+        console.log(`   🗑️  File deleted: ${event.file} (-${event.oldTokens} tokens)`);
+    });
+
+    // Start watching
+    watcher.start();
+
+    console.log('✅ Watch mode active');
+    console.log('   Press Ctrl+C to stop\n');
+
+    // Keep process alive
+    process.on('SIGINT', () => {
+        console.log('\n\n🛑 Stopping watch mode...');
+        watcher.stop();
+        process.exit(0);
+    });
 }
 
 async function runWizard() {

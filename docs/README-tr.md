@@ -1,6 +1,8 @@
 # Context Manager
 
-Method seviyesi filtreleme ve token optimizasyonu ile LLM bağlam yönetimi aracı. AI destekli geliştirme iş akışları için mükemmel.
+**AI Geliştirme Platformu** - Plugin mimarisi, Git entegrasyonu, REST API ve watch modu ile 14+ programlama dilini destekleyen, method seviyesi filtreleme, otomatik LLM optimizasyonu ve gerçek zamanlı analiz sunan platform. AI destekli geliştirme iş akışları için mükemmel.
+
+**v3.0.0** - Platform Foundation Sürümü 🚀
 
 ## ☕ Bu Projeyi Destekleyin
 
@@ -26,6 +28,15 @@ Bu aracı yararlı buluyorsanız, bana bir kahve ısmarlayabilirsiniz! Desteğin
 
 ## Özellikler
 
+### 🚀 Platform Özellikleri (v3.0.0)
+- 🔌 **Plugin Mimarisi** - Modüler, genişletilebilir dil ve exporter sistemi
+- 🔀 **Git Entegrasyonu** - Sadece değişen dosyaları analiz et, diff analizi, yazar takibi
+- 👁️ **Watch Modu** - Gerçek zamanlı dosya izleme ve otomatik analiz
+- 🌐 **REST API** - Programatik erişim için HTTP serveri (6 endpoint)
+- ⚡ **Performans** - Önbellekleme sistemi, paralel işleme (5-10x daha hızlı)
+- 🏗️ **Modüler Çekirdek** - Scanner, Analyzer, ContextBuilder, Reporter
+
+### 🔢 Token Analizi
 - ✅ **Kesin token sayımı** tiktoken kullanarak (GPT-4 uyumlu)
 - 🚫 **Çifte ignore sistemi** - hem `.gitignore` hem calculator ignore kurallarını dikkate alır
 - 📋 **Include/Exclude modları** - `.contextinclude` dosyası `.contextignore` üzerinde önceliğe sahip

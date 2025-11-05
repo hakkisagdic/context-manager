@@ -43,6 +43,9 @@ logs/
 # Context Manager user configs
 .context-manager/custom-profiles.json
 
+# v3.0.0 Cache directory
+.context-cache/
+
 # Named profile configs (user-specific)
 .contextinclude-*
 .contextignore-*

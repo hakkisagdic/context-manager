@@ -1,6 +1,8 @@
 # Context Manager
 
-Universal LLM context optimization tool supporting 14+ programming languages with method-level filtering and token analysis. Perfect for AI-assisted development workflows.
+**AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, automatic LLM optimization, and real-time analysis. Perfect for AI-assisted development workflows.
+
+**v3.0.0** - Platform Foundation Release 🚀
 
 ## ☕ Support This Project
 
@@ -25,6 +27,14 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 - **`README-tr.md`** - Turkish documentation (Türkçe dokümantasyon)
 
 ## Features
+
+### 🚀 Platform Features (v3.0.0)
+- 🔌 **Plugin Architecture** - Modular, extensible system for languages and exporters
+- 🔀 **Git Integration** - Analyze only changed files, diff analysis, author tracking
+- 👁️ **Watch Mode** - Real-time file monitoring and auto-analysis
+- 🌐 **REST API** - HTTP server for programmatic access (6 endpoints)
+- ⚡ **Performance** - Caching system, parallel processing (5-10x faster)
+- 🏗️ **Modular Core** - Scanner, Analyzer, ContextBuilder, Reporter
 
 ### 🎨 User Interface
 - 🧙 **Interactive Wizard Mode** - User-friendly guided setup (default)
@@ -118,12 +128,120 @@ Supported LLM models (9+ models):
 
 Custom models supported via `.context-manager/custom-profiles.json`
 
+### 🔀 Git Integration (v3.0.0)
+```bash
+# Analyze only uncommitted changes
+context-manager --changed-only
+
+# Analyze changes since a commit/branch
+context-manager --changed-since main
+context-manager --changed-since HEAD~5
+context-manager --changed-since v2.3.0
+
+# With author information
+context-manager --changed-only --with-authors
+
+# Output:
+# 🔀 Git Integration - Analyzing Changed Files
+# ══════════════════════════════════════════════════════════
+#
+# 📝 Found 3 changed files
+#    Impact: MEDIUM (score: 25)
+```
+
+### 👁️ Watch Mode (v3.0.0)
+```bash
+# Start watch mode
+context-manager watch
+
+# With method-level analysis
+context-manager watch -m
+
+# Custom debounce (default: 1000ms)
+context-manager watch --debounce 2000
+
+# Output:
+# 👁️ Watch mode active
+# 📝 File change: src/server.js
+#    ✅ Analysis complete: 12,450 tokens (45ms)
+#    📊 Total: 64 files, 181,530 tokens
+```
+
+### 🌐 API Server (v3.0.0)
+```bash
+# Start API server
+context-manager serve
+
+# Custom port and authentication
+context-manager serve --port 8080 --auth-token my-secret-token
+
+# API Endpoints:
+# GET  /api/v1/analyze       - Full project analysis
+# GET  /api/v1/methods       - Extract methods from file
+# GET  /api/v1/stats         - Project statistics
+# GET  /api/v1/diff          - Git diff analysis
+# POST /api/v1/context       - Smart context generation
+# GET  /api/v1/docs          - API documentation
+
+# Example API calls:
+curl http://localhost:3000/api/v1/analyze
+curl http://localhost:3000/api/v1/methods?file=src/server.js
+curl http://localhost:3000/api/v1/diff?since=main
+```
+
 ### Wrapper Script Usage
 ```bash
 # Using the NPM package globally
 context-manager
 context-manager --save-report
 context-manager --context-clipboard
+```
+
+## 🧪 Testing & Validation
+
+### Test Repositories
+
+Context Manager includes real-world test repositories for validation:
+
+```bash
+# Express.js test repo (git submodule)
+cd test-repos/express
+
+# Run full test suite
+context-manager --cli -m --target-model claude-sonnet-4.5
+
+# Git integration test
+context-manager --changed-since v5.0.0
+
+# Watch mode test
+context-manager watch
+```
+
+See [test-repos/README.md](test-repos/README.md) for complete testing guide.
+
+### Manual Testing
+
+Complete manual testing guide available at [docs/MANUAL-TESTING-v3.0.md](docs/MANUAL-TESTING-v3.0.md)
+
+Includes:
+- ✅ 50+ test scenarios for all v3.0.0 features
+- ✅ API endpoint validation
+- ✅ Git integration testing
+- ✅ Watch mode validation
+- ✅ Performance benchmarks
+
+### Automated Tests
+
+```bash
+# Run all tests
+npm run test:comprehensive
+
+# Run v3.0.0 specific tests
+npm run test:v3
+npm run test:git
+npm run test:plugin
+npm run test:api
+npm run test:watch
 ```
 
 ## Current Configuration
