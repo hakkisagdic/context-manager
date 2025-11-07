@@ -27,6 +27,14 @@ import { Logger, getLogger, createLogger } from './lib/utils/logger.js'; // v2.3
 import Updater from './lib/utils/updater.js'; // v2.3.6+
 import GitUtils from './lib/utils/git-utils.js'; // v2.3.6+
 
+// Phase 1 Core Enhancements (v3.1.0)
+import PresetManager from './lib/presets/preset-manager.js';
+import { PresetNotFoundError, InvalidPresetError, PresetLoadError } from './lib/presets/preset-manager.js';
+import TokenBudgetFitter from './lib/optimizers/token-budget-fitter.js';
+import { TokenBudgetError, ImpossibleFitError } from './lib/optimizers/token-budget-fitter.js';
+import FitStrategies from './lib/optimizers/fit-strategies.js';
+import RuleTracer from './lib/debug/rule-tracer.js';
+
 // Orchestrator functions
 import { generateDigestFromReport, generateDigestFromContext } from './context-manager.js';
 
@@ -58,6 +66,17 @@ export {
     createLogger,
     Updater,
     GitUtils,
+
+    // v3.1.0 Phase 1 Core Enhancements
+    PresetManager,
+    PresetNotFoundError,
+    InvalidPresetError,
+    PresetLoadError,
+    TokenBudgetFitter,
+    TokenBudgetError,
+    ImpossibleFitError,
+    FitStrategies,
+    RuleTracer,
 
     // Functions
     generateDigestFromReport,
