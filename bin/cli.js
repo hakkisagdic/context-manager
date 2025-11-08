@@ -135,7 +135,7 @@ async function main() {
         
         // Cleanup preset if applied
         if (appliedPreset) {
-            cleanupPreset(appliedPreset);
+            cleanupPreset(appliedPreset, options.projectRoot);
         }
         return;
     }
@@ -153,10 +153,8 @@ async function main() {
     const analyzer = new TokenAnalyzer(options.projectRoot, options);
     const result = analyzer.run();
 
-    // Apply token budget fitting if specified (v3.1.0)
-    if (options.targetTokens && result && result.files) {
-        await applyTokenBudgetFitting(result, options);
-    }
+    // Token budget fitting is now handled inside TokenAnalyzer.run() before exports
+    // This ensures fitted files are used for all exports (context, reports, gitingest)
 
     // Display rule trace if enabled (v3.1.0)
     if (tracer) {
@@ -165,7 +163,7 @@ async function main() {
 
     // Cleanup preset if applied
     if (appliedPreset) {
-        cleanupPreset(appliedPreset);
+        cleanupPreset(appliedPreset, options.projectRoot);
     }
 }
 
@@ -828,10 +826,15 @@ async function applyPreset(options) {
     }
 }
 
-function cleanupPreset(appliedPreset) {
+function cleanupPreset(appliedPreset, projectRoot) {
     if (!appliedPreset) return;
 
     try {
+        // Ensure projectRoot is available in appliedPreset for cleanup
+        if (projectRoot && !appliedPreset.projectRoot) {
+            appliedPreset.projectRoot = projectRoot;
+        }
+
         const manager = new PresetManager();
         manager.cleanup(appliedPreset);
         console.log(`\n✅ Cleaned up preset files`);
