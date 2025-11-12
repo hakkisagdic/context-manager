@@ -5,14 +5,20 @@
  * Runs all test suites and generates comprehensive report
  */
 
-const { execSync } = require('child_process');
-const path = require('path');
+import { execSync } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const testSuites = [
+    { name: 'Basic Functionality', file: 'test.js', critical: true },
+    { name: 'Unit Tests', file: 'unit-tests.js', critical: true },
+    { name: 'Utility Tests', file: 'test-utils-comprehensive.js', critical: true },
     { name: 'v2.3.x Features', file: 'test-v2.3-features.js', critical: true },
-    { name: 'CLI Integration', file: 'test-cli-integration.js', critical: true },
-    { name: 'TOON Format', file: 'test-toon-format.js', critical: false },
-    { name: 'Basic Functionality', file: 'test.js', critical: true }
+    { name: 'Core Modules', file: 'test-core-modules.js', critical: true },
+    { name: 'Additional Utils', file: 'test-additional-utils.js', critical: false }
 ];
 
 const results = [];

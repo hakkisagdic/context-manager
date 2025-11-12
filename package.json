@@ -29,7 +29,13 @@
     "test:plugin": "node test/test-plugin-system.js",
     "test:api": "node test/test-api-server.js",
     "test:watch": "node test/test-watch-mode.js",
-    "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
+    "test:utils": "node test/test-utils-comprehensive.js",
+    "test:core-modules": "node test/test-core-modules.js",
+    "test:additional-utils": "node test/test-additional-utils.js",
+    "test:coverage": "nyc --reporter=text --reporter=html npm run test:all-core",
+    "test:core": "npm run test && npm run test:unit && npm run test:utils",
+    "test:all-core": "npm run test:core && npm run test:core-modules && npm run test:additional-utils",
+    "test:comprehensive": "npm run test && npm run test:unit && npm run test:utils && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
     "analyze:methods": "node bin/cli.js --cli --method-level",
@@ -114,5 +120,8 @@
   "bugs": {
     "url": "https://github.com/hakkisagdic/context-manager/issues"
   },
-  "homepage": "https://github.com/hakkisagdic/context-manager#readme"
+  "homepage": "https://github.com/hakkisagdic/context-manager#readme",
+  "devDependencies": {
+    "nyc": "^17.1.0"
+  }
 }
