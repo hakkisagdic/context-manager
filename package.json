@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
-  "version": "3.0.0",
-  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 14+ languages. Features include TOON format (40-50% token reduction), real-time analysis, and comprehensive context generation.",
+  "version": "3.1.0",
+  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 14+ languages. Features include TOON format (40-50% token reduction), real-time analysis, preset profiles, token budget optimization, and comprehensive context generation.",
   "type": "module",
   "main": "index.js",
   "bin": {
