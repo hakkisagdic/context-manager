@@ -114,5 +114,8 @@
   "bugs": {
     "url": "https://github.com/hakkisagdic/context-manager/issues"
   },
-  "homepage": "https://github.com/hakkisagdic/context-manager#readme"
+  "homepage": "https://github.com/hakkisagdic/context-manager#readme",
+  "devDependencies": {
+    "c8": "^10.1.3"
+  }
 }
