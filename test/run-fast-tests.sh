@@ -1,0 +1,9 @@
+#!/bin/bash
+# Run fast test suites for coverage analysis
+
+node test/test-core-comprehensive.js > /dev/null 2>&1
+node test/test-language-edge-cases.js > /dev/null 2>&1
+node test/test-formatters-comprehensive.js > /dev/null 2>&1
+node test/test-utils-error-handler.js > /dev/null 2>&1
+
+echo "All fast tests completed"
