@@ -29,6 +29,8 @@
     "test:plugin": "node test/test-plugin-system.js",
     "test:api": "node test/test-api-server.js",
     "test:watch": "node test/test-watch-mode.js",
+    "test:core": "node test/test-core-comprehensive.js",
+    "test:lang": "node test/test-language-edge-cases.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
