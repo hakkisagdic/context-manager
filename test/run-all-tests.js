@@ -5,8 +5,15 @@
  * Runs all test suites and generates comprehensive report
  */
 
-const { execSync } = require('child_process');
-const path = require('path');
+import { execSync } from 'child_process';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 const testSuites = [
     { name: 'v2.3.x Features', file: 'test-v2.3-features.js', critical: true },

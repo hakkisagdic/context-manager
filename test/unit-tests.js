@@ -5,9 +5,16 @@
  * Tests all core functionality with edge cases
  */
 
-const { TokenAnalyzer, MethodAnalyzer, GitIgnoreParser, MethodFilterParser } = require('../index.js');
-const fs = require('fs');
-const path = require('path');
+import { TokenCalculator as TokenAnalyzer, MethodAnalyzer, GitIgnoreParser, MethodFilterParser } from '../index.js';
+import fs from 'fs';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 // Test framework
 let testsPassed = 0;

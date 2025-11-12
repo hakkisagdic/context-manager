@@ -5,9 +5,9 @@
  * Tests C# method extraction and analysis
  */
 
-const { MethodAnalyzer } = require('../index.js');
-const fs = require('fs');
-const path = require('path');
+import { MethodAnalyzer } from '../index.js';
+import fs from 'fs';
+import path from 'path';
 
 // Test framework
 let testsPassed = 0;

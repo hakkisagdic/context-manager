@@ -5,11 +5,11 @@
  * Tests TOON format, format conversion, chunking, and error handling
  */
 
-const ToonFormatter = require('../lib/formatters/toon-formatter');
-const FormatRegistry = require('../lib/formatters/format-registry');
-const FormatConverter = require('../lib/utils/format-converter');
-const ErrorHandler = require('../lib/utils/error-handler');
-const GitIngestFormatter = require('../lib/formatters/gitingest-formatter');
+import ToonFormatter from '../lib/formatters/toon-formatter.js';
+import FormatRegistry from '../lib/formatters/format-registry.js';
+import FormatConverter from '../lib/utils/format-converter.js';
+import ErrorHandler from '../lib/utils/error-handler.js';
+import GitIngestFormatter from '../lib/formatters/gitingest-formatter.js';
 
 let testsRun = 0;
 let testsPassed = 0;
