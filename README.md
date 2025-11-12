@@ -1,8 +1,8 @@
 # Context Manager
 
-**AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, automatic LLM optimization, and real-time analysis. Perfect for AI-assisted development workflows.
+**AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, preset profiles, token budget optimization, and real-time analysis. Perfect for AI-assisted development workflows.
 
-**v3.0.0** - Platform Foundation Release 🚀
+**v3.1.0** - Phase 1 Core Enhancements 🎯
 
 ## ☕ Support This Project
 
@@ -35,6 +35,14 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 - 🌐 **REST API** - HTTP server for programmatic access (6 endpoints)
 - ⚡ **Performance** - Caching system, parallel processing (5-10x faster)
 - 🏗️ **Modular Core** - Scanner, Analyzer, ContextBuilder, Reporter
+
+### 🎯 Phase 1 Core Enhancements (v3.1.0)
+- 🎨 **Preset System** - 8 ready-to-use configuration profiles (review, security-audit, llm-explain, etc.)
+- 🎯 **Token Budget Fitter** - Intelligent file selection to fit LLM context windows
+- 🔍 **Rule Tracer** - Debug tool to track filter decisions and pattern usage
+- ⚡ **5 Fitting Strategies** - Auto, shrink-docs, balanced, methods-only, top-n
+- 📊 **Smart Prioritization** - Entry points, core files weighted higher
+- 🚀 **One-Command Workflows** - `--preset review` for instant code review context
 
 ### 🎨 User Interface
 - 🧙 **Interactive Wizard Mode** - User-friendly guided setup (default)
@@ -94,6 +102,96 @@ context-manager --context-export  # Auto CLI (export)
 
 # Combine multiple exports
 context-manager --cli -g -s  # GitIngest digest + detailed report
+```
+
+### 🎯 Phase 1 Features (v3.1.0)
+
+#### 🎨 Preset System - One-Command Workflows
+```bash
+# List all available presets
+context-manager --list-presets
+
+# Use a preset for code review (100k token budget, method-level, gitingest)
+context-manager --preset review
+
+# Ultra-compact LLM context (50k tokens, methods-only strategy)
+context-manager --preset llm-explain
+
+# Security-focused analysis
+context-manager --preset security-audit
+
+# Get detailed info about a preset
+context-manager --preset-info review
+```
+
+**8 Built-in Presets:**
+- `default` - Standard analysis with balanced settings
+- `review` - Code review focus (filters tests/docs, 100k tokens)
+- `llm-explain` - Ultra-compact for LLM (50k tokens, methods-only)
+- `pair-program` - Interactive development with full details
+- `security-audit` - Security patterns (auth, crypto, tokens)
+- `documentation` - Public APIs and docs
+- `minimal` - Entry points only (10k tokens)
+- `full` - Complete codebase analysis
+
+#### 🎯 Token Budget Fitting - Smart File Selection
+```bash
+# Fit files within 100k token budget
+context-manager --target-tokens 100000
+
+# Use specific fitting strategy
+context-manager --target-tokens 50000 --fit-strategy balanced
+
+# Shorthand notation (k = 1000)
+context-manager --target-tokens 50k --fit-strategy methods-only
+```
+
+**5 Fitting Strategies:**
+- `auto` - Automatically selects best strategy
+- `shrink-docs` - Removes documentation files first
+- `balanced` - Optimizes token/file efficiency ratio
+- `methods-only` - Extracts only methods from large files (60% reduction)
+- `top-n` - Selects most important files by priority
+
+**Example Output:**
+```
+🎯 Token Budget Fitting
+═══════════════════════════════════════
+✅ Successfully fit 30 files within 10000 token budget
+   Strategy: balanced
+   Tokens: 9924 / 10000 (tight fit)
+   Reduction: 701348 tokens (98.6%)
+   Entry points preserved: 2
+
+💡 Recommendations:
+   • Consider increasing token budget for better coverage
+   • Try "methods-only" strategy for more aggressive reduction
+```
+
+#### 🔍 Rule Tracer - Debug Filter Decisions
+```bash
+# Enable rule tracing
+context-manager --trace-rules
+
+# Combine with other options
+context-manager --preset review --trace-rules
+```
+
+**Example Output:**
+```
+📊 Rule Trace Report
+═══════════════════════════════════════
+Files Processed: 250
+  ✅ Included: 180
+  ❌ Excluded: 70
+
+Pattern Analysis:
+  node_modules/** → 45 matches (.gitignore)
+  **/*.test.js → 15 matches (.contextignore)
+  src/**/*.js → 120 matches (.contextinclude)
+
+Unused Patterns: 2
+  - legacy/** (never matched)
 ```
 
 ### 🤖 LLM Optimization (v2.3.7)
