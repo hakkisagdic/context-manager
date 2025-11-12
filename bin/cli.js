@@ -156,15 +156,6 @@ async function main() {
     // Token budget fitting is now handled inside TokenAnalyzer.run() before exports
     // This ensures fitted files are used for all exports (context, reports, gitingest)
 
-    // Display token budget results if applied (v3.1.0)
-    if (options.targetTokens && result.files) {
-        const originalFileCount = result.totalFiles || result.files.length;
-        console.log(`\n✅ Token Budget Applied: ${result.files.length} files selected (${result.totalTokens} tokens)`);
-        if (originalFileCount > result.files.length) {
-            console.log(`   Reduced from ${originalFileCount} files to fit ${options.targetTokens} token budget`);
-        }
-    }
-
     // Display rule trace if enabled (v3.1.0)
     if (tracer) {
         console.log(tracer.generateReport());
