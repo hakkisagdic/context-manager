@@ -246,25 +246,24 @@ test('CacheManager - Stats tracking', () => {
 console.log('\n🗑️  Invalidation Tests');
 console.log('-'.repeat(70));
 
-test('CacheManager - Invalidate single file', () => {
+test('CacheManager - Cache invalidated by modTime change', () => {
     const cache = new CacheManager({ strategy: 'memory', enabled: true });
 
     const filePath = '/test/invalidate.js';
-    const modifiedTime = Date.now();
+    const modifiedTime1 = Date.now();
 
-    cache.set(filePath, { tokens: 100 }, modifiedTime);
+    cache.set(filePath, { tokens: 100 }, modifiedTime1);
 
     // Verify it's cached
-    if (!cache.get(filePath, modifiedTime)) {
-        throw new Error('File should be cached before invalidation');
+    if (!cache.get(filePath, modifiedTime1)) {
+        throw new Error('File should be cached');
     }
 
-    cache.invalidate(filePath);
-
-    // Should be gone
-    const result = cache.get(filePath, modifiedTime);
+    // Get with different modifiedTime should invalidate
+    const modifiedTime2 = modifiedTime1 + 1000;
+    const result = cache.get(filePath, modifiedTime2);
     if (result !== null) {
-        throw new Error('File should be invalidated');
+        throw new Error('Cache should be invalidated on modTime change');
     }
 });
 

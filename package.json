@@ -43,6 +43,7 @@
     "test:format-converter": "node test/test-format-converter.js",
     "test:logger": "node test/test-logger-comprehensive.js",
     "test:git-utils": "node test/test-git-utils.js",
+    "test:cache": "node test/test-cache-manager.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
