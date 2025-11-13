@@ -792,6 +792,388 @@ test('Token percentage at 91%', () => {
 });
 
 // ============================================================================
+// CUSTOM WIDTH
+// ============================================================================
+console.log('\n📏 Custom Width');
+console.log('-'.repeat(60));
+
+test('ProgressBar uses default barWidth of 40', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('━'))
+    );
+
+    const barContent = barCall.children[0];
+    const totalLength = barContent.length;
+    assertEquals(totalLength, 40, 'Default bar width should be 40');
+});
+
+test('ProgressBar respects custom barWidth of 20', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        barWidth: 20,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('━'))
+    );
+
+    const barContent = barCall.children[0];
+    const totalLength = barContent.length;
+    assertEquals(totalLength, 20, 'Custom bar width should be 20');
+});
+
+test('ProgressBar respects custom barWidth of 60', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 75,
+        total: 100,
+        tokens: 7500,
+        maxTokens: 10000,
+        barWidth: 60,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('━'))
+    );
+
+    const barContent = barCall.children[0];
+    const totalLength = barContent.length;
+    assertEquals(totalLength, 60, 'Custom bar width should be 60');
+});
+
+test('Custom barWidth calculates filled portion correctly', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        barWidth: 20,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('━'))
+    );
+
+    const barContent = barCall.children[0];
+    const filledLength = (barContent.match(/━/g) || []).length;
+    assertEquals(filledLength, 10, 'Should have 10 filled characters at 50% with width 20');
+});
+
+// ============================================================================
+// ASCII VS UNICODE RENDERING
+// ============================================================================
+console.log('\n🔤 ASCII vs Unicode Rendering');
+console.log('-'.repeat(60));
+
+test('ProgressBar uses Unicode characters by default', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && (c.includes('━') || c.includes('─')))
+    );
+
+    assertTrue(barCall !== undefined, 'Should find bar with Unicode characters');
+    const barContent = barCall.children[0];
+    assertTrue(barContent.includes('━') || barContent.includes('─'), 'Should contain Unicode bar characters');
+});
+
+test('ProgressBar uses ASCII characters when asciiMode is true', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        asciiMode: true,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && (c.includes('=') || c.includes('-')))
+    );
+
+    assertTrue(barCall !== undefined, 'Should find bar with ASCII characters');
+    const barContent = barCall.children[0];
+    assertTrue(barContent.includes('=') || barContent.includes('-'), 'Should contain ASCII bar characters');
+});
+
+test('ASCII mode filled character is equals sign', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 75,
+        total: 100,
+        tokens: 7500,
+        maxTokens: 10000,
+        asciiMode: true,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('='))
+    );
+
+    assertTrue(barCall !== undefined, 'Should use = for filled portion in ASCII mode');
+});
+
+test('ASCII mode empty character is hyphen', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 25,
+        total: 100,
+        tokens: 2500,
+        maxTokens: 10000,
+        asciiMode: true,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('-'))
+    );
+
+    assertTrue(barCall !== undefined, 'Should use - for empty portion in ASCII mode');
+});
+
+// ============================================================================
+// INDETERMINATE PROGRESS MODE
+// ============================================================================
+console.log('\n⏳ Indeterminate Progress Mode');
+console.log('-'.repeat(60));
+
+test('ProgressBar enters indeterminate mode when current is null', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: null,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    assertTrue(findTextContent('...'), 'Should display ... in indeterminate mode');
+    assertTrue(findTextContent('processing'), 'Should display processing text');
+});
+
+test('ProgressBar enters indeterminate mode when total is null', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 50,
+        total: null,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    assertTrue(findTextContent('...'), 'Should display ... in indeterminate mode');
+});
+
+test('Indeterminate mode shows current file count when available', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: 42,
+        total: null,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    assertTrue(findTextContent('(42 files)'), 'Should show current file count in indeterminate mode');
+});
+
+test('Indeterminate mode uses cyan color for bar', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: null,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const cyanBarCall = textCalls.find(call =>
+        call.props?.color === 'cyan' &&
+        call.children.some(c => typeof c === 'string' && c.includes('⋯'))
+    );
+
+    assertTrue(cyanBarCall !== undefined, 'Indeterminate bar should be cyan');
+});
+
+test('Indeterminate mode uses Unicode indeterminate character by default', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: null,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    assertTrue(findTextContent('⋯'), 'Should use Unicode indeterminate character');
+});
+
+test('Indeterminate mode uses ASCII tilde in ASCII mode', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: null,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        asciiMode: true,
+        components: mockComponents
+    });
+
+    assertTrue(findTextContent('~'), 'Should use ~ for indeterminate in ASCII mode');
+});
+
+test('Indeterminate mode respects custom barWidth', () => {
+    resetCalls();
+
+    ProgressBar({
+        current: null,
+        total: 100,
+        tokens: 5000,
+        maxTokens: 10000,
+        barWidth: 30,
+        components: mockComponents
+    });
+
+    const textCalls = findCalls(MockText);
+    const barCall = textCalls.find(call =>
+        call.children.some(c => typeof c === 'string' && c.includes('⋯'))
+    );
+
+    const barContent = barCall.children[0];
+    assertEquals(barContent.length, 30, 'Indeterminate bar should respect custom width');
+});
+
+// ============================================================================
+// MULTIPLE SIMULTANEOUS PROGRESS BARS
+// ============================================================================
+console.log('\n📊 Multiple Simultaneous Progress Bars');
+console.log('-'.repeat(60));
+
+test('Multiple ProgressBars can be rendered independently', () => {
+    resetCalls();
+
+    // Render first bar
+    const bar1 = ProgressBar({
+        current: 30,
+        total: 100,
+        tokens: 3000,
+        maxTokens: 10000,
+        currentFile: 'file1.js',
+        components: mockComponents
+    });
+
+    const calls1Count = createElementCalls.length;
+    resetCalls();
+
+    // Render second bar
+    const bar2 = ProgressBar({
+        current: 70,
+        total: 100,
+        tokens: 7000,
+        maxTokens: 10000,
+        currentFile: 'file2.js',
+        components: mockComponents
+    });
+
+    const calls2Count = createElementCalls.length;
+
+    assertTrue(bar1 !== null, 'First bar should render');
+    assertTrue(bar2 !== null, 'Second bar should render');
+    assertTrue(calls1Count > 0, 'First bar should create elements');
+    assertTrue(calls2Count > 0, 'Second bar should create elements');
+});
+
+test('Multiple bars maintain separate state', () => {
+    resetCalls();
+
+    const bar1 = ProgressBar({
+        current: 25,
+        total: 100,
+        tokens: 2500,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    const bar1Calls = [...createElementCalls];
+    resetCalls();
+
+    const bar2 = ProgressBar({
+        current: 75,
+        total: 100,
+        tokens: 7500,
+        maxTokens: 10000,
+        components: mockComponents
+    });
+
+    const bar2Calls = [...createElementCalls];
+
+    // Check bar1 had 25%
+    const bar1Text = bar1Calls
+        .flatMap(c => c.children)
+        .filter(c => typeof c === 'string')
+        .join('');
+
+    assertTrue(bar1Text.includes('25%'), 'First bar should show 25%');
+
+    // Check bar2 had 75%
+    const bar2Text = bar2Calls
+        .flatMap(c => c.children)
+        .filter(c => typeof c === 'string')
+        .join('');
+
+    assertTrue(bar2Text.includes('75%'), 'Second bar should show 75%');
+});
+
+// ============================================================================
 // SUMMARY
 // ============================================================================
 console.log('\n' + '='.repeat(60));
