@@ -62,6 +62,7 @@
     "test:file-utils": "node test/test-file-utils.js",
     "test:token-utils": "node test/test-token-utils.js",
     "test:method-analyzer": "node test/test-method-analyzer.js",
+    "test:gitignore-parser": "node test/test-gitignore-parser.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer-extended": "node test/test-incremental-analyzer-extended.js",
