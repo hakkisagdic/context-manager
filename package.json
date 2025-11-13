@@ -59,6 +59,7 @@
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
     "test:config-utils": "node test/test-config-utils.js",
+    "test:file-utils": "node test/test-file-utils.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer-extended": "node test/test-incremental-analyzer-extended.js",
