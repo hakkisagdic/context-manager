@@ -948,6 +948,172 @@ test('15.5: useInput is active only in raw mode', () => {
 });
 
 // ===================================================================
+// Section 16: TokenAnalyzer Integration Tests
+// ===================================================================
+
+console.log('\n🔗 Section 16: TokenAnalyzer Integration\n');
+
+test('16.1: CLI imports TokenAnalyzer', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should import TokenAnalyzer
+	if (!cliCode.includes('TokenAnalyzer')) {
+		throw new Error('CLI should import TokenAnalyzer');
+	}
+});
+
+test('16.2: runWizard function exists in CLI', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should have runWizard function
+	if (!cliCode.includes('async function runWizard()')) {
+		throw new Error('CLI should have runWizard function');
+	}
+});
+
+test('16.3: Wizard onComplete callback receives answers', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should pass onComplete callback to Wizard
+	if (!cliCode.includes('onComplete: (answers)')) {
+		throw new Error('Wizard should receive onComplete callback');
+	}
+});
+
+test('16.4: Wizard answers are converted to analyzer options', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should map wizard answers to analyzer options
+	const requiredMappings = ['outputFormat:', 'targetModel:', 'projectRoot:'];
+	requiredMappings.forEach(mapping => {
+		if (!cliCode.includes(mapping)) {
+			throw new Error(`Should map ${mapping} from wizard answers`);
+		}
+	});
+});
+
+test('16.5: TokenAnalyzer is instantiated with wizard options', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should create TokenAnalyzer instance
+	if (!cliCode.includes('new TokenAnalyzer(options.projectRoot, options)')) {
+		throw new Error('Should instantiate TokenAnalyzer with options');
+	}
+});
+
+test('16.6: analyzer.run() is called after wizard completion', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should call analyzer.run()
+	if (!cliCode.includes('analyzer.run()')) {
+		throw new Error('Should call analyzer.run() after wizard');
+	}
+});
+
+test('16.7: Wizard unmounts before running analyzer', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should unmount wizard instance before analysis
+	if (!cliCode.includes('instance.unmount()')) {
+		throw new Error('Should unmount wizard before analysis');
+	}
+});
+
+test('16.8: Analysis runs with auto-export enabled', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should enable auto-export
+	if (!cliCode.includes('contextExport: true')) {
+		throw new Error('Should enable auto-export for wizard mode');
+	}
+});
+
+test('16.9: Wizard mode is the default behavior', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should run wizard by default
+	if (!cliCode.includes('await runWizard()')) {
+		throw new Error('Wizard should be default mode');
+	}
+});
+
+test('16.10: CLI mode can be explicitly requested', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should support --cli flag
+	if (!cliCode.includes('--cli')) {
+		throw new Error('Should support --cli flag to skip wizard');
+	}
+});
+
+test('16.11: Wizard answers include all required fields', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should use outputFormat, targetModel from answers
+	const expectedFields = ['answers.outputFormat', 'answers.targetModel'];
+	expectedFields.forEach(field => {
+		if (!cliCode.includes(field)) {
+			throw new Error(`Wizard answers should include ${field}`);
+		}
+	});
+});
+
+test('16.12: Profile config files are used by analyzer', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Wizard copies config files to project root
+	// Analyzer should pick them up automatically
+	if (!wizardCode.includes('copyFileSync')) {
+		throw new Error('Wizard should copy config files for analyzer');
+	}
+});
+
+test('16.13: Success message shows after analysis', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should show completion message
+	if (!cliCode.includes('Analysis complete')) {
+		throw new Error('Should show success message after analysis');
+	}
+});
+
+test('16.14: Wizard imports are dynamic (ESM)', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should use dynamic imports for wizard
+	if (!cliCode.includes("await import('../lib/ui/wizard.js')")) {
+		throw new Error('Wizard should be imported dynamically');
+	}
+});
+
+test('16.15: React and Ink are imported dynamically', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should dynamically import React and Ink
+	const imports = ["await import('react')", "await import('ink')"];
+	imports.forEach(imp => {
+		if (!cliCode.includes(imp)) {
+			throw new Error(`Should dynamically import ${imp}`);
+		}
+	});
+});
+
+// ===================================================================
 // Summary
 // ===================================================================
 
