@@ -60,6 +60,8 @@
     "test:clipboard": "node test/test-clipboard-utils.js",
     "test:ui-components": "node test/test-ui-components.js",
     "test:config-utils-comprehensive": "node test/test-config-utils-comprehensive.js",
+    "test:error-scenarios": "node test/test-error-scenarios.js",
+    "test:method-filter-edge-cases": "node test/test-method-filter-edge-cases.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer-extended": "node test/test-incremental-analyzer-extended.js",
