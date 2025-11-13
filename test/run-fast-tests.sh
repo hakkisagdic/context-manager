@@ -12,6 +12,7 @@ node test/test-llm-detector.js > /dev/null 2>&1
 node test/test-format-converter.js > /dev/null 2>&1
 node test/test-logger-comprehensive.js > /dev/null 2>&1
 node test/test-git-utils.js > /dev/null 2>&1
+node test/test-git-utils-comprehensive.js > /dev/null 2>&1
 node test/test-cache-manager.js > /dev/null 2>&1
 node test/test-updater.js > /dev/null 2>&1
 node test/test-token-calculator.js > /dev/null 2>&1
