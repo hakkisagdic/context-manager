@@ -52,6 +52,7 @@
     "test:api-server": "node test/test-api-server.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher": "node test/test-file-watcher.js",
+    "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer": "node test/test-incremental-analyzer.js",
     "test:blame-tracker": "node test/test-blame-tracker.js",
     "test:diff-analyzer": "node test/test-diff-analyzer.js",
