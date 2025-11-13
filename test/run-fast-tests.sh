@@ -17,4 +17,5 @@ node test/test-updater.js > /dev/null 2>&1
 node test/test-token-calculator.js > /dev/null 2>&1
 node test/test-gitingest-formatter.js > /dev/null 2>&1
 node test/test-clipboard-utils.js > /dev/null 2>&1
+node test/test-api-server.js > /dev/null 2>&1
 echo "All fast tests completed"
