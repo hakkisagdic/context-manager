@@ -54,6 +54,7 @@
     "test:blame-tracker": "node test/test-blame-tracker.js",
     "test:diff-analyzer": "node test/test-diff-analyzer.js",
     "test:git-client": "node test/test-git-client.js",
+    "test:toon-formatter-v13": "node test/test-toon-formatter-v13.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
