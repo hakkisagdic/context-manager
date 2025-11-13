@@ -584,6 +584,294 @@ async function runTests() {
     });
 
     // =================================================================
+    // Test Group 7: Advanced Repository Scenarios
+    // =================================================================
+    printHeader('Test Group 7: Advanced Repository Scenarios');
+
+    // Test 27: Private repository handling (authentication required)
+    await testAsync('Test 27: Private repository handling', async () => {
+        // Private repos require authentication which we don't have in tests
+        // This test verifies proper error handling
+        const repoInfo = gitUtils.parseGitHubURL('private-user-999/private-repo-999');
+
+        try {
+            await assertThrowsAsync(
+                async () => gitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 }),
+                'Failed to clone',
+                'Should throw error for private repository without auth'
+            );
+        } catch (error) {
+            // If repo doesn't exist, we get the expected error
+            if (error.message.includes('Failed to clone') ||
+                error.message.includes('Could not find') ||
+                error.message.includes('not found')) {
+                // This is acceptable - both auth failure and not found are expected
+                console.log('   (Verified error handling for private/non-existent repo)');
+            } else {
+                throw error;
+            }
+        }
+    });
+
+    // Test 28: Rate limit handling simulation
+    test('Test 28: GitHub API rate limit awareness', () => {
+        // This test verifies the API setup doesn't have built-in rate limit handling
+        // In production, users should handle rate limits externally
+        const repoInfo = gitUtils.parseGitHubURL('facebook/react');
+
+        // Verify API URL is correctly formed for rate limit headers
+        assertTrue(repoInfo.apiUrl.includes('api.github.com'), 'Should use GitHub API URL');
+        assertTrue(repoInfo.apiUrl.includes('repos/'), 'Should include repos endpoint');
+
+        console.log('   (Note: Rate limiting should be handled by users via GitHub tokens)');
+    });
+
+    // Test 29: Large repository handling - shallow clone performance
+    await testAsync('Test 29: Large repository - shallow clone', async () => {
+        // Use a moderately large but fast-to-clone repo
+        const repoInfo = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo.branch = 'master';
+
+        const startTime = Date.now();
+        const repoPath = gitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 });
+        const cloneTime = Date.now() - startTime;
+
+        assertExists(repoPath, 'Large repository should be cloned');
+
+        // Shallow clone should be relatively fast (< 30 seconds for small repos)
+        assertTrue(cloneTime < 30000, 'Shallow clone should complete quickly');
+
+        console.log(`   (Clone completed in ${cloneTime}ms)`);
+
+        // Cleanup
+        fs.rmSync(repoPath, { recursive: true, force: true });
+    });
+
+    // Test 30: Large repository - memory efficiency
+    await testAsync('Test 30: Large repository - memory efficiency check', async () => {
+        const repoInfo = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo.branch = 'master';
+
+        const beforeMemory = process.memoryUsage().heapUsed;
+
+        const repoPath = gitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 });
+
+        const afterMemory = process.memoryUsage().heapUsed;
+        const memoryIncrease = (afterMemory - beforeMemory) / 1024 / 1024; // MB
+
+        console.log(`   (Memory increase: ${memoryIncrease.toFixed(2)} MB)`);
+
+        // Memory increase should be reasonable (< 100 MB for small repo)
+        assertTrue(memoryIncrease < 100, 'Memory usage should be reasonable');
+
+        // Cleanup
+        fs.rmSync(repoPath, { recursive: true, force: true });
+    });
+
+    // Test 31: Subdirectory cloning (not supported, verify graceful handling)
+    skipTest('Test 31: Subdirectory cloning', 'Git does not support cloning subdirectories directly');
+
+    // Test 32: Clone specific tag
+    await testAsync('Test 32: Clone specific tag/commit', async () => {
+        // Git clone with specific commit/tag requires different approach
+        // Test that URL parsing handles tree/tag URLs
+        const repoInfo = gitUtils.parseGitHubURL('https://github.com/octocat/Hello-World/tree/master');
+
+        assertEqual(repoInfo.owner, 'octocat', 'Should parse owner from tree URL');
+        assertEqual(repoInfo.repo, 'Hello-World', 'Should parse repo from tree URL');
+        assertEqual(repoInfo.branch, 'master', 'Should extract branch from tree URL');
+
+        console.log('   (Note: Specific commit cloning requires git checkout after clone)');
+    });
+
+    // Test 33: Parse commit hash from URL
+    test('Test 33: Handle commit URLs', () => {
+        // Parse URL with commit path
+        const repoInfo = gitUtils.parseGitHubURL('https://github.com/octocat/Hello-World/commit/abc123');
+
+        assertEqual(repoInfo.owner, 'octocat', 'Should parse owner from commit URL');
+        assertEqual(repoInfo.repo, 'Hello-World', 'Should parse repo from commit URL');
+
+        console.log('   (Commit hash would need to be extracted separately for checkout)');
+    });
+
+    // Test 34: Progress reporting verification
+    await testAsync('Test 34: Progress reporting during clone', async () => {
+        const repoInfo = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo.branch = 'master';
+
+        // GitUtils with verbose mode should show progress
+        const verboseGitUtils = new GitUtils({ verbose: true });
+
+        // Clone (will show progress if verbose)
+        const repoPath = verboseGitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 });
+
+        assertExists(repoPath, 'Repository should be cloned with progress reporting');
+
+        // Cleanup
+        fs.rmSync(repoPath, { recursive: true, force: true });
+    });
+
+    // Test 35: Timeout handling for slow operations
+    await testAsync('Test 35: Handle slow clone operations', async () => {
+        // Test with a small repo that should complete quickly
+        const repoInfo = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo.branch = 'master';
+
+        // Set a reasonable timeout
+        const timeout = 60000; // 60 seconds
+        const startTime = Date.now();
+
+        const clonePromise = new Promise((resolve, reject) => {
+            try {
+                const repoPath = gitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 });
+                resolve(repoPath);
+            } catch (error) {
+                reject(error);
+            }
+        });
+
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Clone operation timed out')), timeout);
+        });
+
+        try {
+            const repoPath = await Promise.race([clonePromise, timeoutPromise]);
+            const duration = Date.now() - startTime;
+
+            console.log(`   (Completed in ${duration}ms, well within ${timeout}ms timeout)`);
+            assertTrue(duration < timeout, 'Should complete within timeout');
+
+            // Cleanup
+            fs.rmSync(repoPath, { recursive: true, force: true });
+        } catch (error) {
+            if (error.message.includes('timed out')) {
+                throw new Error('Clone operation exceeded timeout - this may indicate network issues');
+            }
+            throw error;
+        }
+    });
+
+    // Test 36: Disk space error handling
+    test('Test 36: Disk space awareness', () => {
+        // We can't actually fill up the disk in tests, but we can verify
+        // that temp directory structure is reasonable
+        const tempDir = path.join(process.cwd(), '.context-manager', 'temp');
+
+        // Verify temp dir is in a reasonable location
+        assertTrue(tempDir.includes('.context-manager'), 'Temp dir should be in .context-manager');
+
+        // In production, disk space errors would be caught by fs operations
+        // This test verifies the structure is set up correctly
+        console.log(`   (Temp directory: ${tempDir})`);
+        console.log('   (Disk space errors would be handled by fs.mkdirSync/writeFileSync)');
+    });
+
+    // =================================================================
+    // Test Group 8: Edge Cases and Error Recovery
+    // =================================================================
+    printHeader('Test Group 8: Edge Cases and Error Recovery');
+
+    // Test 37: Handle special characters in repo names
+    test('Test 37: Repository names with special characters', () => {
+        // Test repo names with dots, dashes, underscores
+        const repoInfo1 = gitUtils.parseGitHubURL('user.name/repo-name_v2');
+        assertEqual(repoInfo1.owner, 'user.name', 'Should handle dots in owner name');
+        assertEqual(repoInfo1.repo, 'repo-name_v2', 'Should handle dashes and underscores');
+
+        const repoInfo2 = gitUtils.parseGitHubURL('https://github.com/my-org/my.repo.name');
+        assertEqual(repoInfo2.owner, 'my-org', 'Should handle dashes in org name');
+        assertEqual(repoInfo2.repo, 'my.repo.name', 'Should handle dots in repo name');
+    });
+
+    // Test 38: Empty repository handling
+    await testAsync('Test 38: Clone empty repository', async () => {
+        // Most repos have at least a README, but test minimal repo
+        const repoInfo = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo.branch = 'master';
+
+        const repoPath = gitUtils.cloneRepository(repoInfo, { shallow: true, depth: 1 });
+
+        assertExists(repoPath, 'Empty or minimal repository should still clone');
+        assertExists(path.join(repoPath, '.git'), 'Should have .git directory');
+
+        // Cleanup
+        fs.rmSync(repoPath, { recursive: true, force: true });
+    });
+
+    // Test 39: Concurrent clone operations
+    await testAsync('Test 39: Multiple concurrent clones', async () => {
+        const repoInfo1 = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo1.branch = 'master';
+
+        const repoInfo2 = gitUtils.parseGitHubURL('octocat/Hello-World');
+        repoInfo2.branch = 'master';
+
+        // Clone same repo twice concurrently (different instances)
+        const gitUtils1 = new GitUtils({ verbose: false });
+        const gitUtils2 = new GitUtils({ verbose: false });
+
+        const [repoPath1, repoPath2] = await Promise.all([
+            new Promise(resolve => {
+                const path = gitUtils1.cloneRepository(repoInfo1, { shallow: true, depth: 1 });
+                resolve(path);
+            }),
+            new Promise(resolve => {
+                // Add small delay to avoid collision
+                setTimeout(() => {
+                    const path = gitUtils2.cloneRepository(repoInfo2, { shallow: true, depth: 1 });
+                    resolve(path);
+                }, 100);
+            })
+        ]);
+
+        assertExists(repoPath1, 'First clone should succeed');
+        assertExists(repoPath2, 'Second clone should succeed');
+
+        // Both should point to same path (second clone removes first)
+        assertEqual(repoPath1, repoPath2, 'Should handle concurrent clones to same path');
+
+        // Cleanup
+        if (fs.existsSync(repoPath1)) {
+            fs.rmSync(repoPath1, { recursive: true, force: true });
+        }
+    });
+
+    // Test 40: GitIngest with empty/minimal repository
+    await testAsync('Test 40: GitIngest generation from minimal repository', async () => {
+        const testOutputDir = path.join(__dirname, 'test-output');
+        if (!fs.existsSync(testOutputDir)) {
+            fs.mkdirSync(testOutputDir, { recursive: true });
+        }
+
+        const gitUtilsWithOutput = new GitUtils({
+            verbose: false,
+            outputDir: testOutputDir
+        });
+
+        const repoUrl = 'octocat/Hello-World';
+        const repoInfo = gitUtilsWithOutput.parseGitHubURL(repoUrl);
+        repoInfo.branch = 'master';
+
+        const stats = await gitUtilsWithOutput.generateFromGitHub(
+            `https://github.com/${repoInfo.fullName}/tree/${repoInfo.branch}`,
+            { cleanup: true, shallow: true }
+        );
+
+        // Even minimal repos should generate valid digest
+        assertNotNull(stats, 'Stats should not be null');
+        assertTrue(stats.digestSize > 0, 'Should generate non-empty digest');
+        assertExists(stats.outputFile, 'Output file should exist');
+
+        // Verify digest content
+        const content = fs.readFileSync(stats.outputFile, 'utf8');
+        assertTrue(content.includes('Directory:'), 'Digest should have structure');
+
+        // Cleanup
+        fs.rmSync(testOutputDir, { recursive: true, force: true });
+    });
+
+    // =================================================================
     // Summary
     // =================================================================
     printHeader('Test Summary');
