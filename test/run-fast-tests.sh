@@ -22,4 +22,5 @@ node test/test-file-watcher.js > /dev/null 2>&1
 node test/test-incremental-analyzer.js > /dev/null 2>&1
 node test/test-blame-tracker.js > /dev/null 2>&1
 node test/test-diff-analyzer.js > /dev/null 2>&1
+node test/test-git-client.js > /dev/null 2>&1
 echo "All fast tests completed"
