@@ -14,5 +14,5 @@ node test/test-logger-comprehensive.js > /dev/null 2>&1
 node test/test-git-utils.js > /dev/null 2>&1
 node test/test-cache-manager.js > /dev/null 2>&1
 node test/test-updater.js > /dev/null 2>&1
-
+node test/test-token-calculator.js > /dev/null 2>&1
 echo "All fast tests completed"
