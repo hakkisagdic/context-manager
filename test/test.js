@@ -5,9 +5,13 @@
  * Quick smoke tests to verify core functionality
  */
 
-const { TokenAnalyzer, MethodAnalyzer, GitIgnoreParser, MethodFilterParser } = require('../index.js');
-const path = require('path');
-const fs = require('fs');
+import { TokenAnalyzer, MethodAnalyzer, GitIgnoreParser, MethodFilterParser } from '../index.js';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let testsRun = 0;
 let testsPassed = 0;
