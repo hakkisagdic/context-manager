@@ -16,6 +16,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Multi-language**: 14+ languages with method-level analysis
 - **Multiple Formats**: TOON (40-50% reduction), JSON, YAML, CSV, XML, GitIngest, Markdown
 
+**Phase 1 Core Enhancements (v3.1.0):**
+- **Preset System**: 8 predefined configuration profiles (default, review, llm-explain, pair-program, security-audit, documentation, minimal, full)
+- **Token Budget Fitter**: Intelligent file selection to fit LLM context windows with 5 fitting strategies
+- **Rule Tracer**: Debug tool for tracking filter decisions and pattern usage
+- **Smart Prioritization**: Entry points, core files weighted higher for optimization
+- **One-Command Workflows**: Apply presets with `--preset review` for instant configuration
+
 ## Architecture
 
 ### v3.0.0 Modular Architecture
@@ -45,6 +52,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Performance** (`lib/cache/`):
 - `CacheManager.js` - Disk/memory caching system (>80% hit rate)
+
+**Phase 1 Enhancements** (`lib/presets/`, `lib/optimizers/`, `lib/debug/`):
+- `PresetManager.js` - Preset configuration management with 8 predefined profiles
+- `presets.json` - Preset definitions with filters, options, and metadata
+- `TokenBudgetFitter.js` - Intelligent file selection for token budget optimization
+- `FitStrategies.js` - 5 fitting strategies (auto, shrink-docs, balanced, methods-only, top-n)
+- `RuleTracer.js` - Debug tool for tracking filter decisions and pattern usage
 
 **Legacy Components** (backward compatible):
 - `context-manager.js` - Legacy TokenCalculator (still supported)
@@ -88,6 +102,10 @@ npm run test:git          # Git integration tests
 npm run test:plugin       # Plugin system tests
 npm run test:api          # API server tests
 npm run test:watch        # Watch mode tests
+npm run test:phase1       # v3.1.0 Phase 1 tests (presets, budget, tracer)
+npm run test:phase1:presets  # Preset system tests
+npm run test:phase1:budget   # Token budget fitter tests
+npm run test:phase1:tracer   # Rule tracer tests
 npm run test:comprehensive # Complete test suite
 ```
 
@@ -107,6 +125,28 @@ npm run watch                     # Start watch mode
 context-manager --changed-only    # Analyze only changed files
 context-manager --changed-since main  # Analyze changes since branch
 context-manager --list-llms       # List supported LLM models
+```
+
+### v3.1.0 Phase 1 Commands
+```bash
+# Preset System
+context-manager --list-presets           # Display all available presets
+context-manager --preset review          # Apply code review preset
+context-manager --preset llm-explain     # Apply LLM explain preset (ultra-compact)
+context-manager --preset security-audit  # Apply security audit preset
+context-manager --preset-info <id>       # Show detailed preset information
+
+# Token Budget Optimization
+context-manager --target-tokens 100000   # Set token budget (also: 100k, 50k)
+context-manager --target-tokens 50k --fit-strategy auto  # Auto-select strategy
+context-manager --fit-strategy shrink-docs  # Remove documentation files
+context-manager --fit-strategy balanced     # Optimize token/file ratio
+context-manager --fit-strategy methods-only # Extract methods from large files
+context-manager --fit-strategy top-n        # Select most important files
+
+# Debug & Tracing
+context-manager --trace-rules            # Enable rule tracing
+context-manager --trace-rules --preset review  # Trace with preset
 ```
 
 ### Build & Publish
@@ -147,6 +187,64 @@ Generates compact JSON format:
 ```
 
 Method-level format includes method names, line numbers, and token counts per file.
+
+### Preset System Workflow (v3.1.0)
+1. List available presets: `context-manager --list-presets`
+2. View preset details: `context-manager --preset-info review`
+3. Apply preset: `context-manager --preset review`
+4. Preset automatically generates temporary filter files (.contextinclude, .contextignore, .methodinclude)
+5. Analysis runs with preset configuration
+6. Cleanup: temporary filter files removed after analysis
+
+**Available Presets:**
+- **default**: Standard analysis with balanced settings
+- **review**: Code review focused (100k token budget, method-level, GitIngest format)
+- **llm-explain**: Ultra-compact for LLM consumption (50k tokens, methods-only strategy)
+- **pair-program**: Interactive development context with full details
+- **security-audit**: Security-relevant code patterns (auth, crypto, session files)
+- **documentation**: Public API surfaces and documentation
+- **minimal**: Entry points only (10k tokens, top-n strategy)
+- **full**: Complete codebase analysis with all details
+
+### Token Budget Optimization Workflow (v3.1.0)
+1. Set target token budget: `--target-tokens 100000` (or use shorthand: `100k`)
+2. Choose fitting strategy (optional): `--fit-strategy auto` (default)
+3. System analyzes all files and calculates importance scores
+4. Fitting algorithm selects optimal file subset
+5. Export reflects only selected files within budget
+
+**Importance Scoring:**
+- Entry points (index.js, main.js, app.js): Highest priority
+- Core directories (src/, lib/): Higher weight
+- Test files: Lower weight
+- Documentation files: Lower weight
+- Custom patterns can be configured
+
+**Fitting Strategies:**
+- **auto**: Automatically selects best strategy based on analysis
+- **shrink-docs**: Removes documentation files first (.md, docs/)
+- **balanced**: Optimizes token-to-file ratio (removes large low-value files)
+- **methods-only**: Extracts methods from large files instead of full content
+- **top-n**: Selects N most important files to fit budget
+
+### Rule Tracer Workflow (v3.1.0)
+1. Enable tracing: `context-manager --trace-rules`
+2. Run analysis as normal
+3. Tracer records all filter decisions:
+   - Files included/excluded and why (gitignore, contextignore, etc.)
+   - Methods included/excluded and matching patterns
+   - Pattern usage statistics
+4. Review trace report showing:
+   - Which patterns matched which files/methods
+   - Unused patterns (patterns that never matched)
+   - Most effective patterns
+   - Decision reasons for each file/method
+
+**Use Cases:**
+- Debug why specific files are excluded
+- Optimize filter patterns
+- Understand filter effectiveness
+- Identify unused/redundant patterns
 
 ## Important Implementation Details
 
@@ -209,6 +307,38 @@ Method-level format includes method names, line numbers, and token counts per fi
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
 
+### Phase 1 Module Details (v3.1.0)
+
+**PresetManager (`lib/presets/preset-manager.js`):**
+- Loads and validates preset configurations from `presets.json`
+- Generates temporary filter files from preset definitions
+- Manages preset lifecycle (apply, cleanup)
+- Exports: `PresetManager`, `PresetNotFoundError`, `InvalidPresetError`, `PresetLoadError`
+- Key methods: `loadPresets()`, `getPreset(id)`, `applyPreset(id)`, `cleanupPresetFiles()`
+
+**TokenBudgetFitter (`lib/optimizers/token-budget-fitter.js`):**
+- Implements intelligent file selection to fit token budgets
+- Calculates importance scores based on file paths and patterns
+- Supports 5 fitting strategies via `FitStrategies` module
+- Provides recommendations when budget cannot be met
+- Exports: `TokenBudgetFitter`, `TokenBudgetError`, `ImpossibleFitError`
+- Key methods: `fitToBudget(files, targetTokens, strategy)`, `calculateImportance(file)`
+- Performance: <100ms for typical codebases
+
+**FitStrategies (`lib/optimizers/fit-strategies.js`):**
+- Implements 5 fitting strategies: auto, shrink-docs, balanced, methods-only, top-n
+- Each strategy is a pure function: `(files, targetTokens, options) => selectedFiles`
+- Auto strategy automatically selects best approach based on analysis
+- Exports strategy functions and strategy metadata
+
+**RuleTracer (`lib/debug/rule-tracer.js`):**
+- Records filter decisions for debugging and optimization
+- Tracks pattern matches for files and methods
+- Provides statistics on pattern effectiveness
+- Integrates with `GitIgnoreParser` and `MethodFilterParser`
+- Exports: `RuleTracer`
+- Key methods: `traceDecision(type, item, decision, reason)`, `getReport()`
+
 ### Configuration File Discovery
 Searches in order:
 1. Script directory (`__dirname`)
@@ -229,5 +359,32 @@ When no export flags provided, prompts user to choose:
 - ES6 class syntax for core components
 - Regex-based parsing (no AST dependencies)
 - Graceful fallbacks (tiktoken optional, clipboard fallback to file)
-- Minimal dependencies (only tiktoken as optional)
+- Minimal dependencies (only tiktoken as optional, React/Ink for UI)
 - No TypeScript, pure JavaScript for maximum portability
+- Modular architecture with clear separation of concerns
+- Pure functions for strategies and algorithms (v3.1.0)
+- Comprehensive error handling with custom error classes
+
+## API Exports (v3.1.0)
+
+The public API (`index.js`) exports all modules for programmatic usage:
+
+**Core Modules:**
+- `TokenCalculator`, `MethodAnalyzer`
+- `GitIgnoreParser`, `MethodFilterParser`
+- `GitIngestFormatter`, `ToonFormatter`, `FormatRegistry`
+- `TokenUtils`, `FileUtils`, `ClipboardUtils`, `ConfigUtils`, `FormatConverter`, `ErrorHandler`
+- `Logger`, `getLogger`, `createLogger`, `Updater`, `GitUtils`
+
+**Phase 1 Modules (v3.1.0):**
+- `PresetManager` - Preset configuration management
+- `TokenBudgetFitter` - Token budget optimization
+- `FitStrategies` - Fitting strategy implementations
+- `RuleTracer` - Filter decision tracking
+
+**Error Classes:**
+- `PresetNotFoundError`, `InvalidPresetError`, `PresetLoadError`
+- `TokenBudgetError`, `ImpossibleFitError`
+
+**Functions:**
+- `generateDigestFromReport`, `generateDigestFromContext`
