@@ -5,9 +5,16 @@
  * Tests the GitIngestFormatter class functionality
  */
 
-const fs = require('fs');
-const path = require('path');
-const { TokenCalculator, GitIngestFormatter } = require('../index.js');
+import fs from 'fs';
+import path from 'path';
+import { TokenCalculator, GitIngestFormatter } from '../index.js';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 console.log('🧪 Testing GitIngest Integration...\n');
 

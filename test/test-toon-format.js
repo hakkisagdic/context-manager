@@ -3,8 +3,8 @@
  * v2.3.0 - Phase 1 Feature
  */
 
-const ToonFormatter = require('../lib/formatters/toon-formatter');
-const FormatRegistry = require('../lib/formatters/format-registry');
+import ToonFormatter from '../lib/formatters/toon-formatter.js';
+import FormatRegistry from '../lib/formatters/format-registry.js';
 
 console.log('🧪 Testing TOON Format Encoder\n');
 

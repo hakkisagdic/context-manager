@@ -5,11 +5,11 @@
  * Tests method extraction and analysis for Java files
  */
 
-const fs = require('fs');
-const path = require('path');
-const MethodAnalyzer = require('../lib/analyzers/method-analyzer');
-const FileUtils = require('../lib/utils/file-utils');
-const TokenUtils = require('../lib/utils/token-utils');
+import fs from 'fs';
+import path from 'path';
+import MethodAnalyzer from '../lib/analyzers/method-analyzer.js';
+import FileUtils from '../lib/utils/file-utils.js';
+import TokenUtils from '../lib/utils/token-utils.js';
 
 console.log('🧪 Java Support Test Suite');
 console.log('='.repeat(60));
