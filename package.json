@@ -38,6 +38,7 @@
     "test:phase1:tracer": "node test/test-phase1-rule-tracer.js",
     "test:api-endpoints": "node test/test-api-endpoints.js",
     "test:cli-scripts": "node test/test-cli-scripts.js",
+    "test:ui-components": "node test/test-ui-components.js",
     "test:utils": "node test/test-utils-comprehensive.js",
     "test:utils-2": "node test/test-utils-comprehensive-2.js",
     "test:core-modules": "node test/test-core-modules.js",
