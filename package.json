@@ -23,6 +23,7 @@
     "test:ink": "node test/test-ink-ui.js",
     "test:wizard": "node test/test-wizard.js",
     "test:dashboard": "node test/test-dashboard.js",
+    "test:dashboard-comprehensive": "node test/test-dashboard-comprehensive.js",
     "test:llm": "node test/test-llm-detection.js",
     "test:format-converter": "node test/test-format-converter.js",
     "test:logger": "node test/test-logger-comprehensive.js",
