@@ -27,4 +27,5 @@ node test/test-blame-tracker.js > /dev/null 2>&1
 node test/test-diff-analyzer.js > /dev/null 2>&1
 node test/test-git-client.js > /dev/null 2>&1
 node test/test-toon-formatter-v13.js > /dev/null 2>&1
+node test/test-toon-decoder.js > /dev/null 2>&1
 echo "All fast tests completed"

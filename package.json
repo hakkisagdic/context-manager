@@ -57,6 +57,7 @@
     "test:diff-analyzer": "node test/test-diff-analyzer.js",
     "test:git-client": "node test/test-git-client.js",
     "test:toon-formatter-v13": "node test/test-toon-formatter-v13.js",
+    "test:toon-decoder": "node test/test-toon-decoder.js",
     "test:git-utils-comprehensive": "node test/test-git-utils-comprehensive.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
