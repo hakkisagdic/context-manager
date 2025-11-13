@@ -7,5 +7,6 @@ node test/test-formatters-comprehensive.js > /dev/null 2>&1
 node test/test-utils-error-handler.js > /dev/null 2>&1
 node test/test-utils-comprehensive-2.js > /dev/null 2>&1
 node test/test-parsers-comprehensive.js > /dev/null 2>&1
+node test/test-plugins-comprehensive.js > /dev/null 2>&1
 
 echo "All fast tests completed"

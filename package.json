@@ -35,6 +35,7 @@
     "test:error-handler": "node test/test-utils-error-handler.js",
     "test:utils": "node test/test-utils-comprehensive-2.js",
     "test:parsers": "node test/test-parsers-comprehensive.js",
+    "test:plugins": "node test/test-plugins-comprehensive.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
