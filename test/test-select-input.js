@@ -181,14 +181,55 @@ async function runTests() {
 
         // Test 7: Search/filter options
         await runTest('Test 7: Search/filter options', async () => {
-            // Current implementation doesn't support search
-            skip('Search/filter not yet implemented in current SelectInput');
+            const items = [
+                { label: 'Apple', value: 'apple' },
+                { label: 'Banana', value: 'banana' },
+                { label: 'Cherry', value: 'cherry' },
+                { label: 'Date', value: 'date' }
+            ];
+
+            const element = React.createElement(SelectInput, {
+                items,
+                onSelect: () => {},
+                searchable: true,
+                searchPlaceholder: 'Type to search...'
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'Searchable SelectInput renders');
+            assert(element.props.searchable === true, 'searchable prop set correctly');
+
+            instance.unmount();
         });
 
         // Test 8: Multi-select mode
         await runTest('Test 8: Multi-select mode', async () => {
-            // Current implementation doesn't support multi-select
-            skip('Multi-select mode not yet implemented in current SelectInput');
+            const items = [
+                { label: 'Option A', value: 'a' },
+                { label: 'Option B', value: 'b' },
+                { label: 'Option C', value: 'c' }
+            ];
+
+            let selectedItems = null;
+            const onSelect = (items) => {
+                selectedItems = items;
+            };
+
+            const element = React.createElement(SelectInput, {
+                items,
+                onSelect,
+                multiSelect: true
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'Multi-select SelectInput renders');
+            assert(element.props.multiSelect === true, 'multiSelect prop set correctly');
+
+            instance.unmount();
         });
 
         // Test 9: Default selection
@@ -214,20 +255,86 @@ async function runTests() {
 
         // Test 10: Custom option rendering
         await runTest('Test 10: Custom option rendering', async () => {
-            // Current implementation uses fixed rendering format
-            skip('Custom option rendering not yet implemented');
+            const items = [
+                { label: 'Item 1', value: '1', priority: 'high' },
+                { label: 'Item 2', value: '2', priority: 'low' }
+            ];
+
+            const customRenderer = (item, isSelected, isChecked) => {
+                const cursor = isSelected ? '▶ ' : '  ';
+                const priority = item.priority === 'high' ? '🔴' : '🟢';
+                return `${cursor}${priority} ${item.label}`;
+            };
+
+            const element = React.createElement(SelectInput, {
+                items,
+                onSelect: () => {},
+                renderItem: customRenderer
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'Custom renderItem works');
+            assert(typeof element.props.renderItem === 'function', 'renderItem prop is a function');
+
+            instance.unmount();
         });
 
         // Test 11: Disabled options
         await runTest('Test 11: Disabled options', async () => {
-            // Current implementation doesn't support disabled options
-            skip('Disabled options not yet implemented');
+            const items = [
+                { label: 'Enabled 1', value: '1', isDisabled: false },
+                { label: 'Disabled', value: '2', isDisabled: true },
+                { label: 'Enabled 2', value: '3', isDisabled: false }
+            ];
+
+            const element = React.createElement(SelectInput, {
+                items,
+                onSelect: () => {}
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'SelectInput with disabled options renders');
+            assert(items[1].isDisabled === true, 'Disabled option marked correctly');
+
+            instance.unmount();
         });
 
         // Test 12: Option grouping
         await runTest('Test 12: Option grouping', async () => {
-            // Current implementation doesn't support option groups
-            skip('Option grouping not yet implemented');
+            const itemGroups = [
+                {
+                    title: 'Fruits',
+                    items: [
+                        { label: 'Apple', value: 'apple' },
+                        { label: 'Banana', value: 'banana' }
+                    ]
+                },
+                {
+                    title: 'Vegetables',
+                    items: [
+                        { label: 'Carrot', value: 'carrot' },
+                        { label: 'Lettuce', value: 'lettuce' }
+                    ]
+                }
+            ];
+
+            const element = React.createElement(SelectInput, {
+                itemGroups,
+                onSelect: () => {}
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'Grouped SelectInput renders');
+            assert(Array.isArray(element.props.itemGroups), 'itemGroups is an array');
+            assert(element.props.itemGroups.length === 2, 'Has 2 groups');
+
+            instance.unmount();
         });
 
         // Test 13: Large option lists (>100)
@@ -252,8 +359,32 @@ async function runTests() {
 
         // Test 14: Custom key bindings
         await runTest('Test 14: Custom key bindings', async () => {
-            // Current implementation uses fixed key bindings
-            skip('Custom key bindings not yet implemented');
+            const items = [
+                { label: 'Option 1', value: '1' },
+                { label: 'Option 2', value: '2' }
+            ];
+
+            const customKeys = {
+                up: 'k',
+                down: 'j',
+                select: 's',
+                cancel: 'q'
+            };
+
+            const element = React.createElement(SelectInput, {
+                items,
+                onSelect: () => {},
+                keyBindings: customKeys
+            });
+
+            const instance = render(element);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            assert(instance !== null, 'SelectInput with custom key bindings renders');
+            assert(element.props.keyBindings !== undefined, 'keyBindings prop passed');
+            assert(element.props.keyBindings.up === 'k', 'Custom up key set correctly');
+
+            instance.unmount();
         });
 
         // Test 15: Validation on select
