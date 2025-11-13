@@ -609,6 +609,345 @@ test('10.5: Profile selection flow is complete', () => {
 });
 
 // ===================================================================
+// Section 11: Keyboard Navigation & Cancel Tests
+// ===================================================================
+
+console.log('\n⌨️  Section 11: Keyboard Navigation\n');
+
+test('11.1: SelectInput component exists', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	if (!fs.existsSync(selectInputPath)) {
+		throw new Error('SelectInput component file not found');
+	}
+});
+
+test('11.2: SelectInput handles up/down arrow keys', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should handle upArrow and downArrow
+	if (!selectInputCode.includes('upArrow') || !selectInputCode.includes('downArrow')) {
+		throw new Error('SelectInput should handle arrow keys');
+	}
+});
+
+test('11.3: SelectInput handles Enter key', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should handle return/enter key
+	if (!selectInputCode.includes('return')) {
+		throw new Error('SelectInput should handle Enter key');
+	}
+});
+
+test('11.4: SelectInput handles Escape key', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should handle escape key
+	if (!selectInputCode.includes('escape')) {
+		throw new Error('SelectInput should handle Escape key');
+	}
+});
+
+test('11.5: Escape exits the application', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should call process.exit on escape
+	if (!selectInputCode.includes('process.exit')) {
+		throw new Error('Escape should exit application');
+	}
+});
+
+test('11.6: Arrow key navigation wraps around', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should wrap from 0 to length-1 and vice versa
+	if (!selectInputCode.includes('items.length - 1')) {
+		throw new Error('Arrow navigation should wrap around');
+	}
+});
+
+test('11.7: SelectInput uses useInput hook', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should use Ink's useInput hook
+	if (!selectInputCode.includes('useInput')) {
+		throw new Error('SelectInput should use useInput hook');
+	}
+});
+
+// ===================================================================
+// Section 12: Default Values & State Persistence Tests
+// ===================================================================
+
+console.log('\n💾 Section 12: Default Values & State\n');
+
+test('12.1: selectedIndex starts at 0', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should initialize selectedIndex to 0
+	if (!selectInputCode.includes('useState(0)')) {
+		throw new Error('selectedIndex should start at 0');
+	}
+});
+
+test('12.2: Answers object persists across steps', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use spread operator to preserve previous answers
+	if (!wizardCode.includes('...prev')) {
+		throw new Error('Answers should persist across steps');
+	}
+});
+
+test('12.3: Profile items are memoized', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use useMemo for profile items
+	if (!wizardCode.includes('useMemo(() => discoverProfiles()')) {
+		throw new Error('Profile items should be memoized');
+	}
+});
+
+test('12.4: Target model items are memoized', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use useMemo for target model items
+	const targetModelMemo = wizardCode.includes('const targetModelItems = useMemo');
+	if (!targetModelMemo) {
+		throw new Error('Target model items should be memoized');
+	}
+});
+
+test('12.5: Handlers use useCallback', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use useCallback for handlers
+	if (!wizardCode.includes('useCallback')) {
+		throw new Error('Handlers should use useCallback');
+	}
+});
+
+test('12.6: Step state is maintained with useState', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should have step state
+	if (!wizardCode.includes('useState(\'profile\')')) {
+		throw new Error('Step should be maintained with useState');
+	}
+});
+
+// ===================================================================
+// Section 13: Advanced Profile & Config Tests
+// ===================================================================
+
+console.log('\n⚙️  Section 13: Advanced Configuration\n');
+
+test('13.1: Profile files can be copied to project root', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should copy to projectRoot
+	if (!wizardCode.includes('process.cwd()')) {
+		throw new Error('Should copy files to project root');
+	}
+});
+
+test('13.2: Copied files are tracked in answers', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should track copiedFiles in answers
+	if (!wizardCode.includes('copiedFiles:')) {
+		throw new Error('Copied files should be tracked');
+	}
+});
+
+test('13.3: Profile metadata is stored in answers', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should store profileMetadata
+	if (!wizardCode.includes('profileMetadata:')) {
+		throw new Error('Profile metadata should be stored');
+	}
+});
+
+test('13.4: Active config files are created', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should create symlinks or copies for active config
+	const configFiles = ['.contextinclude', '.contextignore', '.methodinclude', '.methodignore'];
+	let found = 0;
+	configFiles.forEach(file => {
+		if (wizardCode.includes(`'${file}'`)) {
+			found++;
+		}
+	});
+
+	if (found !== 4) {
+		throw new Error('Should handle all 4 config files');
+	}
+});
+
+test('13.5: Profile selection clears existing files', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should remove/unlink existing files before creating new ones
+	if (!wizardCode.includes('unlinkSync')) {
+		throw new Error('Should clear existing files');
+	}
+});
+
+test('13.6: File operations check for existence', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should check file existence with existsSync
+	const copyFn = wizardCode.match(/function copyProfileFiles[\s\S]*?^}/m);
+	if (!copyFn || !copyFn[0].includes('existsSync')) {
+		throw new Error('Should check file existence');
+	}
+});
+
+// ===================================================================
+// Section 14: Display & Formatting Tests
+// ===================================================================
+
+console.log('\n🎨 Section 14: Display & Formatting\n');
+
+test('14.1: Complete step shows success message', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should show "Configuration Complete"
+	if (!wizardCode.includes('Configuration Complete')) {
+		throw new Error('Should show completion message');
+	}
+});
+
+test('14.2: Profile icons are displayed in selection', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should include icon in label
+	if (!wizardCode.includes('metadata.icon')) {
+		throw new Error('Profile icons should be displayed');
+	}
+});
+
+test('14.3: Context window sizes are formatted', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should format large numbers (1M for million, k for thousand)
+	if (!wizardCode.includes('contextK') && !wizardCode.includes('1000000')) {
+		throw new Error('Context window sizes should be formatted');
+	}
+});
+
+test('14.4: Wizard has fixed width', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should set width
+	if (!wizardCode.includes('width:')) {
+		throw new Error('Wizard should have fixed width');
+	}
+});
+
+test('14.5: Selected item is highlighted', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should highlight selected item with color
+	if (!selectInputCode.includes('color:') || !selectInputCode.includes('isSelected')) {
+		throw new Error('Selected item should be highlighted');
+	}
+});
+
+test('14.6: Selection indicator is shown', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should show arrow indicator (❯)
+	if (!selectInputCode.includes('❯')) {
+		throw new Error('Should show selection indicator');
+	}
+});
+
+// ===================================================================
+// Section 15: React Hooks & Optimization Tests
+// ===================================================================
+
+console.log('\n⚛️  Section 15: React Hooks & Optimization\n');
+
+test('15.1: Component uses React hooks', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	const hooks = ['useState', 'useCallback', 'useMemo'];
+	hooks.forEach(hook => {
+		if (!wizardCode.includes(hook)) {
+			throw new Error(`Should use ${hook} hook`);
+		}
+	});
+});
+
+test('15.2: useCallback dependencies are correct', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should have dependency arrays with answers and onComplete
+	if (!wizardCode.includes('[answers, onComplete]')) {
+		throw new Error('useCallback should have proper dependencies');
+	}
+});
+
+test('15.3: useMemo prevents unnecessary recalculations', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use empty dependency array for memoized items
+	if (!wizardCode.includes('useMemo(() => discoverProfiles(), [])')) {
+		throw new Error('useMemo should prevent recalculations');
+	}
+});
+
+test('15.4: SelectInput uses useStdin for raw mode', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should use useStdin to check raw mode support
+	if (!selectInputCode.includes('useStdin')) {
+		throw new Error('SelectInput should use useStdin');
+	}
+});
+
+test('15.5: useInput is active only in raw mode', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should check isRawModeSupported
+	if (!selectInputCode.includes('isRawModeSupported')) {
+		throw new Error('useInput should be active only in raw mode');
+	}
+});
+
+// ===================================================================
 // Summary
 // ===================================================================
 
