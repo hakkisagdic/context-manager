@@ -48,6 +48,7 @@
     "test:updater": "node test/test-updater.js",
     "test:token-calculator": "node test/test-token-calculator.js",
     "test:token-calculator-extended": "node test/test-token-calculator-extended.js",
+    "test:token-calculator-reports": "node test/test-token-calculator-reports.js",
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
     "test:api-server": "node test/test-api-server.js",
