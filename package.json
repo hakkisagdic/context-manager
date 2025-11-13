@@ -16,6 +16,7 @@
     "test:unit": "node test/unit-tests.js",
     "test:v2.3": "node test/test-v2.3-features.js",
     "test:cli": "node test/test-cli-integration.js",
+    "test:cli-comprehensive": "node test/test-cli-comprehensive.js",
     "test:toon": "node test/test-toon-format.js",
     "test:gitingest": "node test/test-gitingest.js",
     "test:gitingest-json": "node test/test-gitingest-json.js",
