@@ -40,6 +40,7 @@
     "test:parsers": "node test/test-parsers-comprehensive.js",
     "test:plugins": "node test/test-plugins-comprehensive.js",
     "test:llm": "node test/test-llm-detector.js",
+    "test:llm-extended": "node test/test-llm-detector-extended.js",
     "test:format-converter": "node test/test-format-converter.js",
     "test:logger": "node test/test-logger-comprehensive.js",
     "test:git-utils": "node test/test-git-utils.js",
