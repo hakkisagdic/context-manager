@@ -4,7 +4,7 @@
  * Tests GitHub URL parsing and repository operations
  */
 
-const GitUtils = require('../lib/utils/git-utils');
+import GitUtils from '../lib/utils/git-utils.js';
 
 console.log('🧪 Testing Git Integration...\n');
 

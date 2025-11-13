@@ -5,9 +5,16 @@
  * Tests method extraction from Rust files
  */
 
-const fs = require('fs');
-const path = require('path');
-const MethodAnalyzer = require('../lib/analyzers/method-analyzer');
+import fs from 'fs';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+import MethodAnalyzer from '../lib/analyzers/method-analyzer.js';
 
 console.log('🧪 Running Rust Support Tests...\n');
 
@@ -26,7 +33,7 @@ function assert(condition, testName) {
 
 // Test 1: Rust file detection
 console.log('📋 Test 1: File Type Detection');
-const FileUtils = require('../lib/utils/file-utils');
+import FileUtils from '../lib/utils/file-utils.js';
 
 assert(
     FileUtils.isCode('test.rs'),

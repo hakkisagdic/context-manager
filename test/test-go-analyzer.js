@@ -2,8 +2,8 @@
  * Test Suite for Go Method Analyzer
  */
 
-const GoMethodAnalyzer = require('../lib/analyzers/go-method-analyzer');
-const path = require('path');
+import GoMethodAnalyzer from '../lib/analyzers/go-method-analyzer.js';
+import path from 'path';
 
 function testGoFunctionExtraction() {
     console.log('\n🧪 Test: Go Function Extraction');

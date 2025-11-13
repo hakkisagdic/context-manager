@@ -5,9 +5,16 @@
  * End-to-end tests simulating real-world usage
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 console.log('🧪 INTEGRATION TEST SUITE');
 console.log('='.repeat(70));
@@ -362,8 +369,8 @@ createTestFile('test-extraction.js', testJSContent);
 
 // Create method extraction test script
 const methodTestContent = `
-const { MethodAnalyzer } = require('./index.js');
-const fs = require('fs');
+import { MethodAnalyzer } from './index.js';
+import fs from 'fs';
 
 const analyzer = new MethodAnalyzer();
 const content = fs.readFileSync('test-extraction.js', 'utf8');
