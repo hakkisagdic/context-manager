@@ -45,6 +45,7 @@
     "test:integration-workflows": "node test/test-integration-workflows.js",
     "test:utility-functions": "node test/test-utility-functions.js",
     "test:edge-cases-final": "node test/test-edge-cases-final.js",
+    "test:final-milestone": "node test/test-final-milestone.js",
     "test:watch": "node test/test-watch-mode.js",
     "test:phase1": "node test/test-phase1-all.js",
     "test:phase1:presets": "node test/test-phase1-presets.js",
