@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="styles.xsl"?>
+<!-- TODO: Add schema validation -->
+<!-- FIXME: Update namespace URIs -->
+<project xmlns="http://example.com/schema/project"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:build="http://example.com/schema/build"
+         xmlns:test="http://example.com/schema/test"
+         xsi:schemaLocation="http://example.com/schema/project project.xsd">
+
+    <!-- Project metadata -->
+    <metadata id="project-metadata">
+        <name>Example Project</name>
+        <version>1.0.0</version>
+        <description>A sample project for testing XML parsing</description>
+        <author name="John Doe" email="john@example.com"/>
+        <license type="MIT"/>
+    </metadata>
+
+    <!-- Build configuration -->
+    <build:configuration id="build-config">
+        <build:target name="production">
+            <build:output>dist/</build:output>
+            <build:optimization level="3"/>
+            <build:minify enabled="true"/>
+        </build:target>
+
+        <build:target name="development">
+            <build:output>dev/</build:output>
+            <build:optimization level="0"/>
+            <build:minify enabled="false"/>
+            <build:sourceMaps enabled="true"/>
+        </build:target>
+
+        <!-- NOTE: Add staging environment -->
+        <build:target name="staging">
+            <build:output>staging/</build:output>
+            <build:optimization level="2"/>
+        </build:target>
+    </build:configuration>
+
+    <!-- Dependencies -->
+    <dependencies id="project-dependencies">
+        <dependency name="react" version="^18.0.0" type="production"/>
+        <dependency name="react-dom" version="^18.0.0" type="production"/>
+        <dependency name="typescript" version="^5.0.0" type="development"/>
+        <dependency name="jest" version="^29.0.0" type="development"/>
+        <dependency name="eslint" version="^8.0.0" type="development"/>
+    </dependencies>
+
+    <!-- Scripts -->
+    <scripts id="npm-scripts">
+        <script name="build">
+            <command>tsc &amp;&amp; webpack</command>
+            <description>Build the project for production</description>
+        </script>
+        <script name="test">
+            <command>jest --coverage</command>
+            <description>Run unit tests with coverage</description>
+        </script>
+        <script name="dev">
+            <command>webpack serve --mode development</command>
+            <description>Start development server</description>
+        </script>
+        <script name="lint">
+            <command>eslint src/**/*.ts</command>
+            <description>Lint TypeScript files</description>
+        </script>
+    </scripts>
+
+    <!-- Test configuration -->
+    <test:suite id="test-config">
+        <test:unit name="core-tests">
+            <test:pattern>**/*.test.ts</test:pattern>
+            <test:coverage minimum="80"/>
+            <test:timeout>5000</test:timeout>
+        </test:unit>
+
+        <test:integration name="api-tests">
+            <test:pattern>**/*.integration.test.ts</test:pattern>
+            <test:timeout>10000</test:timeout>
+            <test:setup>
+                <test:database>postgresql://localhost/testdb</test:database>
+                <test:fixtures>fixtures/</test:fixtures>
+            </test:setup>
+        </test:integration>
+
+        <test:e2e name="e2e-tests">
+            <test:pattern>e2e/**/*.spec.ts</test:pattern>
+            <test:browser>chrome</test:browser>
+            <test:headless>true</test:headless>
+        </test:e2e>
+    </test:suite>
+
+    <!-- Deployment configuration -->
+    <deployment id="deploy-config">
+        <environment name="production">
+            <server host="prod.example.com" port="443" protocol="https"/>
+            <database url="postgresql://prod-db.example.com/proddb"/>
+            <cache type="redis" host="prod-cache.example.com" port="6379"/>
+            <cdn enabled="true" provider="cloudflare"/>
+        </environment>
+
+        <environment name="staging">
+            <server host="staging.example.com" port="443" protocol="https"/>
+            <database url="postgresql://staging-db.example.com/stagingdb"/>
+            <cache type="redis" host="staging-cache.example.com" port="6379"/>
+        </environment>
+
+        <environment name="development">
+            <server host="localhost" port="3000" protocol="http"/>
+            <database url="postgresql://localhost/devdb"/>
+            <cache type="memory"/>
+        </environment>
+    </deployment>
+
+    <!-- Feature flags -->
+    <features id="feature-flags">
+        <feature name="new-ui" enabled="true" rollout="100"/>
+        <feature name="experimental-api" enabled="false" rollout="0"/>
+        <feature name="beta-features" enabled="true" rollout="50"/>
+        <feature name="analytics" enabled="true" rollout="100">
+            <config>
+                <tracking-id>UA-123456-1</tracking-id>
+                <anonymize-ip>true</anonymize-ip>
+            </config>
+        </feature>
+    </features>
+
+    <!-- API Configuration -->
+    <api id="api-config">
+        <endpoint name="users" path="/api/users" method="GET">
+            <auth required="true" type="jwt"/>
+            <ratelimit requests="100" window="60"/>
+            <cache ttl="300"/>
+        </endpoint>
+
+        <endpoint name="create-user" path="/api/users" method="POST">
+            <auth required="true" type="jwt"/>
+            <validation schema="user-schema.json"/>
+            <ratelimit requests="10" window="60"/>
+        </endpoint>
+
+        <endpoint name="public-data" path="/api/public" method="GET">
+            <auth required="false"/>
+            <cache ttl="3600"/>
+        </endpoint>
+    </api>
+
+    <!-- Monitoring and logging -->
+    <monitoring id="monitoring-config">
+        <logging level="info" format="json">
+            <output type="console"/>
+            <output type="file" path="logs/app.log"/>
+            <output type="syslog" host="log.example.com" port="514"/>
+        </logging>
+
+        <metrics enabled="true">
+            <prometheus port="9090" path="/metrics"/>
+            <statsd host="metrics.example.com" port="8125"/>
+        </metrics>
+
+        <tracing enabled="true">
+            <jaeger host="tracing.example.com" port="6831"/>
+            <sampling rate="0.1"/>
+        </tracing>
+
+        <!-- HACK: Temporary alert configuration -->
+        <alerts>
+            <alert name="high-error-rate" threshold="5" window="300"/>
+            <alert name="slow-response" threshold="1000" window="60"/>
+            <alert name="high-memory" threshold="90" window="60"/>
+        </alerts>
+    </monitoring>
+
+    <!-- Database configuration -->
+    <database id="db-config">
+        <connection name="primary">
+            <host>db-primary.example.com</host>
+            <port>5432</port>
+            <database>appdb</database>
+            <pool min="5" max="20"/>
+            <timeout>30000</timeout>
+        </connection>
+
+        <connection name="replica">
+            <host>db-replica.example.com</host>
+            <port>5432</port>
+            <database>appdb</database>
+            <readonly>true</readonly>
+            <pool min="2" max="10"/>
+        </connection>
+
+        <migrations>
+            <directory>migrations/</directory>
+            <table>schema_migrations</table>
+            <auto-run>false</auto-run>
+        </migrations>
+    </database>
+
+    <!-- XXX: Review security settings before production -->
+    <security id="security-config">
+        <cors enabled="true">
+            <allowed-origins>
+                <origin>https://example.com</origin>
+                <origin>https://app.example.com</origin>
+            </allowed-origins>
+            <allowed-methods>GET,POST,PUT,DELETE</allowed-methods>
+        </cors>
+
+        <headers>
+            <csp>default-src 'self'; script-src 'self' 'unsafe-inline'</csp>
+            <hsts max-age="31536000" include-subdomains="true"/>
+            <x-frame-options>DENY</x-frame-options>
+        </headers>
+
+        <encryption algorithm="AES-256-GCM">
+            <key-rotation enabled="true" interval="2592000"/>
+        </encryption>
+    </security>
+</project>

@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
   "version": "3.1.0",
-  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 15+ languages including 10-dialect SQL support (SQL Server, PostgreSQL, MySQL, Oracle, SQLite, Snowflake, DB2, Redshift, BigQuery) with auto-detection. Features include TOON format (40-50% token reduction), real-time analysis, preset profiles, token budget optimization, and comprehensive context generation.",
+  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 18+ languages including 10-dialect SQL support (SQL Server, PostgreSQL, MySQL, Oracle, SQLite, Snowflake, DB2, Redshift, BigQuery) and markup languages (HTML, Markdown, XML) with auto-detection. Features include TOON format (40-50% token reduction), real-time analysis, preset profiles, token budget optimization, and comprehensive context generation.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -33,6 +33,8 @@
     "test:api": "node test/test-api-server.js",
     "test:watch": "node test/test-watch-mode.js",
     "test:sqlserver": "node test/test-sqlserver.js",
+    "test:sql-dialects": "node test/test-sql-dialects.js",
+    "test:markup": "node test/test-markup-languages.js",
     "test:phase1": "node test/test-phase1-all.js",
     "test:phase1:presets": "node test/test-phase1-presets.js",
     "test:phase1:budget": "node test/test-phase1-token-budget.js",
@@ -129,6 +131,10 @@
     "multi-dialect",
     "multi-language",
     "database",
+    "html",
+    "markdown",
+    "xml",
+    "markup",
     "ast",
     "tiktoken",
     "optimizer",

@@ -103,6 +103,8 @@ npm run test:plugin       # Plugin system tests
 npm run test:api          # API server tests
 npm run test:watch        # Watch mode tests
 npm run test:sqlserver    # SQL Server T-SQL support tests (30 tests)
+npm run test:sql-dialects # Multi-dialect SQL tests (18 tests, 9 dialects)
+npm run test:markup       # Markup language tests (30 tests: HTML, Markdown, XML)
 npm run test:phase1       # v3.1.0 Phase 1 tests (presets, budget, tracer)
 npm run test:phase1:presets  # Preset system tests
 npm run test:phase1:budget   # Token budget fitter tests
@@ -307,6 +309,32 @@ Method-level format includes method names, line numbers, and token counts per fi
 **Scala:** Detects methods and functions:
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
+
+**HTML:** Extracts structural elements:
+- Headings: `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>`
+- Semantic sections: `<section>`, `<article>`, `<aside>`, `<nav>`, `<header>`, `<footer>`, `<main>` (with id/class)
+- Components: `<div id="...">`, `<div class="...">` (divs with identifiers)
+- Forms: `<form id="...">`, `<form name="...">`
+- Scripts: `<script src="...">`, `<script id="...">`
+- Custom elements: `<user-profile>`, `<data-grid>` (web components with hyphenated names)
+- Templates: `<template id="...">`
+- Supports: .html, .htm extensions
+
+**Markdown:** Extracts document sections:
+- Headings: `#`, `##`, `###`, `####`, `#####`, `######` (ATX-style)
+- Code blocks: ` ```language ` (fenced code blocks with language identifiers)
+- Lists: Ordered (`1.`, `2.`) and unordered (`-`, `*`, `+`)
+- Link references: `[ref]: url`
+- Supports: .md, .markdown extensions
+
+**XML:** Extracts elements and metadata:
+- Root elements: `<root xmlns="...">` (elements with namespace declarations)
+- Elements with id: `<element id="...">`
+- Elements with name: `<element name="...">`
+- Processing instructions: `<?xml-stylesheet ...?>`
+- Annotated comments: `<!-- TODO: ... -->`, `<!-- FIXME: ... -->`, `<!-- NOTE: ... -->`
+- Namespaced elements: `<ns:element>`, `<build:target>`
+- Supports: .xml extension
 
 **SQL (10-Dialect Support with Auto-Detection):**
 
