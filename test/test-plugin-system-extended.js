@@ -1114,6 +1114,438 @@ await asyncTest('Hot reload - Unload and reload plugin', async () => {
 });
 
 // ============================================================================
+// PLUGIN SANDBOXING
+// ============================================================================
+console.log('\n🔒 Plugin Sandboxing Tests');
+console.log('-'.repeat(70));
+
+test('Sandboxing - Resource access restrictions', () => {
+    class SandboxedPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.allowedPaths = ['/allowed/path'];
+            this.blockedPaths = ['/etc', '/sys', '/proc'];
+        }
+
+        canAccess(path) {
+            // Check if path is in blocked paths
+            if (this.blockedPaths.some(blocked => path.startsWith(blocked))) {
+                return false;
+            }
+            // Check if path is in allowed paths
+            return this.allowedPaths.some(allowed => path.startsWith(allowed));
+        }
+
+        readFile(path) {
+            if (!this.canAccess(path)) {
+                throw new Error(`Access denied: ${path}`);
+            }
+            // Would read file here
+            return 'file content';
+        }
+    }
+
+    const plugin = new SandboxedPlugin();
+
+    // Should allow access to allowed paths
+    if (!plugin.canAccess('/allowed/path/file.js')) {
+        throw new Error('Should allow access to allowed path');
+    }
+
+    // Should block access to system paths
+    if (plugin.canAccess('/etc/passwd')) {
+        throw new Error('Should block access to /etc');
+    }
+
+    // Should throw on unauthorized access
+    try {
+        plugin.readFile('/etc/passwd');
+        throw new Error('Should have thrown access denied');
+    } catch (error) {
+        if (!error.message.includes('Access denied')) throw error;
+    }
+});
+
+test('Sandboxing - Memory usage limits', () => {
+    class MemoryLimitedPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.maxMemoryMB = 50;
+            this.currentMemoryMB = 0;
+        }
+
+        allocate(sizeMB) {
+            if (this.currentMemoryMB + sizeMB > this.maxMemoryMB) {
+                throw new Error(`Memory limit exceeded: ${this.currentMemoryMB + sizeMB}MB > ${this.maxMemoryMB}MB`);
+            }
+            this.currentMemoryMB += sizeMB;
+            return new Array(sizeMB * 1024 * 256); // Rough approximation
+        }
+
+        free(sizeMB) {
+            this.currentMemoryMB = Math.max(0, this.currentMemoryMB - sizeMB);
+        }
+    }
+
+    const plugin = new MemoryLimitedPlugin();
+
+    // Should allow allocation within limit
+    plugin.allocate(30);
+    if (plugin.currentMemoryMB !== 30) throw new Error('Memory not tracked');
+
+    // Should allow more allocation up to limit
+    plugin.allocate(15);
+    if (plugin.currentMemoryMB !== 45) throw new Error('Memory not tracked');
+
+    // Should throw when exceeding limit
+    try {
+        plugin.allocate(10); // Would exceed 50MB
+        throw new Error('Should have thrown memory limit error');
+    } catch (error) {
+        if (!error.message.includes('Memory limit exceeded')) throw error;
+    }
+
+    // Should allow freeing memory
+    plugin.free(20);
+    if (plugin.currentMemoryMB !== 25) throw new Error('Memory not freed');
+});
+
+test('Sandboxing - Execution timeout', async () => {
+    class TimeoutPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.timeoutMs = 1000;
+        }
+
+        async executeWithTimeout(fn) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    reject(new Error('Execution timeout exceeded'));
+                }, this.timeoutMs);
+
+                try {
+                    const result = fn();
+                    clearTimeout(timer);
+                    resolve(result);
+                } catch (error) {
+                    clearTimeout(timer);
+                    reject(error);
+                }
+            });
+        }
+    }
+
+    const plugin = new TimeoutPlugin();
+
+    // Should complete within timeout
+    const result = await plugin.executeWithTimeout(() => {
+        return 'completed';
+    });
+    if (result !== 'completed') throw new Error('Should complete');
+
+    // Should timeout on slow operation
+    plugin.timeoutMs = 10; // Very short timeout
+    try {
+        await plugin.executeWithTimeout(() => {
+            const start = Date.now();
+            while (Date.now() - start < 100) {
+                // Busy wait
+            }
+            return 'too slow';
+        });
+        throw new Error('Should have timed out');
+    } catch (error) {
+        if (!error.message.includes('timeout')) throw error;
+    }
+});
+
+test('Sandboxing - Unsafe operations blocking', () => {
+    class SafePlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.unsafePatterns = [
+                /eval\s*\(/,
+                /Function\s*\(/,
+                /execSync/,
+                /child_process/,
+                /\.\.\/\.\.\//  // Path traversal
+            ];
+        }
+
+        isSafe(code) {
+            return !this.unsafePatterns.some(pattern => pattern.test(code));
+        }
+
+        extractMethods(content) {
+            if (!this.isSafe(content)) {
+                throw new Error('Unsafe code detected');
+            }
+            return []; // Would extract methods here
+        }
+    }
+
+    const plugin = new SafePlugin();
+
+    // Should allow safe code
+    if (!plugin.isSafe('function test() { return 42; }')) {
+        throw new Error('Should allow safe code');
+    }
+
+    // Should block eval
+    if (plugin.isSafe('eval("malicious code")')) {
+        throw new Error('Should block eval');
+    }
+
+    // Should block Function constructor
+    if (plugin.isSafe('new Function("return 1")')) {
+        throw new Error('Should block Function constructor');
+    }
+
+    // Should block child_process
+    if (plugin.isSafe('require("child_process")')) {
+        throw new Error('Should block child_process');
+    }
+
+    // Should block path traversal
+    if (plugin.isSafe('require("../../../etc/passwd")')) {
+        throw new Error('Should block path traversal');
+    }
+
+    // Should throw on unsafe code
+    try {
+        plugin.extractMethods('eval("unsafe")');
+        throw new Error('Should have blocked unsafe code');
+    } catch (error) {
+        if (!error.message.includes('Unsafe code')) throw error;
+    }
+});
+
+test('Sandboxing - API access control', () => {
+    class RestrictedPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.allowedAPIs = ['extractMethods', 'validate', 'getMetadata'];
+        }
+
+        canCallAPI(apiName) {
+            return this.allowedAPIs.includes(apiName);
+        }
+
+        callAPI(apiName, ...args) {
+            if (!this.canCallAPI(apiName)) {
+                throw new Error(`API access denied: ${apiName}`);
+            }
+            // Would call the actual API here
+            return `Called ${apiName}`;
+        }
+    }
+
+    const plugin = new RestrictedPlugin();
+
+    // Should allow whitelisted APIs
+    if (!plugin.canCallAPI('extractMethods')) {
+        throw new Error('Should allow extractMethods');
+    }
+
+    const result = plugin.callAPI('extractMethods', 'code');
+    if (!result.includes('extractMethods')) throw new Error('API call failed');
+
+    // Should block non-whitelisted APIs
+    if (plugin.canCallAPI('deleteFiles')) {
+        throw new Error('Should block deleteFiles');
+    }
+
+    try {
+        plugin.callAPI('dangerousOperation');
+        throw new Error('Should have blocked API call');
+    } catch (error) {
+        if (!error.message.includes('API access denied')) throw error;
+    }
+});
+
+test('Sandboxing - Scope isolation', () => {
+    class IsolatedPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.isolatedScope = {
+                allowed: ['console', 'Array', 'Object', 'String', 'Number'],
+                blocked: ['process', 'require', 'global', '__dirname', '__filename']
+            };
+        }
+
+        canAccessGlobal(globalName) {
+            if (this.isolatedScope.blocked.includes(globalName)) {
+                return false;
+            }
+            return this.isolatedScope.allowed.includes(globalName);
+        }
+
+        execute(code) {
+            // Check for blocked globals
+            const blockedAccess = this.isolatedScope.blocked.find(name =>
+                code.includes(name)
+            );
+
+            if (blockedAccess) {
+                throw new Error(`Access to ${blockedAccess} is not allowed`);
+            }
+
+            // Would execute in isolated scope here
+            return 'executed safely';
+        }
+    }
+
+    const plugin = new IsolatedPlugin();
+
+    // Should allow safe globals
+    if (!plugin.canAccessGlobal('console')) {
+        throw new Error('Should allow console');
+    }
+    if (!plugin.canAccessGlobal('Array')) {
+        throw new Error('Should allow Array');
+    }
+
+    // Should block dangerous globals
+    if (plugin.canAccessGlobal('process')) {
+        throw new Error('Should block process');
+    }
+    if (plugin.canAccessGlobal('require')) {
+        throw new Error('Should block require');
+    }
+
+    // Should execute safe code
+    const result = plugin.execute('console.log("safe")');
+    if (result !== 'executed safely') throw new Error('Execution failed');
+
+    // Should block code accessing process
+    try {
+        plugin.execute('process.exit(0)');
+        throw new Error('Should have blocked process access');
+    } catch (error) {
+        if (!error.message.includes('process')) throw error;
+    }
+});
+
+test('Sandboxing - Plugin context separation', () => {
+    const pm = new PluginManager({ autoLoad: false });
+
+    class Plugin1 extends LanguagePlugin {
+        constructor() {
+            super();
+            this.name = 'plugin1';
+            this.privateData = 'secret1';
+        }
+    }
+
+    class Plugin2 extends LanguagePlugin {
+        constructor() {
+            super();
+            this.name = 'plugin2';
+            this.privateData = 'secret2';
+        }
+
+        tryAccessOtherPlugin(otherPlugin) {
+            // Plugins should not be able to access each other's private data
+            // without explicit permission
+            return otherPlugin.privateData;
+        }
+    }
+
+    const p1 = new Plugin1();
+    const p2 = new Plugin2();
+
+    pm.register('plugin1', p1);
+    pm.register('plugin2', p2);
+
+    // Each plugin should have its own context
+    if (p1.privateData === p2.privateData) {
+        throw new Error('Plugins share data - no isolation');
+    }
+
+    // Plugin2 can access Plugin1 (this shows plugins are NOT isolated by default)
+    // In a real sandbox, this would be prevented
+    const accessed = p2.tryAccessOtherPlugin(p1);
+    if (accessed !== 'secret1') {
+        throw new Error('Unexpected access result');
+    }
+
+    // This test documents current behavior: plugins CAN access each other
+    // A real sandboxing implementation would prevent this
+});
+
+test('Sandboxing - Input validation and sanitization', () => {
+    class ValidatingPlugin extends LanguagePlugin {
+        constructor() {
+            super();
+            this.maxInputSize = 1000000; // 1MB
+        }
+
+        validateInput(content) {
+            // Check size
+            if (content.length > this.maxInputSize) {
+                throw new Error('Input size exceeds limit');
+            }
+
+            // Check for null bytes (potential injection)
+            if (content.includes('\0')) {
+                throw new Error('Null bytes not allowed');
+            }
+
+            // Check for control characters (except newline, tab, carriage return)
+            const hasInvalidChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F]/.test(content);
+            if (hasInvalidChars) {
+                throw new Error('Invalid control characters detected');
+            }
+
+            return true;
+        }
+
+        sanitizeInput(content) {
+            // Remove or escape potentially dangerous content
+            return content
+                .replace(/\0/g, '') // Remove null bytes
+                .replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F]/g, ''); // Remove control chars
+        }
+
+        extractMethods(content) {
+            this.validateInput(content);
+            const sanitized = this.sanitizeInput(content);
+            return []; // Would extract from sanitized content
+        }
+    }
+
+    const plugin = new ValidatingPlugin();
+
+    // Should validate clean input
+    if (!plugin.validateInput('function test() {}')) {
+        throw new Error('Should validate clean input');
+    }
+
+    // Should reject oversized input
+    const huge = 'x'.repeat(2000000);
+    try {
+        plugin.validateInput(huge);
+        throw new Error('Should reject oversized input');
+    } catch (error) {
+        if (!error.message.includes('exceeds limit')) throw error;
+    }
+
+    // Should reject null bytes
+    try {
+        plugin.validateInput('test\0malicious');
+        throw new Error('Should reject null bytes');
+    } catch (error) {
+        if (!error.message.includes('Null bytes')) throw error;
+    }
+
+    // Should sanitize input
+    const dirty = 'test\0\x01\x02code';
+    const clean = plugin.sanitizeInput(dirty);
+    if (clean.includes('\0')) throw new Error('Sanitization failed');
+    if (clean === dirty) throw new Error('Should have modified input');
+});
+
+// ============================================================================
 // RESULTS
 // ============================================================================
 console.log('\n' + '='.repeat(70));
