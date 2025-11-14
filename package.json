@@ -55,6 +55,7 @@
     "test:plugins": "node test/test-plugins-comprehensive.js",
     "test:llm-extended": "node test/test-llm-detector-extended.js",
     "test:cache": "node test/test-cache-manager.js",
+    "test:cache-extended": "node test/test-cache-manager-extended.js",
     "test:updater": "node test/test-updater.js",
     "test:token-calculator": "node test/test-token-calculator.js",
     "test:token-calculator-extended": "node test/test-token-calculator-extended.js",
