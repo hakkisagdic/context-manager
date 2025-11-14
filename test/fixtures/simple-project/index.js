@@ -1,22 +1,6 @@
-// Simple test project for CLI testing
-
-function hello(name) {
-    return `Hello, ${name}!`;
+// Simple test fixture
+function hello() {
+    return 'Hello World';
 }
 
-function add(a, b) {
-    return a + b;
-}
-
-class Calculator {
-    multiply(a, b) {
-        return a * b;
-    }
-
-    divide(a, b) {
-        if (b === 0) throw new Error('Division by zero');
-        return a / b;
-    }
-}
-
-module.exports = { hello, add, Calculator };
+module.exports = { hello };
