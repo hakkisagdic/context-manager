@@ -17,6 +17,7 @@ import TokenUtils from '../lib/utils/token-utils.js';
 import FileUtils from '../lib/utils/file-utils.js';
 import GitIgnoreParser from '../lib/parsers/gitignore-parser.js';
 import MethodFilterParser from '../lib/parsers/method-filter-parser.js';
+import FormatRegistry from '../lib/formatters/format-registry.js';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -183,10 +184,18 @@ export { fibonacci, processData, DataProcessor };
 
     const sampleLargeJS = sampleJS.repeat(100); // ~100KB file
     const sampleHugeJS = sampleJS.repeat(1000); // ~1MB file
+    const sample10MB = sampleJS.repeat(10000); // ~10MB file
+    const sample100MB = sampleJS.repeat(100000); // ~100MB file
 
     fs.writeFileSync(path.join(TEMP_DIR, 'small.js'), sampleJS);
     fs.writeFileSync(path.join(TEMP_DIR, 'large.js'), sampleLargeJS);
     fs.writeFileSync(path.join(TEMP_DIR, 'huge.js'), sampleHugeJS);
+
+    console.log('   Creating 10MB test file...');
+    fs.writeFileSync(path.join(TEMP_DIR, 'file-10mb.js'), sample10MB);
+
+    console.log('   Creating 100MB test file (this may take a moment)...');
+    fs.writeFileSync(path.join(TEMP_DIR, 'file-100mb.js'), sample100MB);
 
     console.log('✅ Fixtures created\n');
 }
@@ -284,6 +293,36 @@ benchmark('Large codebase scan (10,000 files)', () => {
     };
 }, { targetTime: 10000 });
 
+benchmark('Very large codebase scan (50,000 files)', () => {
+    const testDir = path.join(TEMP_DIR, 'scan-50k');
+    console.log('   ⚠️  Warning: Creating 50,000 files may take a while...');
+    generateLargeCodebase(50000, testDir);
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    return {
+        filesScanned: files.length,
+        throughput: `${(files.length / 1000).toFixed(1)}k files`,
+        details: `${scanner.stats.directoriesTraversed} directories traversed, ${(files.length / (Date.now() / 1000)).toFixed(0)} files/sec`
+    };
+}, { targetTime: 30000 });
+
+benchmark('Extreme codebase scan (100,000 files)', () => {
+    const testDir = path.join(TEMP_DIR, 'scan-100k');
+    console.log('   ⚠️  Warning: Creating 100,000 files may take several minutes...');
+    generateLargeCodebase(100000, testDir);
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    return {
+        filesScanned: files.length,
+        throughput: `${(files.length / 1000).toFixed(1)}k files`,
+        details: `${scanner.stats.directoriesTraversed} directories traversed, ${(files.length / (Date.now() / 1000)).toFixed(0)} files/sec`
+    };
+}, { targetTime: 60000 });
+
 // ============================================================================
 // TOKEN CALCULATION PERFORMANCE
 // ============================================================================
@@ -343,6 +382,39 @@ benchmark('Token calculation - huge file (1MB)', () => {
         details: `${Math.round(totalTokens / iterations)} tokens per file`
     };
 }, { iterations: 1 });
+
+benchmark('Token calculation - very large file (10MB)', () => {
+    const filePath = path.join(TEMP_DIR, 'file-10mb.js');
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const iterations = 3;
+    let totalTokens = 0;
+
+    const start = Date.now();
+    for (let i = 0; i < iterations; i++) {
+        totalTokens += TokenUtils.calculate(content, filePath);
+    }
+    const elapsed = Date.now() - start;
+
+    return {
+        throughput: `${Math.round(iterations / (elapsed / 1000))} files/sec`,
+        details: `${Math.round(totalTokens / iterations)} tokens per file, ${formatBytes(content.length)} size`
+    };
+}, { iterations: 1, targetTime: 30000 });
+
+benchmark('Token calculation - extreme file (100MB)', () => {
+    const filePath = path.join(TEMP_DIR, 'file-100mb.js');
+    console.log('   ⚠️  Reading 100MB file...');
+    const content = fs.readFileSync(filePath, 'utf-8');
+
+    const start = Date.now();
+    const totalTokens = TokenUtils.calculate(content, filePath);
+    const elapsed = Date.now() - start;
+
+    return {
+        throughput: `${(1 / (elapsed / 1000)).toFixed(2)} files/sec`,
+        details: `${totalTokens} tokens, ${formatBytes(content.length)} size`
+    };
+}, { iterations: 1, targetTime: 60000 });
 
 // ============================================================================
 // METHOD EXTRACTION PERFORMANCE
@@ -427,6 +499,79 @@ benchmark('Memory usage - analyze with method extraction', () => {
         details: `${result.stats?.totalMethods || 'N/A'} total methods`
     };
 }, { targetMemory: 150 * 1024 * 1024 }); // 150MB target
+
+benchmark('Memory leak detection - repeated analysis', () => {
+    const testDir = path.join(TEMP_DIR, 'memory-leak');
+    generateLargeCodebase(100, testDir);
+
+    if (global.gc) {
+        global.gc();
+    }
+
+    const initialMemory = process.memoryUsage().heapUsed;
+    const memorySnapshots = [];
+
+    // Run analysis 10 times
+    for (let i = 0; i < 10; i++) {
+        const scanner = new Scanner(testDir);
+        const files = scanner.scan();
+        const analyzer = new Analyzer({ methodLevel: true });
+        analyzer.analyze(files);
+
+        if (global.gc) {
+            global.gc();
+        }
+
+        memorySnapshots.push(process.memoryUsage().heapUsed);
+    }
+
+    const finalMemory = process.memoryUsage().heapUsed;
+    const memoryGrowth = finalMemory - initialMemory;
+    const avgGrowthPerIteration = memoryGrowth / 10;
+
+    // Check if memory is growing linearly (potential leak)
+    const isLeaking = avgGrowthPerIteration > 5 * 1024 * 1024; // > 5MB per iteration
+
+    return {
+        throughput: isLeaking ? '⚠️  Potential leak detected' : '✅ No significant leak',
+        details: `Memory growth: ${formatBytes(memoryGrowth)}, avg per iteration: ${formatBytes(avgGrowthPerIteration)}`
+    };
+}, { iterations: 1 });
+
+benchmark('Parallel processing efficiency (simulated)', () => {
+    const testDir = path.join(TEMP_DIR, 'parallel-test');
+    generateLargeCodebase(500, testDir);
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    // Sequential processing
+    const seqStart = Date.now();
+    const analyzer1 = new Analyzer({ methodLevel: false });
+    analyzer1.analyze(files);
+    const seqTime = Date.now() - seqStart;
+
+    // Parallel processing simulation (split into chunks)
+    const chunkSize = Math.ceil(files.length / 4);
+    const chunks = [];
+    for (let i = 0; i < files.length; i += chunkSize) {
+        chunks.push(files.slice(i, i + chunkSize));
+    }
+
+    const parallelStart = Date.now();
+    const results = chunks.map(chunk => {
+        const analyzer = new Analyzer({ methodLevel: false });
+        return analyzer.analyze(chunk);
+    });
+    const parallelTime = Date.now() - parallelStart;
+
+    const speedup = (seqTime / parallelTime).toFixed(2);
+
+    return {
+        throughput: `${speedup}x speedup (4 chunks)`,
+        details: `Sequential: ${seqTime}ms, Parallel: ${parallelTime}ms`
+    };
+}, { iterations: 1 });
 
 // ============================================================================
 // CACHE PERFORMANCE BENCHMARKS
@@ -620,6 +765,35 @@ set*
     };
 }, { iterations: 1 });
 
+benchmark('Regex compilation caching efficiency', () => {
+    const analyzer = new MethodAnalyzer();
+    const iterations = 1000;
+
+    // Test with pre-compiled (cached) regexes
+    const cachedStart = Date.now();
+    for (let i = 0; i < iterations; i++) {
+        const testCode = `function test${i}() { return ${i}; }`;
+        analyzer.extractMethods(testCode, 'test.js');
+    }
+    const cachedTime = Date.now() - cachedStart;
+
+    // Test with fresh regex compilation (simulate no cache)
+    const freshStart = Date.now();
+    for (let i = 0; i < iterations; i++) {
+        const testCode = `function test${i}() { return ${i}; }`;
+        const freshAnalyzer = new MethodAnalyzer();
+        freshAnalyzer.extractMethods(testCode, 'test.js');
+    }
+    const freshTime = Date.now() - freshStart;
+
+    const improvement = ((freshTime - cachedTime) / freshTime * 100).toFixed(1);
+
+    return {
+        throughput: `${improvement}% faster with caching`,
+        details: `Cached: ${cachedTime}ms, Fresh: ${freshTime}ms`
+    };
+}, { iterations: 1 });
+
 // ============================================================================
 // DIRECTORY TRAVERSAL BENCHMARKS
 // ============================================================================
@@ -669,6 +843,49 @@ benchmark('Wide directory traversal (100 files per dir)', () => {
     };
 }, { targetTime: 2000 });
 
+benchmark('Extreme deep directory traversal (150 levels)', () => {
+    const testDir = path.join(TEMP_DIR, 'extreme-deep-dir');
+
+    // Create very deep nested structure
+    let currentDir = testDir;
+    for (let i = 0; i < 150; i++) {
+        currentDir = path.join(currentDir, `level${i}`);
+        fs.mkdirSync(currentDir, { recursive: true });
+        fs.writeFileSync(path.join(currentDir, 'file.js'), 'export const test = 1;');
+    }
+
+    const scanner = new Scanner(testDir, { maxDepth: Infinity });
+    const files = scanner.scan();
+
+    return {
+        throughput: `${files.length} files found`,
+        details: `${scanner.stats.directoriesTraversed} directories traversed, max depth: 150`
+    };
+}, { targetTime: 2000 });
+
+benchmark('Very wide directory traversal (1,000 files per dir)', () => {
+    const testDir = path.join(TEMP_DIR, 'very-wide-dir');
+    fs.mkdirSync(testDir, { recursive: true });
+
+    // Create 5 directories with 1000 files each
+    for (let d = 0; d < 5; d++) {
+        const dirPath = path.join(testDir, `dir${d}`);
+        fs.mkdirSync(dirPath, { recursive: true });
+
+        for (let f = 0; f < 1000; f++) {
+            fs.writeFileSync(path.join(dirPath, `file${f}.js`), 'export const test = 1;');
+        }
+    }
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    return {
+        throughput: `${files.length} files found`,
+        details: `${scanner.stats.directoriesTraversed} directories, ${Math.round(files.length / scanner.stats.directoriesTraversed)} files/dir avg`
+    };
+}, { targetTime: 5000 });
+
 // ============================================================================
 // EXPORT GENERATION BENCHMARKS
 // ============================================================================
@@ -710,6 +927,80 @@ benchmark('Export generation - Method-level export', () => {
         details: `${formatBytes(jsonOutput.length)} JSON size`
     };
 }, { targetTime: 5000 });
+
+benchmark('Export all formats - performance comparison', () => {
+    const testDir = path.join(TEMP_DIR, 'export-all-formats');
+    generateLargeCodebase(200, testDir);
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    const analyzer = new Analyzer({ methodLevel: false });
+    const result = analyzer.analyze(files);
+
+    const registry = new FormatRegistry();
+    const formats = ['json', 'json-compact', 'yaml', 'csv', 'xml', 'markdown', 'toon'];
+    const results = {};
+
+    for (const format of formats) {
+        const start = Date.now();
+        try {
+            const output = registry.encode(format, result);
+            const elapsed = Date.now() - start;
+            results[format] = {
+                time: elapsed,
+                size: output.length
+            };
+        } catch (error) {
+            results[format] = {
+                time: 0,
+                size: 0,
+                error: error.message
+            };
+        }
+    }
+
+    // Find best (smallest) format
+    const formatSizes = Object.entries(results)
+        .filter(([_, data]) => !data.error)
+        .map(([format, data]) => ({ format, size: data.size }))
+        .sort((a, b) => a.size - b.size);
+
+    const best = formatSizes[0];
+    const worst = formatSizes[formatSizes.length - 1];
+    const reduction = ((worst.size - best.size) / worst.size * 100).toFixed(1);
+
+    return {
+        throughput: `${formats.length} formats exported`,
+        details: `Best: ${best.format} (${formatBytes(best.size)}), Worst: ${worst.format} (${formatBytes(worst.size)}), ${reduction}% reduction`
+    };
+}, { iterations: 1 });
+
+benchmark('Export - TOON format compression ratio', () => {
+    const testDir = path.join(TEMP_DIR, 'export-toon');
+    generateLargeCodebase(500, testDir);
+
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    const analyzer = new Analyzer({ methodLevel: false });
+    const result = analyzer.analyze(files);
+
+    const registry = new FormatRegistry();
+
+    // Standard JSON
+    const jsonOutput = registry.encode('json', result);
+
+    // TOON format
+    const toonOutput = registry.encode('toon', result);
+
+    const reduction = ((jsonOutput.length - toonOutput.length) / jsonOutput.length * 100).toFixed(1);
+
+    return {
+        throughput: `${reduction}% token reduction`,
+        details: `JSON: ${formatBytes(jsonOutput.length)}, TOON: ${formatBytes(toonOutput.length)}`
+    };
+}, { targetTime: 3000 });
 
 // ============================================================================
 // SUMMARY
