@@ -110,6 +110,8 @@ npm run test:phase1:presets  # Preset system tests
 npm run test:phase1:budget   # Token budget fitter tests
 npm run test:phase1:tracer   # Rule tracer tests
 npm run test:cross-platform # Cross-platform compatibility tests (39 tests)
+npm run test:cache        # Cache manager basic tests
+npm run test:cache-extended  # Cache manager extended tests (43 tests)
 npm run test:comprehensive # Complete test suite
 ```
 
