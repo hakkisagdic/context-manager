@@ -39,6 +39,7 @@
     "test:phase1:presets": "node test/test-phase1-presets.js",
     "test:phase1:budget": "node test/test-phase1-token-budget.js",
     "test:phase1:tracer": "node test/test-phase1-rule-tracer.js",
+    "test:performance": "node test/test-performance.js",
     "test:utils": "node test/test-utils-comprehensive.js",
     "test:utils-2": "node test/test-utils-comprehensive-2.js",
     "test:core-modules": "node test/test-core-modules.js",
