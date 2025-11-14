@@ -8,13 +8,14 @@ const __dirname = path.dirname(__filename);
 let totalTests = 0;
 let passedTests = 0;
 let failedTests = 0;
+const pendingTests = [];
 
 function test(name, fn) {
     totalTests++;
     try {
         const result = fn();
         if (result instanceof Promise) {
-            return result.then(() => {
+            const promise = result.then(() => {
                 console.log('✅ ' + name);
                 passedTests++;
             }).catch(err => {
@@ -22,6 +23,8 @@ function test(name, fn) {
                 console.log('   Error: ' + err.message);
                 failedTests++;
             });
+            pendingTests.push(promise);
+            return promise;
         } else {
             console.log('✅ ' + name);
             passedTests++;
@@ -33,6 +36,7 @@ function test(name, fn) {
     }
 }
 
+async function runTests() {
 console.log('🧪 95% Coverage Final Push Tests\n');
 console.log('🎯 TARGET: Cross the 95% threshold!\n');
 
@@ -145,6 +149,9 @@ test('Bonus: Default parameters', () => {
     if (greet() !== 'Hello World') throw new Error('Default parameters failed');
 });
 
+// Wait for all async tests to complete
+await Promise.all(pendingTests);
+
 console.log('\n' + '='.repeat(70));
 console.log('📊 95% FINAL PUSH TEST SUMMARY');
 console.log('='.repeat(70));
@@ -161,3 +168,7 @@ if (failedTests === 0) {
     console.log('\n⚠️  ' + failedTests + ' test(s) failed');
     process.exit(1);
 }
+}
+
+// Run all tests
+runTests();

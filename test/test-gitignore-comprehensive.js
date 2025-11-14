@@ -182,16 +182,19 @@ test('ContextInclude: Switches to include mode', () => {
 
 test('ContextInclude: Multiple include patterns', () => {
     const contextincludePath = path.join(testDir, '.contextinclude');
-    fs.writeFileSync(contextincludePath, 'src/\nlib/\n*.js');
+    fs.writeFileSync(contextincludePath, 'src/\nlib/');
 
     const parser = new GitIgnoreParser(null, null, contextincludePath);
     const ignored1 = parser.isIgnored(null, 'src/file.js');
     const ignored2 = parser.isIgnored(null, 'test/file.js');
+    const ignored3 = parser.isIgnored(null, 'lib/util.js');
 
     // src/ should be included (not ignored)
     // test/ should be ignored (not in include list)
+    // lib/ should be included (not ignored)
     if (ignored1) throw new Error('src/ should be included');
     if (!ignored2) throw new Error('test/ should be excluded');
+    if (ignored3) throw new Error('lib/ should be included');
 
     fs.unlinkSync(contextincludePath);
 });
