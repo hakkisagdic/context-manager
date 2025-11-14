@@ -55,6 +55,7 @@
     "test:formatters": "node test/test-formatters-comprehensive.js",
     "test:error-handler": "node test/test-utils-error-handler.js",
     "test:parsers": "node test/test-parsers-comprehensive.js",
+    "test:gitignore-edge-cases": "node test/test-gitignore-parser-edge-cases.js",
     "test:plugins": "node test/test-plugins-comprehensive.js",
     "test:llm-extended": "node test/test-llm-detector-extended.js",
     "test:cache": "node test/test-cache-manager.js",

@@ -1,0 +1,9 @@
+*.log
+*.tmp
+node_modules/
+build/
+dist/
+coverage/
+.cache/
+**/*.test.js
+**/*.spec.js
