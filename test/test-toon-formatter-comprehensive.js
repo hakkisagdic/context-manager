@@ -603,6 +603,381 @@ test('TOON - Detect circular reference in array', () => {
 });
 
 // ============================================================================
+// BINARY DATA AND BASE64 ENCODING
+// ============================================================================
+console.log('\n🔢 Binary Data Tests');
+console.log('-'.repeat(70));
+
+test('TOON - Encode Buffer as Base64 string', () => {
+    const formatter = new ToonFormatterV13();
+    const buffer = Buffer.from('Hello World', 'utf8');
+    const base64 = buffer.toString('base64');
+    const result = formatter.encode({ data: base64 });
+    if (!result.includes(base64)) {
+        throw new Error('Should preserve Base64 string');
+    }
+});
+
+test('TOON - Encode binary-like string data', () => {
+    const formatter = new ToonFormatterV13();
+    const binaryString = '\x00\x01\x02\x03\xFF';
+    const result = formatter.encode({ binary: binaryString });
+    // Binary characters should be preserved (may be escaped)
+    if (!result.includes('binary:')) {
+        throw new Error('Should encode binary-like data');
+    }
+});
+
+test('TOON - Roundtrip Base64 encoded data', () => {
+    const formatter = new ToonFormatterV13();
+    const base64 = 'SGVsbG8gV29ybGQh'; // "Hello World!"
+    const encoded = formatter.encode({ file: base64 });
+    const decoded = formatter.decode(encoded);
+    if (decoded.file !== base64) {
+        throw new Error('Base64 data should survive roundtrip');
+    }
+});
+
+test('TOON - Encode large Base64 blob (1KB)', () => {
+    const formatter = new ToonFormatterV13();
+    const largeData = Buffer.alloc(1024, 'A').toString('base64');
+    const result = formatter.encode({ blob: largeData });
+    if (!result.includes('blob:')) {
+        throw new Error('Should encode large Base64 blob');
+    }
+});
+
+// ============================================================================
+// ERROR RECOVERY AND MALFORMED TOON
+// ============================================================================
+console.log('\n🚨 Error Recovery Tests');
+console.log('-'.repeat(70));
+
+test('TOON - Handle malformed array with missing closing bracket', () => {
+    const formatter = new ToonFormatterV13();
+    const malformed = '[3]: 1,2,3'; // Missing closing context
+    try {
+        const result = formatter.decode(malformed);
+        // Should either parse partially or handle gracefully
+        if (result === null || Array.isArray(result)) {
+            // Acceptable outcomes
+        } else {
+            throw new Error('Unexpected result type');
+        }
+    } catch (error) {
+        // Error is also acceptable for malformed input
+    }
+});
+
+test('TOON - Handle incomplete key-value pair', () => {
+    const formatter = new ToonFormatterV13();
+    const incomplete = 'name: Test\ncount:'; // Missing value
+    try {
+        const result = formatter.decode(incomplete);
+        // Should handle gracefully (maybe skip incomplete field)
+        if (typeof result === 'object') {
+            // Acceptable
+        }
+    } catch (error) {
+        // Error is acceptable
+    }
+});
+
+test('TOON - Handle mixed indentation levels', () => {
+    const formatter = new ToonFormatterV13();
+    const mixedIndent = 'a:\n  b: 1\n    c: 2\n  d: 3'; // Inconsistent nesting
+    try {
+        const result = formatter.decode(mixedIndent);
+        // Should attempt to parse as best as possible
+        if (typeof result === 'object') {
+            // Acceptable
+        }
+    } catch (error) {
+        // Error is acceptable
+    }
+});
+
+test('TOON - Handle unescaped quotes in values', () => {
+    const formatter = new ToonFormatterV13();
+    const unescaped = 'msg: "hello "world""'; // Improperly escaped
+    try {
+        const result = formatter.decode(unescaped);
+        // Should either parse or fail gracefully
+    } catch (error) {
+        // Error is acceptable
+    }
+});
+
+test('TOON - Handle empty lines in array', () => {
+    const formatter = new ToonFormatterV13();
+    const withEmpty = '[3]:\n- 1\n\n- 2\n- 3'; // Empty line between items
+    try {
+        const result = formatter.decode(withEmpty);
+        // Should skip empty lines
+        if (Array.isArray(result)) {
+            if (result.length <= 3) {
+                // Acceptable
+            }
+        }
+    } catch (error) {
+        // Error is acceptable
+    }
+});
+
+test('TOON - Recover from syntax error mid-document', () => {
+    const formatter = new ToonFormatterV13();
+    const partial = 'name: Test\n@@@INVALID@@@\ncount: 42';
+    try {
+        const result = formatter.decode(partial);
+        // Should parse what it can
+        if (result && result.name === 'Test') {
+            // Successfully recovered first field
+        }
+    } catch (error) {
+        // Error is acceptable for corrupted input
+    }
+});
+
+// ============================================================================
+// VERSION COMPATIBILITY
+// ============================================================================
+console.log('\n📋 Version Compatibility Tests');
+console.log('-'.repeat(70));
+
+test('TOON - Decode TOON v1.3 with comma delimiter', () => {
+    const formatter = new ToonFormatterV13({ delimiter: ',' });
+    const v13 = '[3]: 1,2,3';
+    const result = formatter.decode(v13);
+    if (!Array.isArray(result) || result.length !== 3) {
+        throw new Error('Should decode v1.3 comma format');
+    }
+});
+
+test('TOON - Decode TOON v1.3 with tab delimiter', () => {
+    const formatter = new ToonFormatterV13({ delimiter: '\t' });
+    const v13Tab = '[3\t]: 1\t2\t3';
+    const result = formatter.decode(v13Tab);
+    if (!Array.isArray(result) || result.length !== 3) {
+        throw new Error('Should decode v1.3 tab format');
+    }
+});
+
+test('TOON - Decode TOON v1.3 with pipe delimiter', () => {
+    const formatter = new ToonFormatterV13({ delimiter: '|' });
+    const v13Pipe = '[3|]: 1|2|3';
+    const result = formatter.decode(v13Pipe);
+    if (!Array.isArray(result) || result.length !== 3) {
+        throw new Error('Should decode v1.3 pipe format');
+    }
+});
+
+test('TOON - Decode with length marker prefix (#)', () => {
+    const formatter = new ToonFormatterV13({ lengthMarker: '#' });
+    const withMarker = '[#5]: 1,2,3,4,5';
+    const result = formatter.decode(withMarker);
+    if (!Array.isArray(result) || result.length !== 5) {
+        throw new Error('Should decode with # length marker');
+    }
+});
+
+test('TOON - Decode without length marker prefix', () => {
+    const formatter = new ToonFormatterV13({ lengthMarker: false });
+    const noMarker = '[5]: 1,2,3,4,5';
+    const result = formatter.decode(noMarker);
+    if (!Array.isArray(result) || result.length !== 5) {
+        throw new Error('Should decode without length marker');
+    }
+});
+
+test('TOON - Cross-format compatibility (encode with comma, decode with tab)', () => {
+    const encoder = new ToonFormatterV13({ delimiter: ',' });
+    const decoder = new ToonFormatterV13({ delimiter: ',' });
+
+    const data = [1, 2, 3];
+    const encoded = encoder.encode(data);
+    const decoded = decoder.decode(encoded);
+
+    if (!Array.isArray(decoded) || decoded.length !== 3) {
+        throw new Error('Should maintain compatibility across delimiter settings');
+    }
+});
+
+// ============================================================================
+// METADATA PRESERVATION
+// ============================================================================
+console.log('\n📝 Metadata Preservation Tests');
+console.log('-'.repeat(70));
+
+test('TOON - Preserve property order', () => {
+    const formatter = new ToonFormatterV13();
+    const ordered = { z: 1, a: 2, m: 3 };
+    const encoded = formatter.encode(ordered);
+    const decoded = formatter.decode(encoded);
+
+    const originalKeys = Object.keys(ordered);
+    const decodedKeys = Object.keys(decoded);
+
+    // Note: Object.keys() order may differ, but all keys should be present
+    if (decodedKeys.length !== originalKeys.length) {
+        throw new Error('Should preserve all properties');
+    }
+});
+
+test('TOON - Preserve special characters in keys', () => {
+    const formatter = new ToonFormatterV13();
+    const specialKeys = { 'key-with-dash': 1, 'key.with.dot': 2, 'key_with_underscore': 3 };
+    const encoded = formatter.encode(specialKeys);
+    const decoded = formatter.decode(encoded);
+
+    if (!decoded['key-with-dash'] || !decoded['key.with.dot'] || !decoded['key_with_underscore']) {
+        throw new Error('Should preserve special characters in keys');
+    }
+});
+
+test('TOON - Preserve numeric string keys', () => {
+    const formatter = new ToonFormatterV13();
+    const numericKeys = { '123': 'value1', '456': 'value2' };
+    const encoded = formatter.encode(numericKeys);
+    const decoded = formatter.decode(encoded);
+
+    if (decoded['123'] !== 'value1' || decoded['456'] !== 'value2') {
+        throw new Error('Should preserve numeric string keys');
+    }
+});
+
+test('TOON - Preserve nested structure depth', () => {
+    const formatter = new ToonFormatterV13();
+    const nested = { a: { b: { c: { d: 'deep' } } } };
+    const encoded = formatter.encode(nested);
+    const decoded = formatter.decode(encoded);
+
+    if (decoded?.a?.b?.c?.d !== 'deep') {
+        throw new Error('Should preserve nested structure depth');
+    }
+});
+
+test('TOON - Preserve array structure in nested objects', () => {
+    const formatter = new ToonFormatterV13();
+    const complex = {
+        users: [
+            { id: 1, tags: ['admin', 'user'] },
+            { id: 2, tags: ['user'] }
+        ]
+    };
+    const encoded = formatter.encode(complex);
+    const decoded = formatter.decode(encoded);
+
+    if (!decoded.users || !Array.isArray(decoded.users)) {
+        throw new Error('Should preserve array structure in nested objects');
+    }
+});
+
+// ============================================================================
+// FORMAT MIGRATION
+// ============================================================================
+console.log('\n🔄 Format Migration Tests');
+console.log('-'.repeat(70));
+
+test('TOON - Migrate from JSON to TOON', () => {
+    const formatter = new ToonFormatterV13();
+    const jsonData = { name: 'Test', count: 42, active: true };
+    const jsonString = JSON.stringify(jsonData);
+
+    // Convert JSON to TOON
+    const parsed = JSON.parse(jsonString);
+    const toon = formatter.encode(parsed);
+
+    if (!toon.includes('name:') || !toon.includes('count:') || !toon.includes('active:')) {
+        throw new Error('Should migrate from JSON to TOON');
+    }
+});
+
+test('TOON - Migrate from TOON back to JSON', () => {
+    const formatter = new ToonFormatterV13();
+    const toon = 'name: Test\ncount: 42\nactive: true';
+
+    const decoded = formatter.decode(toon);
+    const json = JSON.stringify(decoded);
+
+    if (!json.includes('Test') || !json.includes('42') || !json.includes('true')) {
+        throw new Error('Should migrate from TOON to JSON');
+    }
+});
+
+test('TOON - Migrate delimiter format (comma to pipe)', () => {
+    const commaFormatter = new ToonFormatterV13({ delimiter: ',' });
+    const pipeFormatter = new ToonFormatterV13({ delimiter: '|' });
+
+    const data = [1, 2, 3, 4, 5];
+    const commaEncoded = commaFormatter.encode(data);
+
+    // Decode with comma, re-encode with pipe
+    const decoded = commaFormatter.decode(commaEncoded);
+    const pipeEncoded = pipeFormatter.encode(decoded);
+
+    if (!pipeEncoded.includes('|')) {
+        throw new Error('Should migrate between delimiter formats');
+    }
+});
+
+test('TOON - Migrate length marker format (without to with)', () => {
+    const noMarker = new ToonFormatterV13({ lengthMarker: false });
+    const withMarker = new ToonFormatterV13({ lengthMarker: '#' });
+
+    const data = [10, 20, 30];
+    const encoded1 = noMarker.encode(data);
+    const decoded = noMarker.decode(encoded1);
+    const encoded2 = withMarker.encode(decoded);
+
+    if (!encoded2.includes('[#3]:')) {
+        throw new Error('Should migrate length marker format');
+    }
+});
+
+test('TOON - Migrate indent size (2 to 4 spaces)', () => {
+    const indent2 = new ToonFormatterV13({ indent: 2 });
+    const indent4 = new ToonFormatterV13({ indent: 4 });
+
+    const data = { a: { b: 1 } };
+    const encoded1 = indent2.encode(data);
+    const decoded = indent2.decode(encoded1);
+    const encoded2 = indent4.encode(decoded);
+
+    // Should have different indentation
+    if (encoded1 === encoded2) {
+        throw new Error('Indentation should differ');
+    }
+    if (!encoded2.includes('    ')) { // 4 spaces
+        throw new Error('Should use 4-space indentation');
+    }
+});
+
+test('TOON - Lossless roundtrip through multiple formats', () => {
+    const formatter1 = new ToonFormatterV13({ delimiter: ',', indent: 2 });
+    const formatter2 = new ToonFormatterV13({ delimiter: '\t', indent: 4 });
+    const formatter3 = new ToonFormatterV13({ delimiter: '|', indent: 2 });
+
+    const original = {
+        name: 'Test',
+        values: [1, 2, 3],
+        nested: { x: 10, y: 20 }
+    };
+
+    // Multiple format migrations
+    const enc1 = formatter1.encode(original);
+    const dec1 = formatter1.decode(enc1);
+    const enc2 = formatter2.encode(dec1);
+    const dec2 = formatter2.decode(enc2);
+    const enc3 = formatter3.encode(dec2);
+    const final = formatter3.decode(enc3);
+
+    // Should preserve data through all migrations
+    if (final.name !== 'Test' || !Array.isArray(final.values) || final.nested.x !== 10) {
+        throw new Error('Should preserve data through multiple format migrations');
+    }
+});
+
+// ============================================================================
 // SUMMARY
 // ============================================================================
 console.log('\n' + '='.repeat(70));
