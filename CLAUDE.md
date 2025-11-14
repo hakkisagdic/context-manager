@@ -113,6 +113,11 @@ npm run test:cross-platform # Cross-platform compatibility tests (39 tests)
 npm run test:cache        # Cache manager basic tests
 npm run test:cache-extended  # Cache manager extended tests (43 tests)
 npm run test:comprehensive # Complete test suite
+
+# Coverage Testing (c8)
+npm run test:coverage      # Run comprehensive tests with coverage report
+npm run test:coverage:report  # Generate HTML coverage report
+npm run test:coverage:check   # Check coverage thresholds (95% lines, 90% functions, 85% branches)
 ```
 
 ### Analysis
