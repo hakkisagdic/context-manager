@@ -255,8 +255,8 @@ test('FormatConverter: Get supported conversions', () => {
     const converter = new FormatConverter();
     const supported = converter.getSupportedConversions();
     assert(supported.fullySupported.length > 0, 'Should have fully supported conversions');
-    assert(Array.isArray(supported.partialSupport), 'Should list partial support');
-    assert(Array.isArray(supported.planned), 'Should list planned features');
+    assert(Array.isArray(supported.limitations), 'Should list limitations');
+    assert(Array.isArray(supported.experimental), 'Should list experimental features');
 });
 
 // ============================================================================
