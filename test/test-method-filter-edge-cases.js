@@ -255,6 +255,20 @@ test('Priority - No filter files (include all)', () => {
     assertEquals(parser.shouldIncludeMethod('anyMethod', 'file.js'), true, 'Should include everything');
 });
 
+test('Priority - Conflicting patterns (same pattern in both files)', () => {
+    const includePath = path.join(FIXTURES_DIR, 'conflict-include.methodinclude');
+    const ignorePath = path.join(FIXTURES_DIR, 'conflict-ignore.methodignore');
+    // Same pattern in both files - include mode should take precedence
+    fs.writeFileSync(includePath, 'get*\nset*');
+    fs.writeFileSync(ignorePath, 'get*\ndelete*');
+
+    const parser = new MethodFilterParser(includePath, ignorePath);
+    // When include file exists, ignore file is not used at all
+    assertEquals(parser.shouldIncludeMethod('getData', 'file.js'), true, 'Should match include pattern');
+    assertEquals(parser.shouldIncludeMethod('setData', 'file.js'), true, 'Should match include pattern');
+    assertEquals(parser.shouldIncludeMethod('deleteData', 'file.js'), false, 'Should not match (include mode excludes by default)');
+});
+
 // ============================================================================
 // MULTIPLE PATTERN MATCHING
 // ============================================================================
@@ -296,6 +310,25 @@ test('Duplicate patterns - Same pattern multiple times', () => {
     // Should still work, just inefficient
     assertEquals(parser.includePatterns.length, 3, 'Should have 3 patterns (including duplicates)');
     assertEquals(parser.shouldIncludeMethod('getData', 'file.js'), true, 'Should match despite duplicates');
+});
+
+test('Pattern optimization - Redundant patterns', () => {
+    const includePath = path.join(FIXTURES_DIR, 'redundant-patterns.methodinclude');
+    // Patterns where one is more general and covers others
+    fs.writeFileSync(includePath, 'get*\ngetData\ngetUserData\n*');
+
+    const parser = new MethodFilterParser(includePath, null);
+    // Current implementation doesn't optimize/remove redundant patterns
+    // but it should still work correctly (first match wins)
+    assertEquals(parser.includePatterns.length, 4, 'Should have 4 patterns (no optimization)');
+
+    // All should match (first pattern get* or last pattern * would match)
+    assertEquals(parser.shouldIncludeMethod('getData', 'file.js'), true, 'Should match redundant patterns');
+    assertEquals(parser.shouldIncludeMethod('getUser', 'file.js'), true, 'Should match general pattern');
+    assertEquals(parser.shouldIncludeMethod('setData', 'file.js'), true, 'Should match wildcard pattern');
+
+    // Document that optimization could reduce patterns from 4 to 1 (just *)
+    console.log('   ℹ️  Redundant patterns not optimized (could reduce 4 patterns to 1)');
 });
 
 // ============================================================================
