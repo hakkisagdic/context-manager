@@ -64,6 +64,8 @@
     "test:method-filter-edge-cases": "node test/test-method-filter-edge-cases.js",
     "test:language-analyzers-comprehensive": "node test/test-language-analyzers-comprehensive.js",
     "test:gitignore-parser-edge-cases": "node test/test-gitignore-parser-edge-cases.js",
+    "test:wizard-comprehensive": "node test/test-wizard-comprehensive.js",
+    "test:dashboard-comprehensive": "node test/test-dashboard-comprehensive.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer-extended": "node test/test-incremental-analyzer-extended.js",
