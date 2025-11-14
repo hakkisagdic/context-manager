@@ -72,6 +72,8 @@
     "test:token-calculator": "node test/test-token-calculator.js",
     "test:token-calculator-extended": "node test/test-token-calculator-extended.js",
     "test:token-calculator-reports": "node test/test-token-calculator-reports.js",
+    "test:error-scenarios": "node test/test-error-scenarios.js",
+    "test:integration-scenarios": "node test/test-integration-scenarios.js",
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:gitingest-formatter-comprehensive": "node test/test-gitingest-formatter-comprehensive.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
