@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample HTML Document for Testing</title>
+    <script src="https://cdn.example.com/jquery.min.js"></script>
+    <script id="analytics-script">
+        // Analytics initialization
+        window.analytics = {};
+    </script>
+</head>
+<body>
+    <!-- Main Header -->
+    <header id="main-header" class="site-header">
+        <h1>Welcome to Our Site</h1>
+        <nav id="main-navigation">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container">
+        <section id="hero-section" class="hero">
+            <h2>Our Mission</h2>
+            <p>To provide excellent service to our customers.</p>
+        </section>
+
+        <article id="main-article" class="content-article">
+            <h2>About Our Company</h2>
+            <p>We are a leading provider of web solutions.</p>
+
+            <section id="services-section">
+                <h3>Our Services</h3>
+                <div class="service-card">
+                    <h4>Web Development</h4>
+                    <p>Custom web applications tailored to your needs.</p>
+                </div>
+                <div class="service-card">
+                    <h4>Mobile Development</h4>
+                    <p>Native and cross-platform mobile apps.</p>
+                </div>
+                <div class="service-card">
+                    <h4>Cloud Solutions</h4>
+                    <p>Scalable cloud infrastructure and services.</p>
+                </div>
+            </section>
+        </article>
+
+        <aside id="sidebar" class="sidebar-widgets">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Contact Form -->
+        <section id="contact-section">
+            <h2>Contact Us</h2>
+            <form id="contact-form" name="contactForm" action="/submit" method="POST">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+        </section>
+
+        <!-- Data Table -->
+        <section id="data-section">
+            <h2>Data Overview</h2>
+            <div id="data-container" class="table-wrapper">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Custom Web Components -->
+        <section id="components-section">
+            <h2>Custom Components</h2>
+            <user-profile user-id="123" theme="dark"></user-profile>
+            <data-grid columns="5" sortable></data-grid>
+            <notification-badge count="3"></notification-badge>
+        </section>
+
+        <!-- Templates -->
+        <template id="user-card-template">
+            <div class="user-card">
+                <img src="" alt="User Avatar" class="avatar">
+                <h4 class="user-name"></h4>
+                <p class="user-bio"></p>
+            </div>
+        </template>
+
+        <template id="product-template">
+            <div class="product">
+                <h5 class="product-title"></h5>
+                <span class="product-price"></span>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </template>
+    </main>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="site-footer">
+        <div class="footer-content">
+            <h3>Company Info</h3>
+            <p>&copy; 2024 Example Company. All rights reserved.</p>
+        </div>
+        <nav id="footer-navigation">
+            <ul>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#terms">Terms of Service</a></li>
+            </ul>
+        </nav>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script id="config-script">
+        window.config = {
+            apiUrl: 'https://api.example.com',
+            version: '1.0.0'
+        };
+    </script>
+</body>
+</html>

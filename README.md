@@ -1,6 +1,6 @@
 # Context Manager
 
-**AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, preset profiles, token budget optimization, and real-time analysis. Perfect for AI-assisted development workflows.
+**AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 15+ programming languages with method-level filtering, preset profiles, token budget optimization, and real-time analysis. Perfect for AI-assisted development workflows.
 
 **v3.1.0** - Phase 1 Core Enhancements 🎯
 
@@ -51,7 +51,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 
 ### 🔢 Token Analysis
 - ✅ **Exact token counting** using tiktoken (GPT-4 compatible)
-- 🌍 **Multi-language support** - 14+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala
+- 🌍 **Multi-language support** - 15+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala, SQL (T-SQL, PL/pgSQL, MySQL, PL/SQL)
 - 🎯 **Method-level analysis** - Analyze tokens per function/method
 - 📊 **Detailed reporting** - by file type, largest files, statistics
 

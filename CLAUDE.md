@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 14+ programming languages, generating optimized context for AI assistants.
+**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 15+ programming languages, generating optimized context for AI assistants.
 
 **Core Capabilities (v3.0.0):**
 - **Plugin Architecture**: Modular system for languages and exporters
@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **REST API**: HTTP server with 6 endpoints for programmatic access
 - **Performance**: Caching system and parallel processing (5-10x faster)
 - **LLM Optimization**: Auto-detect target LLM and optimize context
-- **Multi-language**: 14+ languages with method-level analysis
+- **Multi-language**: 15+ languages with method-level analysis
 - **Multiple Formats**: TOON (40-50% reduction), JSON, YAML, CSV, XML, GitIngest, Markdown
 
 **Phase 1 Core Enhancements (v3.1.0):**
@@ -102,6 +102,9 @@ npm run test:git          # Git integration tests
 npm run test:plugin       # Plugin system tests
 npm run test:api          # API server tests
 npm run test:watch        # Watch mode tests
+npm run test:sqlserver    # SQL Server T-SQL support tests (30 tests)
+npm run test:sql-dialects # Multi-dialect SQL tests (18 tests, 9 dialects)
+npm run test:markup       # Markup language tests (30 tests: HTML, Markdown, XML)
 npm run test:phase1       # v3.1.0 Phase 1 tests (presets, budget, tracer)
 npm run test:phase1:presets  # Preset system tests
 npm run test:phase1:budget   # Token budget fitter tests
@@ -306,6 +309,121 @@ Method-level format includes method names, line numbers, and token counts per fi
 **Scala:** Detects methods and functions:
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
+
+**HTML:** Extracts structural elements:
+- Headings: `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>`
+- Semantic sections: `<section>`, `<article>`, `<aside>`, `<nav>`, `<header>`, `<footer>`, `<main>` (with id/class)
+- Components: `<div id="...">`, `<div class="...">` (divs with identifiers)
+- Forms: `<form id="...">`, `<form name="...">`
+- Scripts: `<script src="...">`, `<script id="...">`
+- Custom elements: `<user-profile>`, `<data-grid>` (web components with hyphenated names)
+- Templates: `<template id="...">`
+- Supports: .html, .htm extensions
+
+**Markdown:** Extracts document sections:
+- Headings: `#`, `##`, `###`, `####`, `#####`, `######` (ATX-style)
+- Code blocks: ` ```language ` (fenced code blocks with language identifiers)
+- Lists: Ordered (`1.`, `2.`) and unordered (`-`, `*`, `+`)
+- Link references: `[ref]: url`
+- Supports: .md, .markdown extensions
+
+**XML:** Extracts elements and metadata:
+- Root elements: `<root xmlns="...">` (elements with namespace declarations)
+- Elements with id: `<element id="...">`
+- Elements with name: `<element name="...">`
+- Processing instructions: `<?xml-stylesheet ...?>`
+- Annotated comments: `<!-- TODO: ... -->`, `<!-- FIXME: ... -->`, `<!-- NOTE: ... -->`
+- Namespaced elements: `<ns:element>`, `<build:target>`
+- Supports: .xml extension
+
+**SQL (10-Dialect Support with Auto-Detection):**
+
+Automatically detects SQL dialect from content and extracts database objects using dialect-specific patterns. Supports 10 major SQL dialects with intelligent fallback to generic SQL parsing:
+
+**SQL Server (T-SQL):** 9 object types
+- Procedures: `CREATE/ALTER PROCEDURE` (supports `PROC`, `CREATE OR ALTER`, temp `#name`)
+- Functions: `CREATE/ALTER FUNCTION` (scalar, table-valued, inline)
+- Triggers: `CREATE/ALTER TRIGGER` (`AFTER`, `INSTEAD OF`)
+- Views: `CREATE/ALTER VIEW` (`CREATE OR ALTER`)
+- Types: `CREATE TYPE...AS TABLE`, `CREATE TYPE...FROM`
+- Synonyms: `CREATE SYNONYM`
+- Sequences: `CREATE SEQUENCE`
+- Indexes: `CREATE INDEX` (CLUSTERED/NONCLUSTERED)
+- Schema-qualified names: `dbo.ProcedureName`
+
+**PostgreSQL (PL/pgSQL):** 8 object types
+- Functions: `CREATE OR REPLACE FUNCTION...LANGUAGE plpgsql`
+- Procedures: `CREATE OR REPLACE PROCEDURE`
+- Triggers: `CREATE TRIGGER`
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW`
+- Types: `CREATE TYPE` (composite, enum)
+- Domains: `CREATE DOMAIN`
+- Rules: `CREATE RULE`
+- Operators: `CREATE OPERATOR`
+
+**MySQL/MariaDB:** 5 object types
+- Procedures: `CREATE PROCEDURE` (supports `DEFINER`, `DELIMITER $$`)
+- Functions: `CREATE FUNCTION`
+- Triggers: `CREATE TRIGGER`
+- Views: `CREATE OR REPLACE VIEW` (supports `ALGORITHM`, `DEFINER`)
+- Events: `CREATE EVENT` (Event Scheduler)
+- Backtick names: `` `table-name` ``
+
+**Oracle (PL/SQL):** 8 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...IS`
+- Functions: `CREATE OR REPLACE FUNCTION...RETURN`
+- Triggers: `CREATE OR REPLACE TRIGGER`
+- Views: `CREATE OR REPLACE [FORCE] VIEW`
+- Packages: `CREATE OR REPLACE PACKAGE`
+- Package Bodies: `CREATE OR REPLACE PACKAGE BODY`
+- Types: `CREATE OR REPLACE TYPE`
+- Type Bodies: `CREATE OR REPLACE TYPE BODY`
+
+**SQLite:** 3 object types
+- Triggers: `CREATE [TEMP] TRIGGER` (supports `INSTEAD OF`, `RAISE`)
+- Views: `CREATE [TEMP] VIEW` (supports `IF NOT EXISTS`)
+- Indexes: `CREATE [UNIQUE] INDEX` (partial, expression-based)
+
+**Snowflake:** 7 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE [SQL|JAVASCRIPT|PYTHON|JAVA|SCALA]`
+- Functions: `CREATE OR REPLACE [SECURE] FUNCTION` (UDF, UDTF)
+- Views: `CREATE OR REPLACE [SECURE|MATERIALIZED] VIEW`
+- Stages: `CREATE OR REPLACE STAGE` (internal, external S3/Azure)
+- Pipes: `CREATE OR REPLACE PIPE` (with AUTO_INGEST)
+- Streams: `CREATE OR REPLACE STREAM` (CDC, change tracking)
+- Tasks: `CREATE OR REPLACE TASK` (scheduled, DAG-based)
+
+**IBM DB2 (SQL PL):** 5 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE SQL` (MODE DB2SQL)
+- Functions: `CREATE OR REPLACE FUNCTION` (scalar, table, deterministic)
+- Triggers: `CREATE OR REPLACE TRIGGER` (MODE DB2SQL, REFERENCING)
+- Views: `CREATE OR REPLACE VIEW` (WITH CHECK OPTION)
+- Types: `CREATE OR REPLACE TYPE` (structured, distinct)
+
+**Amazon Redshift:** 3 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE plpgsql` (transaction control)
+- Functions: `CREATE OR REPLACE FUNCTION` (SQL, Python UDF, Lambda)
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW` (late binding, NO SCHEMA BINDING)
+
+**Google BigQuery:** 3 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE` (Standard SQL, control flow)
+- Functions: `CREATE OR REPLACE FUNCTION` (SQL UDF, JavaScript UDF, TABLE FUNCTION)
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW` (authorized views, STRUCT/ARRAY support)
+
+**Generic SQL (Fallback):** Basic object extraction when dialect cannot be determined
+
+**Auto-Detection Priority:** Snowflake → MySQL → BigQuery → Oracle → DB2 → Redshift → T-SQL → PostgreSQL → SQLite → Generic
+
+**Detection Markers:**
+- **Snowflake**: `LANGUAGE JAVASCRIPT|PYTHON`, `CREATE STAGE|PIPE|STREAM|TASK`, `RUNTIME_VERSION`
+- **BigQuery**: `` `project.dataset.table` ``, `TABLE FUNCTION`, `INT64`, `STRUCT<`, triple-quote strings
+- **MySQL**: `DELIMITER $$`, `CREATE DEFINER=`, `CREATE EVENT`
+- **Oracle**: `CREATE PACKAGE`, `...IS`, `TYPE BODY`
+- **DB2**: `MODE DB2SQL`, `DYNAMIC RESULT SETS`, `REFERENCING NEW AS...OLD AS`
+- **Redshift**: `LANGUAGE plpythonu`, `WITH NO SCHEMA BINDING`, `DISTKEY|SORTKEY`
+- **T-SQL**: `CREATE OR ALTER`, `GO` statement
+- **PostgreSQL**: `LANGUAGE plpgsql`, `$$` function delimiters
+- **SQLite**: `PRAGMA`, `AUTOINCREMENT`, `RAISE(ABORT)`, temp triggers
 
 ### Phase 1 Module Details (v3.1.0)
 
