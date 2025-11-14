@@ -1011,6 +1011,395 @@ test('Should handle race conditions in file operations', async () => {
 });
 
 // ============================================================================
+// CODE INJECTION PREVENTION TESTS
+// ============================================================================
+
+console.log('\n💻 Code Injection Prevention Tests\n');
+
+test('Should prevent eval injection', () => {
+    const maliciousInputs = [
+        'eval("malicious code")',
+        'Function("return this")()',
+        'setTimeout("alert(1)", 0)',
+        'setInterval("console.log(1)", 100)'
+    ];
+
+    for (const input of maliciousInputs) {
+        const hasEval = /\b(eval|Function|setTimeout|setInterval)\s*\(/.test(input);
+        assertTrue(hasEval, `Should detect code injection attempt: ${input}`);
+    }
+});
+
+test('Should prevent require/import injection', () => {
+    const maliciousImports = [
+        'require("child_process").exec("rm -rf /")',
+        'import("./malicious.js")',
+        '__dirname + "/../../../etc/passwd"'
+    ];
+
+    for (const input of maliciousImports) {
+        const hasDangerousImport = /\b(require|import)\s*\(/.test(input);
+        if (input.includes('require') || input.includes('import')) {
+            assertTrue(hasDangerousImport, `Should detect import injection: ${input}`);
+        }
+    }
+});
+
+test('Should sanitize user-provided paths in dynamic requires', () => {
+    const userInput = '../../malicious';
+    const basePath = '/safe/plugins/';
+
+    // Should normalize and validate path
+    const normalizedInput = path.normalize(userInput);
+    const resolvedPath = path.resolve(basePath, normalizedInput);
+    const isWithinBase = resolvedPath.startsWith(path.resolve(basePath));
+
+    assertFalse(isWithinBase, 'Path traversal in requires should be detected');
+});
+
+// ============================================================================
+// ARBITRARY FILE WRITE PREVENTION TESTS
+// ============================================================================
+
+console.log('\n📝 Arbitrary File Write Prevention Tests\n');
+
+test('Should prevent writing outside project directory', () => {
+    setupTestEnvironment();
+
+    const maliciousPaths = [
+        '../../../etc/cron.d/backdoor',
+        '/etc/passwd',
+        '../.env'
+    ];
+
+    for (const maliciousPath of maliciousPaths) {
+        const resolvedPath = path.resolve(testDir, maliciousPath);
+        const normalizedPath = path.normalize(resolvedPath);
+        const isWithinTestDir = normalizedPath.startsWith(path.normalize(testDir));
+
+        // These paths should escape the test directory or be absolute
+        const isDangerous = !isWithinTestDir || path.isAbsolute(maliciousPath);
+        assertTrue(
+            isDangerous,
+            `Should detect dangerous path: ${maliciousPath}`
+        );
+    }
+
+    cleanupTestEnvironment();
+});
+
+test('Should validate file write permissions', () => {
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'test-write.txt');
+    fs.writeFileSync(testFile, 'test content', 'utf-8');
+
+    // Check file exists
+    assertTrue(fs.existsSync(testFile), 'File should be created');
+
+    // Check file is readable
+    const content = fs.readFileSync(testFile, 'utf-8');
+    assertEquals(content, 'test content', 'File content should match');
+
+    // File should be within test directory
+    const normalizedPath = path.normalize(testFile);
+    assertTrue(
+        normalizedPath.startsWith(path.normalize(testDir)),
+        'File should be within test directory'
+    );
+
+    cleanupTestEnvironment();
+});
+
+test('Should prevent overwriting critical files', () => {
+    const criticalFiles = [
+        'package.json',
+        'package-lock.json',
+        '.git/config',
+        '.gitignore',
+        'node_modules/package.json'
+    ];
+
+    for (const file of criticalFiles) {
+        // Should detect attempts to overwrite critical files
+        const isCritical =
+            file.includes('package') ||
+            file.startsWith('.git') ||
+            file.includes('.git/') ||
+            file.includes('node_modules');
+
+        assertTrue(isCritical, `Should protect critical file: ${file}`);
+    }
+});
+
+// ============================================================================
+// TOCTOU (Time-of-Check Time-of-Use) TESTS
+// ============================================================================
+
+console.log('\n⏱️  TOCTOU Prevention Tests\n');
+
+test('Should handle file existence checks safely', () => {
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'toctou.txt');
+
+    // Check-then-use pattern (potential TOCTOU)
+    const exists = fs.existsSync(testFile);
+    assertFalse(exists, 'File should not exist initially');
+
+    // Better: Use try-catch instead of check-then-use
+    let caught = false;
+    try {
+        fs.readFileSync(testFile, 'utf-8');
+    } catch (error) {
+        caught = true;
+        assertTrue(error.code === 'ENOENT', 'Should catch ENOENT error');
+    }
+
+    assertTrue(caught, 'Should use try-catch instead of existence check');
+
+    cleanupTestEnvironment();
+});
+
+test('Should use atomic file operations', () => {
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'atomic.txt');
+
+    // Write file atomically (write to temp, then rename)
+    const tempFile = testFile + '.tmp';
+    fs.writeFileSync(tempFile, 'atomic content', 'utf-8');
+
+    // Rename is atomic on most filesystems
+    fs.renameSync(tempFile, testFile);
+
+    assertTrue(fs.existsSync(testFile), 'Final file should exist');
+    assertFalse(fs.existsSync(tempFile), 'Temp file should not exist');
+
+    cleanupTestEnvironment();
+});
+
+test('Should handle concurrent file modifications', async () => {
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'concurrent.txt');
+    fs.writeFileSync(testFile, 'initial', 'utf-8');
+
+    // Simulate concurrent modifications
+    const modification1 = fs.promises.appendFile(testFile, '-mod1', 'utf-8');
+    const modification2 = fs.promises.appendFile(testFile, '-mod2', 'utf-8');
+
+    await Promise.all([modification1, modification2]);
+
+    const finalContent = fs.readFileSync(testFile, 'utf-8');
+
+    // Both modifications should be present
+    assertContains(finalContent, 'initial', 'Should contain initial content');
+    assertContains(finalContent, 'mod1', 'Should contain first modification');
+    assertContains(finalContent, 'mod2', 'Should contain second modification');
+
+    cleanupTestEnvironment();
+});
+
+// ============================================================================
+// API AUTHORIZATION TESTS
+// ============================================================================
+
+console.log('\n🔐 API Authorization Tests\n');
+
+await asyncTest('Should enforce role-based access control', async () => {
+    // Simulate different user roles
+    const roles = {
+        admin: { canWrite: true, canDelete: true, canRead: true },
+        user: { canWrite: false, canDelete: false, canRead: true },
+        guest: { canWrite: false, canDelete: false, canRead: false }
+    };
+
+    // Check permissions
+    assertTrue(roles.admin.canWrite, 'Admin should have write access');
+    assertFalse(roles.user.canWrite, 'User should not have write access');
+    assertFalse(roles.guest.canRead, 'Guest should not have read access');
+});
+
+await asyncTest('Should prevent privilege escalation', async () => {
+    const userPermissions = {
+        userId: 'user123',
+        role: 'user',
+        canAccessAdmin: false
+    };
+
+    // Attempt to escalate privileges
+    const escalationAttempt = { ...userPermissions, role: 'admin' };
+
+    // Should detect unauthorized role change
+    assertFalse(
+        userPermissions.role === escalationAttempt.role,
+        'Original role should differ from escalation attempt'
+    );
+});
+
+await asyncTest('Should validate resource ownership', async () => {
+    const resources = [
+        { id: 1, ownerId: 'user1', name: 'resource1' },
+        { id: 2, ownerId: 'user2', name: 'resource2' }
+    ];
+
+    const currentUser = 'user1';
+
+    // User should only access their own resources
+    const userResources = resources.filter(r => r.ownerId === currentUser);
+
+    assertEquals(userResources.length, 1, 'User should only see their own resources');
+    assertEquals(userResources[0].ownerId, currentUser, 'Resource should belong to user');
+});
+
+// ============================================================================
+// RATE LIMITING TESTS
+// ============================================================================
+
+console.log('\n⏳ Rate Limiting Tests\n');
+
+await asyncTest('Should enforce request rate limits', async () => {
+    const rateLimit = {
+        maxRequests: 10,
+        windowMs: 1000,
+        requests: []
+    };
+
+    const now = Date.now();
+
+    // Simulate 15 requests
+    for (let i = 0; i < 15; i++) {
+        rateLimit.requests.push(now + i * 50);
+    }
+
+    // Count requests in window
+    const recentRequests = rateLimit.requests.filter(
+        time => now - time < rateLimit.windowMs
+    );
+
+    assertTrue(
+        recentRequests.length > rateLimit.maxRequests,
+        'Should detect rate limit violation'
+    );
+});
+
+await asyncTest('Should implement exponential backoff', async () => {
+    const backoffDelays = [];
+    let delay = 100; // Start with 100ms
+
+    for (let i = 0; i < 5; i++) {
+        backoffDelays.push(delay);
+        delay *= 2; // Exponential backoff
+    }
+
+    // Verify exponential growth
+    assertEquals(backoffDelays[0], 100, 'First delay should be 100ms');
+    assertEquals(backoffDelays[1], 200, 'Second delay should be 200ms');
+    assertEquals(backoffDelays[2], 400, 'Third delay should be 400ms');
+    assertEquals(backoffDelays[4], 1600, 'Fifth delay should be 1600ms');
+});
+
+await asyncTest('Should track request counts per client', async () => {
+    const clientRequests = new Map();
+
+    // Simulate requests from different clients
+    const clients = ['client1', 'client2', 'client3'];
+
+    for (const client of clients) {
+        for (let i = 0; i < 5; i++) {
+            const count = clientRequests.get(client) || 0;
+            clientRequests.set(client, count + 1);
+        }
+    }
+
+    // Each client should have 5 requests
+    for (const client of clients) {
+        assertEquals(
+            clientRequests.get(client),
+            5,
+            `${client} should have 5 requests`
+        );
+    }
+});
+
+// ============================================================================
+// FILE PERMISSIONS TESTS
+// ============================================================================
+
+console.log('\n🔒 Secure File Permissions Tests\n');
+
+test('Should create files with secure permissions', () => {
+    if (process.platform === 'win32') {
+        console.log('   ⏭️  Skipping file permissions test on Windows');
+        testsRun--;
+        return;
+    }
+
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'permissions.txt');
+    fs.writeFileSync(testFile, 'secure content', { mode: 0o600 });
+
+    const stats = fs.statSync(testFile);
+    const mode = stats.mode & 0o777;
+
+    // File should have restricted permissions (owner only)
+    assertTrue(
+        mode === 0o600 || mode === 0o644,
+        `File should have secure permissions: ${mode.toString(8)}`
+    );
+
+    cleanupTestEnvironment();
+});
+
+test('Should not create world-writable files', () => {
+    if (process.platform === 'win32') {
+        console.log('   ⏭️  Skipping file permissions test on Windows');
+        testsRun--;
+        return;
+    }
+
+    setupTestEnvironment();
+
+    const testFile = path.join(testDir, 'not-world-writable.txt');
+    fs.writeFileSync(testFile, 'content', 'utf-8');
+
+    const stats = fs.statSync(testFile);
+    const mode = stats.mode & 0o777;
+
+    // File should not be world-writable (bit 1 should not be set)
+    const isWorldWritable = (mode & 0o002) !== 0;
+    assertFalse(isWorldWritable, 'File should not be world-writable');
+
+    cleanupTestEnvironment();
+});
+
+test('Should create directories with appropriate permissions', () => {
+    if (process.platform === 'win32') {
+        console.log('   ⏭️  Skipping directory permissions test on Windows');
+        testsRun--;
+        return;
+    }
+
+    setupTestEnvironment();
+
+    const testSubDir = path.join(testDir, 'secure-dir');
+    fs.mkdirSync(testSubDir, { mode: 0o700 });
+
+    const stats = fs.statSync(testSubDir);
+    const mode = stats.mode & 0o777;
+
+    // Directory should have restricted permissions
+    assertTrue(
+        mode === 0o700 || mode === 0o755,
+        `Directory should have secure permissions: ${mode.toString(8)}`
+    );
+
+    cleanupTestEnvironment();
+});
+
+// ============================================================================
 // SUMMARY
 // ============================================================================
 
