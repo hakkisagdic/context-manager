@@ -51,7 +51,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 
 ### 🔢 Token Analysis
 - ✅ **Exact token counting** using tiktoken (GPT-4 compatible)
-- 🌍 **Multi-language support** - 15+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala, SQL Server (T-SQL)
+- 🌍 **Multi-language support** - 15+ languages: JavaScript, TypeScript, Python, PHP, Ruby, Java, Kotlin, C#, Go, Rust, Swift, C/C++, Scala, SQL (T-SQL, PL/pgSQL, MySQL, PL/SQL)
 - 🎯 **Method-level analysis** - Analyze tokens per function/method
 - 📊 **Detailed reporting** - by file type, largest files, statistics
 

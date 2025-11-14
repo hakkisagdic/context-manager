@@ -308,14 +308,50 @@ Method-level format includes method names, line numbers, and token counts per fi
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
 
-**SQL Server (T-SQL):** Uses 4 regex patterns to detect database objects:
-- Stored Procedures: `CREATE/ALTER PROCEDURE name` (supports `PROC` shorthand and `CREATE OR ALTER`)
-- Functions: `CREATE/ALTER FUNCTION name` (supports scalar, table-valued, and inline table-valued functions)
-- Triggers: `CREATE/ALTER TRIGGER name` (supports `AFTER`, `INSTEAD OF`, and all trigger types)
-- Views: `CREATE/ALTER VIEW name` (supports `CREATE OR ALTER`)
-- Supports schema-qualified names: `dbo.ProcedureName`
-- Case-insensitive matching for T-SQL keywords
-- Filters out T-SQL reserved keywords
+**SQL (Multi-Dialect Support with Auto-Detection):**
+
+Automatically detects SQL dialect and extracts database objects using dialect-specific patterns:
+
+**SQL Server (T-SQL):** 9 object types
+- Procedures: `CREATE/ALTER PROCEDURE` (supports `PROC`, `CREATE OR ALTER`, temp `#name`)
+- Functions: `CREATE/ALTER FUNCTION` (scalar, table-valued, inline)
+- Triggers: `CREATE/ALTER TRIGGER` (`AFTER`, `INSTEAD OF`)
+- Views: `CREATE/ALTER VIEW` (`CREATE OR ALTER`)
+- Types: `CREATE TYPE...AS TABLE`, `CREATE TYPE...FROM`
+- Synonyms: `CREATE SYNONYM`
+- Sequences: `CREATE SEQUENCE`
+- Indexes: `CREATE INDEX` (CLUSTERED/NONCLUSTERED)
+- Schema-qualified names: `dbo.ProcedureName`
+
+**PostgreSQL (PL/pgSQL):** 8 object types
+- Functions: `CREATE OR REPLACE FUNCTION...LANGUAGE plpgsql`
+- Procedures: `CREATE OR REPLACE PROCEDURE`
+- Triggers: `CREATE TRIGGER`
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW`
+- Types: `CREATE TYPE` (composite, enum)
+- Domains: `CREATE DOMAIN`
+- Rules: `CREATE RULE`
+- Operators: `CREATE OPERATOR`
+
+**MySQL/MariaDB:** 5 object types
+- Procedures: `CREATE PROCEDURE` (supports `DEFINER`)
+- Functions: `CREATE FUNCTION`
+- Triggers: `CREATE TRIGGER`
+- Views: `CREATE OR REPLACE VIEW` (supports `ALGORITHM`, `DEFINER`)
+- Events: `CREATE EVENT` (Event Scheduler)
+- Backtick names: `` `table-name` ``
+
+**Oracle (PL/SQL):** 8 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...IS`
+- Functions: `CREATE OR REPLACE FUNCTION...RETURN`
+- Triggers: `CREATE OR REPLACE TRIGGER`
+- Views: `CREATE OR REPLACE [FORCE] VIEW`
+- Packages: `CREATE OR REPLACE PACKAGE`
+- Package Bodies: `CREATE OR REPLACE PACKAGE BODY`
+- Types: `CREATE OR REPLACE TYPE`
+- Type Bodies: `CREATE OR REPLACE TYPE BODY`
+
+**Auto-Detection:** Based on syntax markers (`CREATE OR ALTER`, `LANGUAGE plpgsql`, `DELIMITER $$`, `PACKAGE`, etc.)
 
 ### Phase 1 Module Details (v3.1.0)
 
