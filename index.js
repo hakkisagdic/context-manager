@@ -48,6 +48,11 @@ import RuleTracer from './lib/debug/rule-tracer.js';
 // Orchestrator functions
 import { generateDigestFromReport, generateDigestFromContext } from './context-manager.js';
 
+// NOTE: UI Components (ProgressBar, SpinnerWithText, Wizard, Dashboard, SelectInput)
+// are available via the '/ui' export but require optional dependencies (ink, react).
+// Import them directly if needed:
+//   import { SelectInput, Wizard, Dashboard } from '@hakkisagdic/context-manager/ui';
+
 export {
     // Analyzers
     TokenCalculator,

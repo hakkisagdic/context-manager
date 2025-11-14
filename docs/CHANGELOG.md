@@ -2,6 +2,128 @@
 
 All notable changes to the Context Manager will be documented in this file.
 
+## [Unreleased]
+
+### ✨ Advanced SelectInput Component - Complete UI Enhancement
+
+Replace deprecated `ink-select-input` with custom advanced SelectInput component featuring search, multi-select, grouping, and more.
+
+#### Added
+
+**🎨 Custom SelectInput Component:**
+- **Search/Filter** - Real-time filtering with customizable placeholder
+- **Multi-Select Mode** - Select multiple items with Space, confirm with Enter
+- **Custom Rendering** - Full control over item display via renderItem prop
+- **Disabled Options** - Skip disabled items in navigation, visual feedback
+- **Option Grouping** - Organize items into titled groups
+- **Custom Key Bindings** - Vim-style or custom keybindings (k/j, etc.)
+- **Smart Navigation** - Automatically skips disabled items
+- **Dynamic Help Text** - Context-aware hints based on active features
+- **Initial Index** - Start at specific position
+- **Empty State** - Graceful handling of empty lists
+
+**Component Features:**
+```javascript
+import { SelectInput } from './lib/ui/index.js';
+
+// Multi-select with search
+<SelectInput
+  items={items}
+  searchable={true}
+  multiSelect={true}
+  onSelect={(selectedItems) => {}}
+/>
+
+// Grouped options
+<SelectInput
+  itemGroups={[
+    { title: 'Fruits', items: [...] },
+    { title: 'Vegetables', items: [...] }
+  ]}
+/>
+
+// Custom rendering
+<SelectInput
+  renderItem={(item, isSelected, isChecked) =>
+    `${isSelected ? '▶' : ' '} ${item.label}`
+  }
+/>
+
+// Vim-style keys
+<SelectInput
+  keyBindings={{ up: 'k', down: 'j', select: 's' }}
+/>
+```
+
+#### Tests
+
+**📋 Comprehensive Test Suite:**
+- 40 passing tests ✅
+- 0 failed tests
+- 0 skipped tests (all features implemented)
+- Tests cover: initialization, rendering, navigation, selection, edge cases
+- Advanced feature tests: search, multi-select, grouping, custom rendering, disabled options, key bindings
+
+**Test npm Scripts:**
+- `npm run test:select-input` - Run SelectInput tests (40 tests)
+- Included in `npm run test:comprehensive`
+
+#### Fixed
+
+- Replace deprecated `ink-select-input` package references
+- React key warnings with unique composite keys
+- Empty array handling with graceful fallback
+- Bounds checking for safe item access
+- Newline handling in labels
+- Null/undefined callback validation
+
+#### Documentation
+
+- Updated `docs/INSTALLATION-GUIDE.md` - Remove deprecated package from install commands
+- Updated `docs/WIZARD-DASHBOARD-SETUP.md` - Document custom SelectInput component
+- Updated test error messages to reflect new dependencies
+- Exported SelectInput from `lib/ui/index.js`
+
+#### Migration
+
+**From ink-select-input to SelectInput:**
+```javascript
+// Before (deprecated)
+import SelectInput from 'ink-select-input';
+
+// After (custom component) - npm package import
+import { SelectInput } from '@hakkisagdic/context-manager/ui';
+
+// Or direct import (for local development)
+import { SelectInput } from './lib/ui/index.js';
+
+// API is backward compatible - existing code works!
+<SelectInput items={items} onSelect={handleSelect} />
+```
+
+**Package Exports:**
+- Main exports: `import { TokenCalculator, PresetManager } from '@hakkisagdic/context-manager'`
+- UI exports: `import { SelectInput, Wizard, Dashboard } from '@hakkisagdic/context-manager/ui'`
+
+#### Performance
+
+- Composite keys prevent React warnings
+- useMemo optimizations for filtering and navigation
+- Filter null values before rendering
+- Lazy evaluation of search results
+
+#### Dependencies
+
+**Removed:**
+- `ink-select-input` - No longer needed (deprecated)
+
+**Uses:**
+- `ink` ^6.4.0
+- `ink-text-input` ^6.0.0 (for search feature)
+- `react` ^19.2.0
+
+---
+
 ## [3.0.0] - 2025-11-05
 
 ### 🚀 MAJOR: Platform Foundation - Plugin Architecture & Git Integration

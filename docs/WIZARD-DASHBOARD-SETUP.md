@@ -30,8 +30,8 @@ This will install all dependencies including:
 - `ink@^4.4.1` - React-based terminal UI framework
 - `react@^18.2.0` - React library
 - `ink-spinner@^5.0.0` - Loading spinners
-- `ink-select-input@^5.0.0` - Interactive selection
 - `ink-text-input@^5.0.1` - Text input component
+- Custom `SelectInput` component - Advanced interactive selection
 
 ### Verify Installation
 
@@ -46,7 +46,7 @@ context-manager --dashboard
 If dependencies are missing, you'll see:
 ```
 ⚠️  Interactive wizard requires additional dependencies.
-   Install: npm install ink react ink-select-input ink-text-input
+   Install: npm install ink react ink-text-input
    Falling back to standard mode...
 ```
 
@@ -326,7 +326,7 @@ context-manager --dashboard --watch
 npm install
 
 # Or install specific packages
-npm install ink react ink-select-input ink-text-input ink-spinner
+npm install ink react ink-text-input ink-spinner
 ```
 
 ### Terminal Display Issues
@@ -447,10 +447,10 @@ npm list --depth=0 | grep -E "ink|react"
 
 # Should show:
 # ├── ink@4.4.1
-# ├── ink-select-input@5.0.0
 # ├── ink-spinner@5.0.0
 # ├── ink-text-input@5.0.1
 # └── react@18.2.0
+# Note: SelectInput is now a custom internal component
 ```
 
 ### Test Interactive Features
