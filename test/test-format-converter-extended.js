@@ -1123,6 +1123,158 @@ test('Return unknown for unrecognized format', () => {
     if (detected !== 'unknown') throw new Error('Should return unknown');
 });
 
+// ============================================================================
+// PARTIAL CONVERSION
+// ============================================================================
+console.log('\n✂️ Partial Conversion');
+console.log('-'.repeat(70));
+
+test('Partial conversion - field selection', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "email": "test@example.com", "password": "secret"}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['name', 'email']
+    });
+
+    const parsed = JSON.parse(JSON.stringify(result.output));
+    if (!result.output.includes('name:')) throw new Error('Should include name field');
+    if (!result.output.includes('email:')) throw new Error('Should include email field');
+    if (result.output.includes('password')) throw new Error('Should exclude password field');
+    if (!result.partial) throw new Error('Should be marked as partial');
+});
+
+test('Partial conversion - field exclusion', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "password": "secret", "token": "xyz"}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        exclude: ['password', 'token']
+    });
+
+    if (!result.output.includes('name:')) throw new Error('Should include name');
+    if (!result.output.includes('age:')) throw new Error('Should include age');
+    if (result.output.includes('password')) throw new Error('Should exclude password');
+    if (result.output.includes('token')) throw new Error('Should exclude token');
+});
+
+test('Partial conversion - array limit', () => {
+    const converter = new FormatConverter();
+    const input = '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        limit: 3
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (!Array.isArray(parsed)) throw new Error('Should be array');
+    if (parsed.length !== 3) throw new Error('Should have exactly 3 items');
+    if (parsed[0] !== 1) throw new Error('Should start with 1');
+});
+
+test('Partial conversion - array offset', () => {
+    const converter = new FormatConverter();
+    const input = '[10, 20, 30, 40, 50]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        offset: 2
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (parsed.length !== 3) throw new Error('Should have 3 items after offset');
+    if (parsed[0] !== 30) throw new Error('Should start from offset position');
+});
+
+test('Partial conversion - offset and limit combined', () => {
+    const converter = new FormatConverter();
+    const input = '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        offset: 3,
+        limit: 4
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (parsed.length !== 4) throw new Error('Should have 4 items');
+    if (parsed[0] !== 4) throw new Error('Should start from offset 3 (value 4)');
+    if (parsed[3] !== 7) throw new Error('Should end at offset+limit (value 7)');
+});
+
+test('Partial conversion - deep field filtering', () => {
+    const converter = new FormatConverter();
+    const input = JSON.stringify([
+        { name: 'Alice', age: 30, password: 'secret1' },
+        { name: 'Bob', age: 25, password: 'secret2' }
+    ]);
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['name', 'age'],
+        deep: true
+    });
+
+    if (!result.output.includes('Alice')) throw new Error('Should include name');
+    if (!result.output.includes('30')) throw new Error('Should include age');
+    if (result.output.includes('secret')) throw new Error('Should exclude password with deep filtering');
+});
+
+test('Partial conversion - metadata tracking', () => {
+    const converter = new FormatConverter();
+    const input = '{"a": 1, "b": 2, "c": 3}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['a', 'b']
+    });
+
+    if (!result.metadata.filterApplied) throw new Error('Should have filter metadata');
+    if (!result.metadata.filterApplied.fields) throw new Error('Should track fields');
+    if (result.metadata.filterApplied.fields.length !== 2) {
+        throw new Error('Should track field count');
+    }
+});
+
+test('Field projection - simple array', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "email": "test@test.com", "phone": "123"}';
+    const result = converter.convertWithProjection(input, 'json', 'yaml', ['name', 'email']);
+
+    if (!result.output.includes('name:')) throw new Error('Should include name');
+    if (!result.output.includes('email:')) throw new Error('Should include email');
+    if (result.output.includes('age')) throw new Error('Should exclude age');
+    if (!result.projected) throw new Error('Should be marked as projected');
+});
+
+test('Field projection - nested fields (MongoDB-style)', () => {
+    const converter = new FormatConverter();
+    const input = JSON.stringify({
+        user: {
+            name: 'Alice',
+            profile: {
+                age: 30,
+                city: 'NYC'
+            }
+        },
+        status: 'active'
+    });
+
+    const result = converter.convertWithProjection(input, 'json', 'json', {
+        'user.name': 1,
+        'user.profile.city': 1
+    });
+
+    const parsed = JSON.parse(result.output);
+    if (!parsed.user) throw new Error('Should have user object');
+    if (!parsed.user.name) throw new Error('Should have user.name');
+    if (!parsed.user.profile) throw new Error('Should have user.profile');
+    if (!parsed.user.profile.city) throw new Error('Should have user.profile.city');
+    if (parsed.user.profile.age) throw new Error('Should exclude user.profile.age');
+});
+
+test('Partial conversion - empty result when no fields match', () => {
+    const converter = new FormatConverter();
+    const input = '{"a": 1, "b": 2}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['x', 'y', 'z']
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (Object.keys(parsed).length !== 0) {
+        throw new Error('Should return empty object when no fields match');
+    }
+});
+
 // Cleanup fixtures directory
 if (fs.existsSync(FIXTURES_DIR)) {
     fs.rmSync(FIXTURES_DIR, { recursive: true, force: true });
