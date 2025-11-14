@@ -61,6 +61,7 @@
     "test:token-calculator-reports": "node test/test-token-calculator-reports.js",
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
+    "test:cross-platform": "node test/test-cross-platform.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
     "test:incremental-analyzer-extended": "node test/test-incremental-analyzer-extended.js",
