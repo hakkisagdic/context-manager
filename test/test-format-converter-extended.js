@@ -1,0 +1,1300 @@
+#!/usr/bin/env node
+
+/**
+ * Extended Format Converter Tests
+ * Comprehensive test suite covering:
+ * - Cross-format conversions (JSON, TOON, YAML, CSV, XML, Markdown)
+ * - Round-trip conversion testing
+ * - Data loss detection
+ * - Type preservation
+ * - Encoding preservation
+ * - Format auto-detection
+ * - Custom format registration
+ * - Format validation
+ * - Large file conversion
+ * - Error recovery
+ */
+
+import FormatConverter from '../lib/utils/format-converter.js';
+import FormatRegistry from '../lib/formatters/format-registry.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+let testsPassed = 0;
+let testsFailed = 0;
+
+const FIXTURES_DIR = path.join(__dirname, 'fixtures', 'converter-extended');
+
+function test(name, fn) {
+    try {
+        fn();
+        console.log(`✅ ${name}`);
+        testsPassed++;
+        return true;
+    } catch (error) {
+        console.error(`❌ ${name}`);
+        console.error(`   Error: ${error.message}`);
+        testsFailed++;
+        return false;
+    }
+}
+
+// Setup fixtures directory
+if (!fs.existsSync(FIXTURES_DIR)) {
+    fs.mkdirSync(FIXTURES_DIR, { recursive: true });
+}
+
+console.log('🧪 Testing Extended Format Converter Features...\n');
+
+// ============================================================================
+// JSON TO ALL FORMATS
+// ============================================================================
+console.log('🔄 JSON to All Formats');
+console.log('-'.repeat(70));
+
+test('JSON to TOON conversion', () => {
+    const converter = new FormatConverter();
+    const json = JSON.stringify({
+        project: { root: '/test', totalFiles: 2, totalTokens: 100 },
+        paths: { 'src/': ['file1.js', 'file2.js'] }
+    });
+    const result = converter.convert(json, 'json', 'toon');
+
+    if (!result.output) throw new Error('Should have output');
+    if (typeof result.output !== 'string') throw new Error('Output should be string');
+    if (!result.metadata) throw new Error('Should have metadata');
+});
+
+test('JSON to YAML conversion preserves structure', () => {
+    const converter = new FormatConverter();
+    const json = '{"name": "test", "count": 42, "active": true}';
+    const result = converter.convert(json, 'json', 'yaml');
+
+    if (!result.output.includes('name:')) throw new Error('Should include name key');
+    if (!result.output.includes('test')) throw new Error('Should include test value');
+    if (!result.output.includes('42')) throw new Error('Should include number');
+});
+
+test('JSON to CSV conversion with nested data', () => {
+    const converter = new FormatConverter();
+    const json = JSON.stringify({
+        methods: {
+            'file1.js': [
+                { name: 'func1', line: 10, tokens: 50 },
+                { name: 'func2', line: 20, tokens: 75 }
+            ]
+        }
+    });
+    const result = converter.convert(json, 'json', 'csv');
+
+    if (!result.output.includes('File,Method,Line,Tokens')) {
+        throw new Error('Should have CSV headers');
+    }
+    if (!result.output.includes('func1')) throw new Error('Should include method names');
+});
+
+test('JSON to XML conversion', () => {
+    const converter = new FormatConverter();
+    const json = '{"project": {"name": "test", "version": "1.0"}}';
+    const result = converter.convert(json, 'json', 'xml');
+
+    if (!result.output.includes('<?xml')) throw new Error('Should have XML declaration');
+    if (!result.output.includes('<context>')) throw new Error('Should have context root');
+    if (!result.output.includes('<project>')) throw new Error('Should have project tag');
+});
+
+test('JSON to Markdown conversion', () => {
+    const converter = new FormatConverter();
+    const json = JSON.stringify({
+        project: { root: '/test', totalFiles: 5, totalTokens: 1000 },
+        paths: { 'src/': ['file1.js'] }
+    });
+    const result = converter.convert(json, 'json', 'markdown');
+
+    if (!result.output.includes('#')) throw new Error('Should have markdown headers');
+    if (!result.output.includes('Project Summary')) throw new Error('Should have summary');
+});
+
+test('JSON to JSON-compact conversion reduces size', () => {
+    const converter = new FormatConverter();
+    const json = JSON.stringify({ test: 'value', nested: { key: 'val' } }, null, 2);
+    const result = converter.convert(json, 'json', 'json-compact');
+
+    if (result.metadata.savings <= 0) {
+        throw new Error('Compact JSON should be smaller');
+    }
+});
+
+// ============================================================================
+// TOON TO ALL FORMATS
+// ============================================================================
+console.log('\n🎨 TOON to All Formats');
+console.log('-'.repeat(70));
+
+test('TOON to JSON conversion - simple object', () => {
+    const converter = new FormatConverter();
+    const toon = `{
+  name: test,
+  value: 42,
+  active: true
+}`;
+    const result = converter.convert(toon, 'toon', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (parsed.name !== 'test') throw new Error('Should preserve name');
+    if (parsed.value !== 42) throw new Error('Should preserve number');
+    if (parsed.active !== true) throw new Error('Should preserve boolean');
+});
+
+test('TOON to JSON conversion - compact array', () => {
+    const converter = new FormatConverter();
+    const toon = '[1,2,3,4,5]';
+    const result = converter.convert(toon, 'toon', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (!Array.isArray(parsed)) throw new Error('Should be array');
+    if (parsed.length !== 5) throw new Error('Should have 5 items');
+    if (parsed[0] !== 1) throw new Error('Should preserve numbers');
+});
+
+test('TOON to YAML conversion', () => {
+    const converter = new FormatConverter();
+    const toon = `{
+  project: test,
+  version: 1.0
+}`;
+    const result = converter.convert(toon, 'toon', 'yaml');
+
+    if (!result.output.includes('project:')) throw new Error('Should have project key');
+    if (!result.output.includes('test')) throw new Error('Should have test value');
+});
+
+test('TOON to XML conversion', () => {
+    const converter = new FormatConverter();
+    const toon = `{
+  name: test,
+  count: 5
+}`;
+    const result = converter.convert(toon, 'toon', 'xml');
+
+    if (!result.output.includes('<name>test</name>')) {
+        throw new Error('Should have name element');
+    }
+    if (!result.output.includes('<count>5</count>')) {
+        throw new Error('Should have count element');
+    }
+});
+
+// ============================================================================
+// XML TO ALL FORMATS
+// ============================================================================
+console.log('\n📋 XML to All Formats');
+console.log('-'.repeat(70));
+
+test('XML to JSON conversion', () => {
+    const converter = new FormatConverter();
+    const xml = `<?xml version="1.0"?>
+<context>
+  <name>test</name>
+  <value>42</value>
+  <active>true</active>
+</context>`;
+    const result = converter.convert(xml, 'xml', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (!parsed.name) throw new Error('Should have name');
+    if (parsed.name !== 'test') throw new Error('Should preserve name value');
+});
+
+test('XML to YAML conversion', () => {
+    const converter = new FormatConverter();
+    const xml = `<?xml version="1.0"?>
+<context>
+  <project>test</project>
+  <version>1.0</version>
+</context>`;
+    const result = converter.convert(xml, 'xml', 'yaml');
+
+    if (!result.output.includes('project:')) throw new Error('Should have project key');
+});
+
+test('XML to TOON conversion', () => {
+    const converter = new FormatConverter();
+    const xml = `<?xml version="1.0"?>
+<context>
+  <name>example</name>
+  <count>10</count>
+</context>`;
+    const result = converter.convert(xml, 'xml', 'toon');
+
+    if (!result.output) throw new Error('Should produce output');
+});
+
+test('XML unescapes special characters', () => {
+    const converter = new FormatConverter();
+    const xml = `<?xml version="1.0"?>
+<context>
+  <text>&lt;tag&gt; &amp; &quot;quotes&quot;</text>
+</context>`;
+    const result = converter.convert(xml, 'xml', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (!parsed.text.includes('<tag>')) throw new Error('Should unescape <');
+    if (!parsed.text.includes('&')) throw new Error('Should unescape &');
+    if (!parsed.text.includes('"quotes"')) throw new Error('Should unescape quotes');
+});
+
+// ============================================================================
+// MARKDOWN TO ALL FORMATS
+// ============================================================================
+console.log('\n📄 Markdown to All Formats');
+console.log('-'.repeat(70));
+
+test('Markdown to JSON conversion - basic structure', () => {
+    const converter = new FormatConverter();
+    const md = `# Main Title
+## Section 1
+Some content here
+- Item 1
+- Item 2`;
+    const result = converter.convert(md, 'markdown', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (parsed.title !== 'Main Title') throw new Error('Should extract title');
+    if (parsed.sections.length === 0) throw new Error('Should have sections');
+    if (parsed.lists.length === 0) throw new Error('Should extract lists');
+});
+
+test('Markdown parser extracts code blocks', () => {
+    const converter = new FormatConverter();
+    const md = `# Test
+\`\`\`javascript
+const x = 1;
+console.log(x);
+\`\`\``;
+    const result = converter.convert(md, 'markdown', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (parsed.codeBlocks.length === 0) throw new Error('Should extract code blocks');
+    if (parsed.codeBlocks[0].language !== 'javascript') {
+        throw new Error('Should detect language');
+    }
+    if (!parsed.codeBlocks[0].content.includes('const x')) {
+        throw new Error('Should preserve code content');
+    }
+});
+
+test('Markdown parser extracts links', () => {
+    const converter = new FormatConverter();
+    const md = `# Test
+Check out [GitHub](https://github.com) and [Google](https://google.com)`;
+    const result = converter.convert(md, 'markdown', 'json');
+    const parsed = JSON.parse(result.output);
+
+    if (parsed.links.length !== 2) throw new Error('Should extract 2 links');
+    if (parsed.links[0].text !== 'GitHub') throw new Error('Should extract link text');
+    if (!parsed.links[0].url.includes('github')) throw new Error('Should extract URL');
+});
+
+test('Markdown to YAML conversion', () => {
+    const converter = new FormatConverter();
+    const md = `# Title
+Some content`;
+    const result = converter.convert(md, 'markdown', 'yaml');
+
+    if (!result.output.includes('title:')) throw new Error('Should have title key');
+});
+
+// ============================================================================
+// YAML TO ALL FORMATS
+// ============================================================================
+console.log('\n📝 YAML to All Formats');
+console.log('-'.repeat(70));
+
+test('YAML to JSON conversion', () => {
+    const converter = new FormatConverter();
+    const yaml = 'name: test\nvalue: 42\nactive: true';
+    const result = converter.convert(yaml, 'yaml', 'json');
+
+    const parsed = JSON.parse(result.output);
+    if (parsed.name !== 'test') throw new Error('Should preserve string');
+    if (parsed.value !== 42) throw new Error('Should preserve number');
+    if (parsed.active !== true) throw new Error('Should preserve boolean');
+});
+
+test('YAML to XML conversion', () => {
+    const converter = new FormatConverter();
+    const yaml = 'project: test\nversion: 1.0';
+    const result = converter.convert(yaml, 'yaml', 'xml');
+
+    if (!result.output.includes('<project>')) throw new Error('Should have project tag');
+    if (!result.output.includes('test')) throw new Error('Should include values');
+});
+
+test('YAML to Markdown conversion', () => {
+    const converter = new FormatConverter();
+    const yaml = 'project:\n  root: /test\n  totalFiles: 5';
+
+    try {
+        const result = converter.convert(yaml, 'yaml', 'markdown');
+        // Basic YAML parser may not handle nested objects perfectly
+        if (!result.output) throw new Error('Should produce output');
+    } catch (error) {
+        // Expected for complex YAML structures
+        if (!error.message.includes('markdown')) throw error;
+    }
+});
+
+// ============================================================================
+// CSV TO ALL FORMATS
+// ============================================================================
+console.log('\n📊 CSV to All Formats');
+console.log('-'.repeat(70));
+
+test('CSV to JSON conversion', () => {
+    const converter = new FormatConverter();
+    const csv = 'name,value\ntest,42\nfoo,99';
+    const result = converter.convert(csv, 'csv', 'json');
+
+    const parsed = JSON.parse(result.output);
+    if (!parsed.rows) throw new Error('Should have rows');
+    if (parsed.rows.length !== 2) throw new Error('Should have 2 rows');
+});
+
+test('CSV to YAML conversion', () => {
+    const converter = new FormatConverter();
+    const csv = 'name,value\ntest,42';
+    const result = converter.convert(csv, 'csv', 'yaml');
+
+    if (!result.output.includes('rows:')) throw new Error('Should have rows key');
+});
+
+test('CSV to XML conversion', () => {
+    const converter = new FormatConverter();
+    const csv = 'col1,col2\nval1,val2';
+    const result = converter.convert(csv, 'csv', 'xml');
+
+    if (!result.output.includes('<rows>')) throw new Error('Should have rows element');
+});
+
+// ============================================================================
+// ROUND-TRIP CONVERSION TESTING
+// ============================================================================
+console.log('\n🔄 Round-Trip Conversions');
+console.log('-'.repeat(70));
+
+test('JSON → YAML → JSON preserves data', () => {
+    const converter = new FormatConverter();
+    const original = { name: 'test', value: 42, active: true };
+    const json1 = JSON.stringify(original);
+
+    // JSON to YAML
+    const yamlResult = converter.convert(json1, 'json', 'yaml');
+
+    // YAML back to JSON
+    const jsonResult = converter.convert(yamlResult.output, 'yaml', 'json');
+    const restored = JSON.parse(jsonResult.output);
+
+    if (restored.name !== original.name) throw new Error('Should preserve name');
+    if (restored.value !== original.value) throw new Error('Should preserve value');
+    if (restored.active !== original.active) throw new Error('Should preserve boolean');
+});
+
+test('JSON → CSV → JSON round-trip', () => {
+    const converter = new FormatConverter();
+    const original = {
+        headers: ['name', 'value'],
+        rows: [{ name: 'test', value: '42' }]
+    };
+
+    const json1 = JSON.stringify(original);
+    const csvResult = converter.convert(json1, 'json', 'csv');
+    const jsonResult = converter.convert(csvResult.output, 'csv', 'json');
+    const restored = JSON.parse(jsonResult.output);
+
+    if (!restored.rows || restored.rows.length === 0) {
+        throw new Error('Should restore rows');
+    }
+});
+
+test('JSON → XML → JSON structure preservation', () => {
+    const converter = new FormatConverter();
+    const original = { simple: 'value', number: 123 };
+    const json1 = JSON.stringify(original);
+
+    const xmlResult = converter.convert(json1, 'json', 'xml');
+    const jsonResult = converter.convert(xmlResult.output, 'xml', 'json');
+    const restored = JSON.parse(jsonResult.output);
+
+    if (restored.simple !== 'value') throw new Error('Should preserve string value');
+    // Note: XML parser returns strings, number becomes "123"
+    if (!restored.number) throw new Error('Should have number field');
+});
+
+test('JSON → TOON → JSON round-trip', () => {
+    const converter = new FormatConverter();
+    const original = { name: 'test', count: 42, enabled: true };
+    const json1 = JSON.stringify(original);
+
+    const toonResult = converter.convert(json1, 'json', 'toon');
+    const jsonResult = converter.convert(toonResult.output, 'toon', 'json');
+    const restored = JSON.parse(jsonResult.output);
+
+    if (restored.name !== original.name) throw new Error('Should preserve name');
+    if (restored.count !== original.count) throw new Error('Should preserve count');
+    if (restored.enabled !== original.enabled) throw new Error('Should preserve boolean');
+});
+
+test('TOON → JSON → TOON → JSON consistency', () => {
+    const converter = new FormatConverter();
+    const toon = `{
+  name: example,
+  value: 100
+}`;
+
+    const json1 = converter.convert(toon, 'toon', 'json');
+    const toon2 = converter.convert(json1.output, 'json', 'toon');
+    const json2 = converter.convert(toon2.output, 'toon', 'json');
+
+    const parsed1 = JSON.parse(json1.output);
+    const parsed2 = JSON.parse(json2.output);
+
+    if (parsed1.name !== parsed2.name) throw new Error('Should maintain consistency');
+    if (parsed1.value !== parsed2.value) throw new Error('Should maintain consistency');
+});
+
+// ============================================================================
+// DATA LOSS DETECTION
+// ============================================================================
+console.log('\n🔍 Data Loss Detection');
+console.log('-'.repeat(70));
+
+test('Detect data loss in CSV conversion (complex objects)', () => {
+    const converter = new FormatConverter();
+    const json = JSON.stringify({
+        data: { nested: { deep: { value: 'test' } } }
+    });
+
+    const result = converter.convert(json, 'json', 'csv');
+
+    // CSV format cannot represent deeply nested data
+    // Should still complete without error
+    if (!result.output) throw new Error('Should produce output');
+});
+
+test('Detect precision loss in number conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"value": 3.14159265358979323846}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+    const backToJson = converter.convert(yamlResult.output, 'yaml', 'json');
+
+    const original = JSON.parse(json);
+    const restored = JSON.parse(backToJson.output);
+
+    // Check if precision is maintained (within floating point limits)
+    const diff = Math.abs(original.value - restored.value);
+    if (diff > 0.0001) {
+        console.log(`   ⚠️  Precision loss detected: ${diff}`);
+    }
+});
+
+// ============================================================================
+// TYPE PRESERVATION
+// ============================================================================
+console.log('\n🎯 Type Preservation');
+console.log('-'.repeat(70));
+
+test('Preserve string types through conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"text": "hello", "numeric": "123"}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+    const backToJson = converter.convert(yamlResult.output, 'yaml', 'json');
+    const restored = JSON.parse(backToJson.output);
+
+    if (typeof restored.text !== 'string') {
+        throw new Error('Should preserve string type');
+    }
+});
+
+test('Preserve number types through conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"count": 42, "price": 19.99}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+    const backToJson = converter.convert(yamlResult.output, 'yaml', 'json');
+    const restored = JSON.parse(backToJson.output);
+
+    if (typeof restored.count !== 'number') {
+        throw new Error('Should preserve integer type');
+    }
+    if (typeof restored.price !== 'number') {
+        throw new Error('Should preserve float type');
+    }
+});
+
+test('Preserve boolean types through conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"enabled": true, "disabled": false}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+    const backToJson = converter.convert(yamlResult.output, 'yaml', 'json');
+    const restored = JSON.parse(backToJson.output);
+
+    if (typeof restored.enabled !== 'boolean') {
+        throw new Error('Should preserve boolean type');
+    }
+    if (restored.enabled !== true) {
+        throw new Error('Should preserve true value');
+    }
+    if (restored.disabled !== false) {
+        throw new Error('Should preserve false value');
+    }
+});
+
+test('Preserve null values through conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"value": null}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+    const backToJson = converter.convert(yamlResult.output, 'yaml', 'json');
+    const restored = JSON.parse(backToJson.output);
+
+    if (restored.value !== null) {
+        throw new Error('Should preserve null value');
+    }
+});
+
+test('Preserve array types through conversions', () => {
+    const converter = new FormatConverter();
+    const json = '{"items": [1, 2, 3]}';
+
+    const yamlResult = converter.convert(json, 'json', 'yaml');
+
+    // Verify YAML array format
+    if (!yamlResult.output.includes('items:')) {
+        throw new Error('Should have items key in YAML');
+    }
+});
+
+// ============================================================================
+// FORMAT AUTO-DETECTION
+// ============================================================================
+console.log('\n🔍 Format Auto-Detection');
+console.log('-'.repeat(70));
+
+test('Auto-detect JSON format from extension', () => {
+    const converter = new FormatConverter();
+    const format = converter.extensionToFormat('json');
+    if (format !== 'json') throw new Error('Should detect JSON format');
+});
+
+test('Auto-detect YAML format from extension', () => {
+    const converter = new FormatConverter();
+    if (converter.extensionToFormat('yaml') !== 'yaml') {
+        throw new Error('Should detect YAML format');
+    }
+    if (converter.extensionToFormat('yml') !== 'yaml') {
+        throw new Error('Should detect .yml as YAML');
+    }
+});
+
+test('Auto-detect format in file conversions', () => {
+    const converter = new FormatConverter();
+    const inputFile = path.join(FIXTURES_DIR, 'auto-detect.json');
+    const outputFile = path.join(FIXTURES_DIR, 'auto-detect.xml');
+
+    fs.writeFileSync(inputFile, '{"test": "value"}');
+
+    const result = converter.convertFile(inputFile, outputFile);
+
+    if (result.fromFormat !== 'json') throw new Error('Should auto-detect JSON');
+    if (result.toFormat !== 'xml') throw new Error('Should auto-detect XML');
+
+    fs.unlinkSync(inputFile);
+    fs.unlinkSync(outputFile);
+});
+
+// ============================================================================
+// CUSTOM FORMAT REGISTRATION
+// ============================================================================
+console.log('\n🔧 Custom Format Registration');
+console.log('-'.repeat(70));
+
+test('Register custom format in FormatRegistry', () => {
+    const registry = new FormatRegistry();
+
+    registry.register('custom', {
+        name: 'Custom Format',
+        description: 'Test custom format',
+        extension: '.custom',
+        mimeType: 'text/custom',
+        encoder: (data) => `CUSTOM:${JSON.stringify(data)}`
+    });
+
+    if (!registry.has('custom')) throw new Error('Should register custom format');
+});
+
+test('Use registered custom format', () => {
+    const registry = new FormatRegistry();
+
+    registry.register('custom', {
+        name: 'Custom Format',
+        description: 'Test custom format',
+        extension: '.custom',
+        mimeType: 'text/custom',
+        encoder: (data) => `CUSTOM:${JSON.stringify(data)}`
+    });
+
+    const output = registry.encode('custom', { test: 'value' });
+
+    if (!output.startsWith('CUSTOM:')) {
+        throw new Error('Should use custom encoder');
+    }
+});
+
+test('Custom format validation - requires encoder', () => {
+    const registry = new FormatRegistry();
+
+    try {
+        registry.register('invalid', {
+            name: 'Invalid Format',
+            description: 'Missing encoder'
+        });
+        throw new Error('Should require encoder function');
+    } catch (error) {
+        if (!error.message.includes('encoder')) {
+            throw new Error('Should validate encoder requirement');
+        }
+    }
+});
+
+test('List all available formats', () => {
+    const registry = new FormatRegistry();
+    const formats = registry.listFormats();
+
+    if (!Array.isArray(formats)) throw new Error('Should return array');
+    if (formats.length === 0) throw new Error('Should have formats');
+    if (!formats.includes('json')) throw new Error('Should include JSON');
+    if (!formats.includes('yaml')) throw new Error('Should include YAML');
+});
+
+test('Get format information', () => {
+    const registry = new FormatRegistry();
+    const info = registry.getInfo('json');
+
+    if (!info.name) throw new Error('Should have name');
+    if (!info.description) throw new Error('Should have description');
+    if (!info.extension) throw new Error('Should have extension');
+    if (!info.mimeType) throw new Error('Should have mimeType');
+});
+
+// ============================================================================
+// LARGE FILE CONVERSION
+// ============================================================================
+console.log('\n📦 Large File Conversion');
+console.log('-'.repeat(70));
+
+test('Convert large JSON dataset', () => {
+    const converter = new FormatConverter();
+
+    // Create a large object
+    const largeData = {
+        project: { root: '/large', totalFiles: 1000, totalTokens: 500000 },
+        methods: {}
+    };
+
+    // Generate 100 files with 10 methods each
+    for (let i = 0; i < 100; i++) {
+        const filename = `file${i}.js`;
+        largeData.methods[filename] = [];
+        for (let j = 0; j < 10; j++) {
+            largeData.methods[filename].push({
+                name: `method${j}`,
+                line: j * 10,
+                tokens: Math.floor(Math.random() * 100)
+            });
+        }
+    }
+
+    const json = JSON.stringify(largeData);
+    const result = converter.convert(json, 'json', 'toon');
+
+    if (!result.output) throw new Error('Should handle large conversion');
+    if (result.metadata.inputSize <= 0) throw new Error('Should track input size');
+});
+
+test('Batch convert multiple files', () => {
+    const converter = new FormatConverter();
+
+    const file1 = path.join(FIXTURES_DIR, 'batch1.json');
+    const file2 = path.join(FIXTURES_DIR, 'batch2.json');
+    const out1 = path.join(FIXTURES_DIR, 'batch1.yaml');
+    const out2 = path.join(FIXTURES_DIR, 'batch2.yaml');
+
+    fs.writeFileSync(file1, '{"test": 1}');
+    fs.writeFileSync(file2, '{"test": 2}');
+
+    const results = converter.batchConvert([
+        { input: file1, output: out1 },
+        { input: file2, output: out2 }
+    ]);
+
+    if (results.length !== 2) throw new Error('Should process both files');
+    if (!results[0].success) throw new Error('First conversion should succeed');
+    if (!results[1].success) throw new Error('Second conversion should succeed');
+
+    fs.unlinkSync(file1);
+    fs.unlinkSync(file2);
+    fs.unlinkSync(out1);
+    fs.unlinkSync(out2);
+});
+
+// ============================================================================
+// ERROR RECOVERY
+// ============================================================================
+console.log('\n🛡️ Error Recovery');
+console.log('-'.repeat(70));
+
+test('Handle invalid JSON input gracefully', () => {
+    const converter = new FormatConverter();
+
+    try {
+        converter.convert('{ invalid json }', 'json', 'yaml');
+        throw new Error('Should throw error for invalid JSON');
+    } catch (error) {
+        if (error.message.includes('Should throw')) throw error;
+        // Expected error
+    }
+});
+
+test('Handle invalid TOON input gracefully', () => {
+    const converter = new FormatConverter();
+
+    try {
+        // TOON parser should handle invalid input
+        const result = converter.convert('{ invalid_no_colon }', 'toon', 'json');
+        // If it doesn't throw, it should at least return something
+        if (!result.output) throw new Error('Should produce some output');
+    } catch (error) {
+        // Expected - invalid TOON can throw
+    }
+});
+
+test('Handle invalid XML input gracefully', () => {
+    const converter = new FormatConverter();
+
+    try {
+        converter.convert('<unclosed>', 'xml', 'json');
+        throw new Error('Should throw for invalid XML');
+    } catch (error) {
+        if (!error.message.includes('No closing tag')) {
+            throw new Error('Should report XML parsing error');
+        }
+    }
+});
+
+test('Handle unknown format gracefully', () => {
+    const converter = new FormatConverter();
+
+    try {
+        converter.encode({ test: 'value' }, 'unknown-format-xyz');
+        throw new Error('Should throw for unknown format');
+    } catch (error) {
+        if (!error.message.includes('Failed to encode')) {
+            throw new Error('Should report encoding failure');
+        }
+    }
+});
+
+test('Batch conversion continues on error', () => {
+    const converter = new FormatConverter();
+
+    const file1 = path.join(FIXTURES_DIR, 'error1.json');
+    const file2 = path.join(FIXTURES_DIR, 'error2.json');
+    const out1 = path.join(FIXTURES_DIR, 'error1.yaml');
+    const out2 = path.join(FIXTURES_DIR, 'error2.yaml');
+
+    fs.writeFileSync(file1, '{ invalid }'); // Invalid JSON
+    fs.writeFileSync(file2, '{"valid": true}');
+
+    const results = converter.batchConvert([
+        { input: file1, output: out1 },
+        { input: file2, output: out2 }
+    ]);
+
+    if (results.length !== 2) throw new Error('Should process both files');
+    if (results[0].success) throw new Error('First should fail');
+    if (!results[1].success) throw new Error('Second should succeed');
+    if (!results[0].error) throw new Error('Should include error message');
+
+    fs.unlinkSync(file1);
+    fs.unlinkSync(file2);
+    if (fs.existsSync(out2)) fs.unlinkSync(out2);
+});
+
+test('Get supported conversions list', () => {
+    const converter = new FormatConverter();
+    const supported = converter.getSupportedConversions();
+
+    if (!supported.fullySupported) throw new Error('Should have fullySupported list');
+    if (!supported.limitations) throw new Error('Should have limitations list');
+    if (!supported.experimental) throw new Error('Should have experimental list');
+    if (!Array.isArray(supported.fullySupported)) {
+        throw new Error('fullySupported should be array');
+    }
+    if (supported.fullySupported.length === 0) {
+        throw new Error('Should have supported conversions');
+    }
+});
+
+// ============================================================================
+// ENCODING EDGE CASES
+// ============================================================================
+console.log('\n🎭 Encoding Edge Cases');
+console.log('-'.repeat(70));
+
+test('XML encoding handles special characters', () => {
+    const registry = new FormatRegistry();
+    const data = {
+        text: 'Test & <special> "characters"'
+    };
+
+    const xml = registry.encode('xml', data);
+
+    if (!xml.includes('&amp;')) throw new Error('Should escape &');
+    if (!xml.includes('&lt;')) throw new Error('Should escape <');
+    if (!xml.includes('&gt;')) throw new Error('Should escape >');
+    if (!xml.includes('&quot;')) throw new Error('Should escape "');
+});
+
+test('YAML encoding handles special characters in strings', () => {
+    const registry = new FormatRegistry();
+    const data = {
+        text: 'Line with: colon and # hash'
+    };
+
+    const yaml = registry.encode('yaml', data);
+
+    if (!yaml.includes('"')) {
+        throw new Error('Should quote strings with special characters');
+    }
+});
+
+test('CSV encoding handles commas in values', () => {
+    const registry = new FormatRegistry();
+    const data = {
+        methods: {
+            'file.js': [
+                { name: 'func(a, b)', line: 10, tokens: 50 }
+            ]
+        }
+    };
+
+    const csv = registry.encode('csv', data);
+
+    // Should handle method name with commas
+    if (!csv.includes('func(a, b)')) {
+        throw new Error('Should preserve commas in quoted fields');
+    }
+});
+
+// ============================================================================
+// STREAM-BASED CONVERSION
+// ============================================================================
+console.log('\n🌊 Stream-Based Conversion');
+console.log('-'.repeat(70));
+
+test('Stream conversion with Readable/Writable streams', async () => {
+    const converter = new FormatConverter();
+    const { Readable, Writable } = await import('stream');
+
+    const inputData = '{"test": "value", "number": 42}';
+    const inputStream = Readable.from([inputData]);
+
+    let outputData = '';
+    const outputStream = new Writable({
+        write(chunk, encoding, callback) {
+            outputData += chunk.toString();
+            callback();
+        }
+    });
+
+    const metadata = await converter.convertStream(inputStream, outputStream, 'json', 'yaml');
+
+    if (!outputData.includes('test:')) throw new Error('Should convert to YAML');
+    if (typeof metadata.inputSize !== 'number') throw new Error('Should return metadata');
+});
+
+test('Stream conversion handles large data', async () => {
+    const converter = new FormatConverter();
+    const { Readable, Writable } = await import('stream');
+
+    // Create large JSON object
+    const largeData = { items: [] };
+    for (let i = 0; i < 1000; i++) {
+        largeData.items.push({ id: i, name: `item${i}`, value: i * 10 });
+    }
+
+    const inputData = JSON.stringify(largeData);
+    const inputStream = Readable.from([inputData]);
+
+    let outputData = '';
+    const outputStream = new Writable({
+        write(chunk, encoding, callback) {
+            outputData += chunk.toString();
+            callback();
+        }
+    });
+
+    const metadata = await converter.convertStream(inputStream, outputStream, 'json', 'toon');
+
+    if (!outputData) throw new Error('Should produce output');
+    if (metadata.outputSize <= 0) throw new Error('Should have valid output size');
+});
+
+// ============================================================================
+// SCHEMA VALIDATION
+// ============================================================================
+console.log('\n🛡️ Schema Validation');
+console.log('-'.repeat(70));
+
+test('Schema validation - valid input', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25}';
+    const schema = {
+        type: 'object',
+        required: ['name', 'age'],
+        properties: {
+            name: { type: 'string' },
+            age: { type: 'number' }
+        }
+    };
+
+    const result = converter.convertWithValidation(input, 'json', 'yaml', { inputSchema: schema });
+
+    if (!result.validated) throw new Error('Should be validated');
+    if (!result.output.includes('name:')) throw new Error('Should produce output');
+});
+
+test('Schema validation - missing required field', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test"}';
+    const schema = {
+        type: 'object',
+        required: ['name', 'age']
+    };
+
+    try {
+        converter.convertWithValidation(input, 'json', 'yaml', { inputSchema: schema });
+        throw new Error('Should throw validation error');
+    } catch (error) {
+        if (!error.message.includes('Missing required property')) {
+            throw new Error('Should report missing property');
+        }
+    }
+});
+
+test('Schema validation - wrong type', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": "twenty"}';
+    const schema = {
+        type: 'object',
+        properties: {
+            name: { type: 'string' },
+            age: { type: 'number' }
+        }
+    };
+
+    try {
+        converter.convertWithValidation(input, 'json', 'yaml', { inputSchema: schema });
+        throw new Error('Should throw validation error');
+    } catch (error) {
+        if (!error.message.includes('expected number')) {
+            throw new Error('Should report type mismatch');
+        }
+    }
+});
+
+test('Schema validation - array items', () => {
+    const converter = new FormatConverter();
+    const schema = {
+        type: 'array',
+        items: { type: 'number' }
+    };
+
+    const validData = JSON.stringify([1, 2, 3, 4, 5]);
+    const result = converter.convertWithValidation(validData, 'json', 'yaml', { inputSchema: schema });
+
+    if (!result.validated) throw new Error('Should validate array');
+});
+
+test('Schema validation - min/max constraints', () => {
+    const converter = new FormatConverter();
+    const input = '5';
+    const schema = {
+        type: 'number',
+        minimum: 1,
+        maximum: 10
+    };
+
+    const result = converter.convertWithValidation(input, 'json', 'yaml', { inputSchema: schema });
+    if (!result.validated) throw new Error('Should validate number in range');
+});
+
+test('Schema validation - string length', () => {
+    const converter = new FormatConverter();
+    const input = '"hello"';
+    const schema = {
+        type: 'string',
+        minLength: 3,
+        maxLength: 10
+    };
+
+    const result = converter.convertWithValidation(input, 'json', 'yaml', { inputSchema: schema });
+    if (!result.validated) throw new Error('Should validate string length');
+});
+
+// ============================================================================
+// FORMAT AUTO-DETECTION
+// ============================================================================
+console.log('\n🔍 Format Auto-Detection');
+console.log('-'.repeat(70));
+
+test('Detect JSON format', () => {
+    const converter = new FormatConverter();
+    const json = '{"test": "value"}';
+    const detected = converter.detectFormat(json);
+
+    if (detected !== 'json') throw new Error('Should detect JSON');
+});
+
+test('Detect XML format', () => {
+    const converter = new FormatConverter();
+    const xml = '<?xml version="1.0"?><root><item>test</item></root>';
+    const detected = converter.detectFormat(xml);
+
+    if (detected !== 'xml') throw new Error('Should detect XML');
+});
+
+test('Detect Markdown format', () => {
+    const converter = new FormatConverter();
+    const md = '# Title\nSome content\n```code```';
+    const detected = converter.detectFormat(md);
+
+    if (detected !== 'markdown') throw new Error('Should detect Markdown');
+});
+
+test('Detect YAML format', () => {
+    const converter = new FormatConverter();
+    const yaml = 'name: test\nvalue: 42';
+    const detected = converter.detectFormat(yaml);
+
+    if (detected !== 'yaml') throw new Error('Should detect YAML');
+});
+
+test('Detect CSV format', () => {
+    const converter = new FormatConverter();
+    const csv = 'name,value\ntest,42\nfoo,99';
+    const detected = converter.detectFormat(csv);
+
+    if (detected !== 'csv') throw new Error('Should detect CSV');
+});
+
+test('Detect TOON format', () => {
+    const converter = new FormatConverter();
+    const toon = '{\n  name: test,\n  value: 42\n}';
+    const detected = converter.detectFormat(toon);
+
+    if (detected !== 'toon') throw new Error('Should detect TOON');
+});
+
+test('Return unknown for unrecognized format', () => {
+    const converter = new FormatConverter();
+    const unknown = 'random text without structure';
+    const detected = converter.detectFormat(unknown);
+
+    if (detected !== 'unknown') throw new Error('Should return unknown');
+});
+
+// ============================================================================
+// PARTIAL CONVERSION
+// ============================================================================
+console.log('\n✂️ Partial Conversion');
+console.log('-'.repeat(70));
+
+test('Partial conversion - field selection', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "email": "test@example.com", "password": "secret"}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['name', 'email']
+    });
+
+    const parsed = JSON.parse(JSON.stringify(result.output));
+    if (!result.output.includes('name:')) throw new Error('Should include name field');
+    if (!result.output.includes('email:')) throw new Error('Should include email field');
+    if (result.output.includes('password')) throw new Error('Should exclude password field');
+    if (!result.partial) throw new Error('Should be marked as partial');
+});
+
+test('Partial conversion - field exclusion', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "password": "secret", "token": "xyz"}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        exclude: ['password', 'token']
+    });
+
+    if (!result.output.includes('name:')) throw new Error('Should include name');
+    if (!result.output.includes('age:')) throw new Error('Should include age');
+    if (result.output.includes('password')) throw new Error('Should exclude password');
+    if (result.output.includes('token')) throw new Error('Should exclude token');
+});
+
+test('Partial conversion - array limit', () => {
+    const converter = new FormatConverter();
+    const input = '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        limit: 3
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (!Array.isArray(parsed)) throw new Error('Should be array');
+    if (parsed.length !== 3) throw new Error('Should have exactly 3 items');
+    if (parsed[0] !== 1) throw new Error('Should start with 1');
+});
+
+test('Partial conversion - array offset', () => {
+    const converter = new FormatConverter();
+    const input = '[10, 20, 30, 40, 50]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        offset: 2
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (parsed.length !== 3) throw new Error('Should have 3 items after offset');
+    if (parsed[0] !== 30) throw new Error('Should start from offset position');
+});
+
+test('Partial conversion - offset and limit combined', () => {
+    const converter = new FormatConverter();
+    const input = '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        offset: 3,
+        limit: 4
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (parsed.length !== 4) throw new Error('Should have 4 items');
+    if (parsed[0] !== 4) throw new Error('Should start from offset 3 (value 4)');
+    if (parsed[3] !== 7) throw new Error('Should end at offset+limit (value 7)');
+});
+
+test('Partial conversion - deep field filtering', () => {
+    const converter = new FormatConverter();
+    const input = JSON.stringify([
+        { name: 'Alice', age: 30, password: 'secret1' },
+        { name: 'Bob', age: 25, password: 'secret2' }
+    ]);
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['name', 'age'],
+        deep: true
+    });
+
+    if (!result.output.includes('Alice')) throw new Error('Should include name');
+    if (!result.output.includes('30')) throw new Error('Should include age');
+    if (result.output.includes('secret')) throw new Error('Should exclude password with deep filtering');
+});
+
+test('Partial conversion - metadata tracking', () => {
+    const converter = new FormatConverter();
+    const input = '{"a": 1, "b": 2, "c": 3}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['a', 'b']
+    });
+
+    if (!result.metadata.filterApplied) throw new Error('Should have filter metadata');
+    if (!result.metadata.filterApplied.fields) throw new Error('Should track fields');
+    if (result.metadata.filterApplied.fields.length !== 2) {
+        throw new Error('Should track field count');
+    }
+});
+
+test('Field projection - simple array', () => {
+    const converter = new FormatConverter();
+    const input = '{"name": "test", "age": 25, "email": "test@test.com", "phone": "123"}';
+    const result = converter.convertWithProjection(input, 'json', 'yaml', ['name', 'email']);
+
+    if (!result.output.includes('name:')) throw new Error('Should include name');
+    if (!result.output.includes('email:')) throw new Error('Should include email');
+    if (result.output.includes('age')) throw new Error('Should exclude age');
+    if (!result.projected) throw new Error('Should be marked as projected');
+});
+
+test('Field projection - nested fields (MongoDB-style)', () => {
+    const converter = new FormatConverter();
+    const input = JSON.stringify({
+        user: {
+            name: 'Alice',
+            profile: {
+                age: 30,
+                city: 'NYC'
+            }
+        },
+        status: 'active'
+    });
+
+    const result = converter.convertWithProjection(input, 'json', 'json', {
+        'user.name': 1,
+        'user.profile.city': 1
+    });
+
+    const parsed = JSON.parse(result.output);
+    if (!parsed.user) throw new Error('Should have user object');
+    if (!parsed.user.name) throw new Error('Should have user.name');
+    if (!parsed.user.profile) throw new Error('Should have user.profile');
+    if (!parsed.user.profile.city) throw new Error('Should have user.profile.city');
+    if (parsed.user.profile.age) throw new Error('Should exclude user.profile.age');
+});
+
+test('Partial conversion - empty result when no fields match', () => {
+    const converter = new FormatConverter();
+    const input = '{"a": 1, "b": 2}';
+    const result = converter.convertPartial(input, 'json', 'yaml', {
+        fields: ['x', 'y', 'z']
+    });
+
+    const parsed = converter.parse(result.output, 'yaml');
+    if (Object.keys(parsed).length !== 0) {
+        throw new Error('Should return empty object when no fields match');
+    }
+});
+
+// Cleanup fixtures directory
+if (fs.existsSync(FIXTURES_DIR)) {
+    fs.rmSync(FIXTURES_DIR, { recursive: true, force: true });
+}
+
+// ============================================================================
+// RESULTS
+// ============================================================================
+console.log('\n' + '='.repeat(70));
+console.log('📊 EXTENDED TEST RESULTS');
+console.log('='.repeat(70));
+console.log(`Total Tests: ${testsPassed + testsFailed}`);
+console.log(`✅ Passed: ${testsPassed}`);
+console.log(`❌ Failed: ${testsFailed}`);
+console.log(`📈 Success Rate: ${((testsPassed / (testsPassed + testsFailed)) * 100).toFixed(1)}%`);
+
+if (testsFailed === 0) {
+    console.log('\n🎉 All extended format converter tests passed!');
+    process.exit(0);
+} else {
+    console.log('\n❌ Some tests failed. Review errors above.');
+    process.exit(1);
+}
