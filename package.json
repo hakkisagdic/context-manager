@@ -1,7 +1,7 @@
 {
   "name": "@hakkisagdic/context-manager",
   "version": "3.1.0",
-  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 15+ languages including multi-dialect SQL (T-SQL, PL/pgSQL, MySQL, PL/SQL) with auto-detection. Features include TOON format (40-50% token reduction), real-time analysis, preset profiles, token budget optimization, and comprehensive context generation.",
+  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 15+ languages including 10-dialect SQL support (SQL Server, PostgreSQL, MySQL, Oracle, SQLite, Snowflake, DB2, Redshift, BigQuery) with auto-detection. Features include TOON format (40-50% token reduction), real-time analysis, preset profiles, token budget optimization, and comprehensive context generation.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -121,8 +121,14 @@
     "mysql",
     "oracle",
     "plsql",
+    "sqlite",
+    "snowflake",
+    "db2",
+    "redshift",
+    "bigquery",
     "multi-dialect",
     "multi-language",
+    "database",
     "ast",
     "tiktoken",
     "optimizer",

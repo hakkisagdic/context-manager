@@ -308,9 +308,9 @@ Method-level format includes method names, line numbers, and token counts per fi
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
 
-**SQL (Multi-Dialect Support with Auto-Detection):**
+**SQL (10-Dialect Support with Auto-Detection):**
 
-Automatically detects SQL dialect and extracts database objects using dialect-specific patterns:
+Automatically detects SQL dialect from content and extracts database objects using dialect-specific patterns. Supports 10 major SQL dialects with intelligent fallback to generic SQL parsing:
 
 **SQL Server (T-SQL):** 9 object types
 - Procedures: `CREATE/ALTER PROCEDURE` (supports `PROC`, `CREATE OR ALTER`, temp `#name`)
@@ -334,7 +334,7 @@ Automatically detects SQL dialect and extracts database objects using dialect-sp
 - Operators: `CREATE OPERATOR`
 
 **MySQL/MariaDB:** 5 object types
-- Procedures: `CREATE PROCEDURE` (supports `DEFINER`)
+- Procedures: `CREATE PROCEDURE` (supports `DEFINER`, `DELIMITER $$`)
 - Functions: `CREATE FUNCTION`
 - Triggers: `CREATE TRIGGER`
 - Views: `CREATE OR REPLACE VIEW` (supports `ALGORITHM`, `DEFINER`)
@@ -351,7 +351,51 @@ Automatically detects SQL dialect and extracts database objects using dialect-sp
 - Types: `CREATE OR REPLACE TYPE`
 - Type Bodies: `CREATE OR REPLACE TYPE BODY`
 
-**Auto-Detection:** Based on syntax markers (`CREATE OR ALTER`, `LANGUAGE plpgsql`, `DELIMITER $$`, `PACKAGE`, etc.)
+**SQLite:** 3 object types
+- Triggers: `CREATE [TEMP] TRIGGER` (supports `INSTEAD OF`, `RAISE`)
+- Views: `CREATE [TEMP] VIEW` (supports `IF NOT EXISTS`)
+- Indexes: `CREATE [UNIQUE] INDEX` (partial, expression-based)
+
+**Snowflake:** 7 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE [SQL|JAVASCRIPT|PYTHON|JAVA|SCALA]`
+- Functions: `CREATE OR REPLACE [SECURE] FUNCTION` (UDF, UDTF)
+- Views: `CREATE OR REPLACE [SECURE|MATERIALIZED] VIEW`
+- Stages: `CREATE OR REPLACE STAGE` (internal, external S3/Azure)
+- Pipes: `CREATE OR REPLACE PIPE` (with AUTO_INGEST)
+- Streams: `CREATE OR REPLACE STREAM` (CDC, change tracking)
+- Tasks: `CREATE OR REPLACE TASK` (scheduled, DAG-based)
+
+**IBM DB2 (SQL PL):** 5 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE SQL` (MODE DB2SQL)
+- Functions: `CREATE OR REPLACE FUNCTION` (scalar, table, deterministic)
+- Triggers: `CREATE OR REPLACE TRIGGER` (MODE DB2SQL, REFERENCING)
+- Views: `CREATE OR REPLACE VIEW` (WITH CHECK OPTION)
+- Types: `CREATE OR REPLACE TYPE` (structured, distinct)
+
+**Amazon Redshift:** 3 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE...LANGUAGE plpgsql` (transaction control)
+- Functions: `CREATE OR REPLACE FUNCTION` (SQL, Python UDF, Lambda)
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW` (late binding, NO SCHEMA BINDING)
+
+**Google BigQuery:** 3 object types
+- Procedures: `CREATE OR REPLACE PROCEDURE` (Standard SQL, control flow)
+- Functions: `CREATE OR REPLACE FUNCTION` (SQL UDF, JavaScript UDF, TABLE FUNCTION)
+- Views: `CREATE OR REPLACE [MATERIALIZED] VIEW` (authorized views, STRUCT/ARRAY support)
+
+**Generic SQL (Fallback):** Basic object extraction when dialect cannot be determined
+
+**Auto-Detection Priority:** Snowflake → MySQL → BigQuery → Oracle → DB2 → Redshift → T-SQL → PostgreSQL → SQLite → Generic
+
+**Detection Markers:**
+- **Snowflake**: `LANGUAGE JAVASCRIPT|PYTHON`, `CREATE STAGE|PIPE|STREAM|TASK`, `RUNTIME_VERSION`
+- **BigQuery**: `` `project.dataset.table` ``, `TABLE FUNCTION`, `INT64`, `STRUCT<`, triple-quote strings
+- **MySQL**: `DELIMITER $$`, `CREATE DEFINER=`, `CREATE EVENT`
+- **Oracle**: `CREATE PACKAGE`, `...IS`, `TYPE BODY`
+- **DB2**: `MODE DB2SQL`, `DYNAMIC RESULT SETS`, `REFERENCING NEW AS...OLD AS`
+- **Redshift**: `LANGUAGE plpythonu`, `WITH NO SCHEMA BINDING`, `DISTKEY|SORTKEY`
+- **T-SQL**: `CREATE OR ALTER`, `GO` statement
+- **PostgreSQL**: `LANGUAGE plpgsql`, `$$` function delimiters
+- **SQLite**: `PRAGMA`, `AUTOINCREMENT`, `RAISE(ABORT)`, temp triggers
 
 ### Phase 1 Module Details (v3.1.0)
 
