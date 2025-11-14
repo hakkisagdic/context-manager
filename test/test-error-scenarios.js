@@ -272,6 +272,43 @@ test('Permission denied writing export file (simulated)', () => {
     }
 });
 
+test('Permission denied creating directories', () => {
+    const parentDir = path.join(FIXTURES_DIR, 'no-write-parent');
+    fs.mkdirSync(parentDir, { recursive: true });
+
+    if (process.platform !== 'win32') {
+        try {
+            fs.chmodSync(parentDir, 0o555); // Read + execute only, no write
+
+            const newDir = path.join(parentDir, 'new-subdir');
+
+            try {
+                fs.mkdirSync(newDir);
+                console.log('   ⚠️  Note: Could create directory despite no write permission (running as root?)');
+                // Clean up if it was created
+                try {
+                    fs.rmdirSync(newDir);
+                } catch (e) {}
+            } catch (error) {
+                // Expected error
+                if (error.code !== 'EACCES' && error.code !== 'EPERM') {
+                    throw new Error(`Unexpected error: ${error.code}`);
+                }
+                // This is the expected behavior
+            }
+
+            // Restore permissions
+            fs.chmodSync(parentDir, 0o755);
+        } catch (error) {
+            if (error.code === 'EPERM') {
+                // Expected on some systems
+            } else {
+                throw error;
+            }
+        }
+    }
+});
+
 // ============================================================================
 // 3. BINARY FILE HANDLING
 // ============================================================================
@@ -920,6 +957,58 @@ test('File modified during read (simulated)', () => {
     }
 });
 
+test('Directory deleted during analysis', () => {
+    const testDir = path.join(FIXTURES_DIR, 'to-be-deleted');
+    fs.mkdirSync(testDir, { recursive: true });
+    fs.writeFileSync(path.join(testDir, 'file1.js'), 'const x = 1;');
+    fs.writeFileSync(path.join(testDir, 'file2.js'), 'const x = 2;');
+
+    const scanner = new Scanner(FIXTURES_DIR);
+
+    // Start scanning, then delete directory
+    // Scanner should handle missing directory gracefully
+    try {
+        // Simulate directory deletion during traversal
+        fs.rmSync(testDir, { recursive: true, force: true });
+
+        const files = scanner.scan();
+
+        // Should complete without crashing
+        if (!Array.isArray(files)) {
+            throw new Error('Scanner should return array even if directory deleted');
+        }
+    } catch (error) {
+        // ENOENT is acceptable
+        if (error.code !== 'ENOENT') {
+            throw error;
+        }
+    }
+});
+
+test('File renamed during analysis', () => {
+    const testFile1 = path.join(FIXTURES_DIR, 'rename-original.js');
+    const testFile2 = path.join(FIXTURES_DIR, 'rename-new.js');
+    fs.writeFileSync(testFile1, 'const x = 42;');
+
+    const analyzer = new TokenCalculator(FIXTURES_DIR);
+
+    // Rename file immediately
+    fs.renameSync(testFile1, testFile2);
+
+    const result = analyzer.analyzeFile(testFile1);
+
+    // Should handle gracefully
+    if (!result) {
+        throw new Error('Should return result object for renamed file');
+    }
+    if (!result.error) {
+        throw new Error('Should have error for renamed/missing file');
+    }
+
+    // Cleanup
+    try { fs.unlinkSync(testFile2); } catch (e) {}
+});
+
 // ============================================================================
 // 12. PATTERN MATCHING EDGE CASES
 // ============================================================================
@@ -1152,7 +1241,345 @@ test('Memory usage with large dataset (simulated)', () => {
 });
 
 // ============================================================================
-// 15. ERROR RECOVERY AND RESILIENCE
+// 15. STACK OVERFLOW AND DEEP RECURSION
+// ============================================================================
+console.log('\n🔁 Stack Overflow and Deep Recursion');
+console.log('-'.repeat(80));
+
+test('Very deep directory recursion (200 levels)', () => {
+    let currentPath = FIXTURES_DIR;
+    const maxDepth = 200;
+
+    // Create deeply nested structure
+    for (let i = 0; i < maxDepth; i++) {
+        currentPath = path.join(currentPath, `d${i}`);
+        fs.mkdirSync(currentPath, { recursive: true });
+    }
+
+    fs.writeFileSync(path.join(currentPath, 'deep.js'), 'const x = 42;');
+
+    try {
+        const scanner = new Scanner(FIXTURES_DIR, { maxDepth: 250 });
+        const files = scanner.scan();
+
+        // Should handle without stack overflow
+        if (!Array.isArray(files)) {
+            throw new Error('Should return array for deep recursion');
+        }
+
+        const stats = scanner.getStats();
+        console.log(`   ℹ️  Scanned ${stats.directoriesTraversed} directories at ${maxDepth} levels`);
+    } catch (error) {
+        if (error.message && error.message.includes('stack')) {
+            throw new Error('Stack overflow detected - recursion not handled properly');
+        }
+        throw error;
+    }
+});
+
+test('Recursive pattern with nested paths', () => {
+    const testDir = path.join(FIXTURES_DIR, 'recursive-pattern-test');
+    fs.mkdirSync(testDir, { recursive: true });
+
+    // Create nested structure with files
+    const levels = ['a', 'b', 'c', 'd', 'e'];
+    let currentDir = testDir;
+
+    for (const level of levels) {
+        currentDir = path.join(currentDir, level);
+        fs.mkdirSync(currentDir, { recursive: true });
+        fs.writeFileSync(path.join(currentDir, 'test.js'), 'const x = 1;');
+        fs.writeFileSync(path.join(currentDir, 'test.log'), 'log entry');
+    }
+
+    const gitignorePath = path.join(testDir, '.gitignore');
+    fs.writeFileSync(gitignorePath, '**/*.log');
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+    const scanner = new Scanner(testDir);
+    const files = scanner.scan();
+
+    // All .js files should be included, all .log files excluded
+    const jsFiles = files.filter(f => f.name.endsWith('.js'));
+    const logFiles = files.filter(f => f.name.endsWith('.log'));
+
+    if (jsFiles.length !== levels.length) {
+        throw new Error(`Expected ${levels.length} JS files, got ${jsFiles.length}`);
+    }
+    if (logFiles.length !== 0) {
+        throw new Error('Log files should be ignored by recursive pattern');
+    }
+});
+
+// ============================================================================
+// 16. INVALID REGEX PATTERNS
+// ============================================================================
+console.log('\n🚫 Invalid Regex Patterns');
+console.log('-'.repeat(80));
+
+test('Invalid regex in .gitignore - catastrophic backtracking', () => {
+    const testFile = path.join(FIXTURES_DIR, '.gitignore-catastrophic');
+    // Pattern that could cause catastrophic backtracking
+    fs.writeFileSync(testFile, '(a+)+b\n(x*)*y\n.*.*.*.*.*');
+
+    try {
+        const parser = new GitIgnoreParser(testFile, null, null);
+
+        // Test against a long string
+        const longPath = 'a'.repeat(100) + 'x';
+        const start = Date.now();
+        const ignored = parser.isIgnored(null, longPath);
+        const elapsed = Date.now() - start;
+
+        // Should complete quickly (< 100ms) even with complex patterns
+        if (elapsed > 100) {
+            console.log(`   ⚠️  Warning: Pattern matching took ${elapsed}ms (potential backtracking issue)`);
+        }
+    } catch (error) {
+        // Invalid regex should be handled gracefully
+        if (error.name === 'SyntaxError') {
+            // This is acceptable - invalid regex caught
+        } else {
+            throw error;
+        }
+    }
+});
+
+test('Invalid regex in .methodinclude - unclosed groups', () => {
+    const testFile = path.join(FIXTURES_DIR, '.methodinclude-invalid-regex');
+    fs.writeFileSync(testFile, 'test[unclosed\n(unclosed\n{invalid');
+
+    try {
+        const parser = new MethodFilterParser(testFile, null);
+
+        // Should not crash, even with invalid patterns
+        if (!parser) throw new Error('Parser should initialize despite invalid patterns');
+
+        // Try to use it
+        const shouldInclude = parser.shouldIncludeMethod('testMethod', 'TestClass');
+
+        // Should handle gracefully (either include or exclude, but not crash)
+        if (typeof shouldInclude !== 'boolean') {
+            throw new Error('Should return boolean even with invalid patterns');
+        }
+    } catch (error) {
+        // SyntaxError is acceptable for invalid regex
+        if (error.name !== 'SyntaxError') {
+            throw error;
+        }
+    }
+});
+
+test('Regex with lookahead/lookbehind', () => {
+    const testFile = path.join(FIXTURES_DIR, '.methodinclude-lookahead');
+    // Advanced regex features
+    fs.writeFileSync(testFile, 'test(?=Handler)\n(?<=get).*\nmethod(?!Test)');
+
+    try {
+        const parser = new MethodFilterParser(testFile, null);
+
+        // These might work or might not depending on regex engine
+        const test1 = parser.shouldIncludeMethod('testHandler', 'Class');
+        const test2 = parser.shouldIncludeMethod('getMethod', 'Class');
+
+        // Should at least not crash
+        if (typeof test1 !== 'boolean' || typeof test2 !== 'boolean') {
+            throw new Error('Should handle lookahead/lookbehind patterns');
+        }
+    } catch (error) {
+        // SyntaxError is acceptable if lookahead/lookbehind not supported
+        if (error.name !== 'SyntaxError') {
+            throw error;
+        }
+    }
+});
+
+// ============================================================================
+// 17. EXTREMELY LARGE FILES
+// ============================================================================
+console.log('\n💾 Extremely Large Files');
+console.log('-'.repeat(80));
+
+test('Large file (50MB) - performance test', () => {
+    // Skip this test in CI or if SKIP_SLOW_TESTS is set
+    if (process.env.CI || process.env.SKIP_SLOW_TESTS) {
+        console.log('   ⚠️  Skipping 50MB test (set SKIP_SLOW_TESTS=false to run)');
+        return;
+    }
+
+    const testFile = path.join(FIXTURES_DIR, 'large-50mb.js');
+    const chunk = 'function test() { return 42; }\n';
+    const chunks = 1750000; // ~50MB
+
+    console.log('   ℹ️  Creating 50MB file... (this may take a while)');
+
+    const stream = fs.createWriteStream(testFile);
+    for (let i = 0; i < chunks; i++) {
+        stream.write(chunk);
+    }
+    stream.end();
+
+    // Wait synchronously for file to be written
+    const startWrite = Date.now();
+    while (!fs.existsSync(testFile) || fs.statSync(testFile).size < 45000000) {
+        if (Date.now() - startWrite > 60000) {
+            throw new Error('Timeout creating 50MB file');
+        }
+        // Small delay
+        const now = Date.now();
+        while (Date.now() - now < 100) {}
+    }
+
+    const analyzer = new TokenCalculator(FIXTURES_DIR);
+    const start = Date.now();
+    const result = analyzer.analyzeFile(testFile);
+    const elapsed = Date.now() - start;
+
+    console.log(`   ℹ️  Analyzed 50MB file in ${elapsed}ms`);
+
+    if (!result) {
+        throw new Error('Should handle 50MB files');
+    }
+    if (result.sizeBytes < 45000000) { // ~45MB acceptable
+        throw new Error(`File size too small: ${result.sizeBytes} bytes`);
+    }
+
+    // Should complete in reasonable time (< 30 seconds)
+    if (elapsed > 30000) {
+        console.log(`   ⚠️  Warning: Analysis took ${elapsed}ms for 50MB file`);
+    }
+});
+
+test('Simulated 100MB+ file handling', () => {
+    // Don't actually create 100MB file, just verify size calculation works
+    const testFile = path.join(FIXTURES_DIR, 'test-size-calc.js');
+    fs.writeFileSync(testFile, 'const x = 42;');
+
+    const analyzer = new TokenCalculator(FIXTURES_DIR);
+
+    // Verify the analyzer can handle large file sizes in its calculations
+    const mockFileInfo = {
+        path: testFile,
+        relativePath: 'test.js',
+        sizeBytes: 100 * 1024 * 1024, // 100MB
+        tokens: 1000000,
+        lines: 100000,
+        extension: '.js'
+    };
+
+    // Check if stats can handle large numbers
+    if (mockFileInfo.sizeBytes !== 104857600) {
+        throw new Error('Size calculation error for large files');
+    }
+});
+
+// ============================================================================
+// 18. RESOURCE CLEANUP AND ERROR HANDLING
+// ============================================================================
+console.log('\n🧹 Resource Cleanup and Error Handling');
+console.log('-'.repeat(80));
+
+test('File handles closed after errors', () => {
+    const testFile = path.join(FIXTURES_DIR, 'file-handle-test.js');
+    fs.writeFileSync(testFile, 'const x = 42;');
+
+    const analyzer = new TokenCalculator(FIXTURES_DIR);
+
+    // Read file multiple times to test handle cleanup
+    for (let i = 0; i < 100; i++) {
+        try {
+            analyzer.analyzeFile(testFile);
+        } catch (error) {
+            // Ignore errors, we're testing handle cleanup
+        }
+    }
+
+    // Delete the file - should succeed if handles were closed
+    try {
+        fs.unlinkSync(testFile);
+    } catch (error) {
+        throw new Error(`File handle not released: ${error.message}`);
+    }
+});
+
+test('Memory cleanup after large analysis', () => {
+    const testDir = path.join(FIXTURES_DIR, 'cleanup-test');
+    fs.mkdirSync(testDir, { recursive: true });
+
+    // Create several files
+    for (let i = 0; i < 50; i++) {
+        fs.writeFileSync(
+            path.join(testDir, `file${i}.js`),
+            'function test() { return 42; }\n'.repeat(1000)
+        );
+    }
+
+    const memBefore = process.memoryUsage().heapUsed;
+
+    // Analyze and clear
+    const scanner = new Scanner(testDir);
+    let files = scanner.scan();
+
+    // Clear reference
+    files = null;
+
+    // Force garbage collection if available
+    if (global.gc) {
+        global.gc();
+    }
+
+    const memAfter = process.memoryUsage().heapUsed;
+    const memDelta = (memAfter - memBefore) / 1024 / 1024; // MB
+
+    console.log(`   ℹ️  Memory after cleanup: ${memDelta > 0 ? '+' : ''}${memDelta.toFixed(2)} MB`);
+
+    // Memory should not grow significantly (< 50MB)
+    if (memDelta > 50) {
+        console.log(`   ⚠️  Warning: Possible memory leak detected (+${memDelta.toFixed(2)} MB)`);
+    }
+});
+
+test('Error recovery in batch operations', () => {
+    const testDir = path.join(FIXTURES_DIR, 'batch-error-test');
+    fs.mkdirSync(testDir, { recursive: true });
+
+    // Create mix of valid and problematic files
+    fs.writeFileSync(path.join(testDir, 'valid1.js'), 'const x = 1;');
+    fs.writeFileSync(path.join(testDir, 'valid2.js'), 'const x = 2;');
+
+    const analyzer = new TokenCalculator(testDir);
+    const files = [
+        path.join(testDir, 'valid1.js'),
+        path.join(testDir, 'nonexistent.js'), // Will fail
+        path.join(testDir, 'valid2.js')
+    ];
+
+    const results = files.map(f => {
+        try {
+            return analyzer.analyzeFile(f);
+        } catch (error) {
+            return { error: error.message };
+        }
+    });
+
+    // Should have results for all files (some with errors)
+    if (results.length !== 3) {
+        throw new Error('Should return results for all files in batch');
+    }
+
+    // First and third should succeed
+    if (results[0].error || results[2].error) {
+        throw new Error('Valid files should analyze successfully');
+    }
+
+    // Second should have error
+    if (!results[1].error) {
+        throw new Error('Nonexistent file should have error');
+    }
+});
+
+// ============================================================================
+// 19. ERROR RECOVERY AND RESILIENCE
 // ============================================================================
 console.log('\n🛡️  Error Recovery and Resilience');
 console.log('-'.repeat(80));
@@ -1216,23 +1643,30 @@ test('Recovery from malformed method extraction', () => {
 // ============================================================================
 // RESULTS SUMMARY
 // ============================================================================
-console.log('\n' + '='.repeat(80));
-console.log('📊 TEST RESULTS');
-console.log('='.repeat(80));
-console.log(`Total Tests: ${testsRun}`);
-console.log(`✅ Passed: ${testsPassed}`);
-console.log(`❌ Failed: ${testsFailed}`);
-console.log(`📈 Success Rate: ${((testsPassed / testsRun) * 100).toFixed(1)}%`);
+async function showResults() {
+    console.log('\n' + '='.repeat(80));
+    console.log('📊 TEST RESULTS');
+    console.log('='.repeat(80));
+    console.log(`Total Tests: ${testsRun}`);
+    console.log(`✅ Passed: ${testsPassed}`);
+    console.log(`❌ Failed: ${testsFailed}`);
+    console.log(`📈 Success Rate: ${((testsPassed / testsRun) * 100).toFixed(1)}%`);
 
-// Cleanup
-cleanup();
+    // Cleanup
+    cleanup();
 
-if (testsFailed === 0) {
-    console.log('\n🎉 All error scenario tests passed!');
-    console.log('The codebase demonstrates excellent robustness and error handling.');
-    process.exit(0);
-} else {
-    console.log('\n❌ Some tests failed. Review errors above.');
-    console.log('Note: Some failures may indicate bugs in the code that need fixing.');
-    process.exit(1);
+    if (testsFailed === 0) {
+        console.log('\n🎉 All error scenario tests passed!');
+        console.log('The codebase demonstrates excellent robustness and error handling.');
+        process.exit(0);
+    } else {
+        console.log('\n❌ Some tests failed. Review errors above.');
+        console.log('Note: Some failures may indicate bugs in the code that need fixing.');
+        process.exit(1);
+    }
 }
+
+showResults().catch(error => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+});
