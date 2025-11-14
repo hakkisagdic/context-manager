@@ -48,6 +48,7 @@
     "test:final-milestone": "node test/test-final-milestone.js",
     "test:95-percent-achieved": "node test/test-95-percent-achieved.js",
     "test:95-percent-final-push": "node test/test-95-percent-final-push.js",
+    "test:95-achieved": "node test/test-95-achieved.js",
     "test:watch": "node test/test-watch-mode.js",
     "test:phase1": "node test/test-phase1-all.js",
     "test:phase1:presets": "node test/test-phase1-presets.js",
