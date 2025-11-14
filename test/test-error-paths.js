@@ -56,16 +56,16 @@ console.log('══════════════════════�
 console.log('📂 Testing Scanner Error Handling...\n');
 
 test('Scanner: handles non-existent directory', () => {
-    const scanner = new Scanner();
     const nonExistentPath = '/this/path/does/not/exist';
 
     try {
-        const files = scanner.scan(nonExistentPath);
+        const scanner = new Scanner(nonExistentPath);
+        const files = scanner.scan();
         // Should either return empty array or throw error
         assert(Array.isArray(files), 'Should return array or throw');
     } catch (error) {
         assert(error instanceof Error, 'Should throw proper error');
-        assert(error.code === 'ENOENT', 'Should throw ENOENT error');
+        assert(error.code === 'ENOENT' || error.message.includes('ENOENT'), 'Should throw ENOENT error');
     }
 });
 
@@ -81,10 +81,10 @@ test('Scanner: handles permission denied error', () => {
         try {
             fs.chmodSync(restrictedDir, 0o000);
 
-            const scanner = new Scanner();
+            const scanner = new Scanner(restrictedDir);
 
             try {
-                const files = scanner.scan(restrictedDir);
+                const files = scanner.scan();
                 // If it succeeds despite permissions, that's fine (system-dependent)
                 assert(true, 'Should handle or bypass permission issues');
             } catch (error) {
@@ -111,8 +111,8 @@ test('Scanner: handles empty directory', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scanner-test-'));
 
     try {
-        const scanner = new Scanner();
-        const files = scanner.scan(tempDir);
+        const scanner = new Scanner(tempDir);
+        const files = scanner.scan();
 
         assert(Array.isArray(files), 'Should return array');
         assertEquals(files.length, 0, 'Should return empty array for empty directory');
@@ -169,8 +169,8 @@ test('Scanner: handles very deep directory nesting', () => {
         // Add a file at the deepest level
         fs.writeFileSync(path.join(currentPath, 'deep.txt'), 'deep file');
 
-        const scanner = new Scanner();
-        const files = scanner.scan(tempDir);
+        const scanner = new Scanner(tempDir);
+        const files = scanner.scan();
 
         assert(Array.isArray(files), 'Should scan deep directories');
         assert(files.length > 0, 'Should find file in deep directory');
@@ -217,9 +217,9 @@ test('GitIgnoreParser: handles empty pattern file', () => {
         const emptyFile = path.join(tempDir, '.gitignore');
         fs.writeFileSync(emptyFile, '');
 
-        const parser = new GitIgnoreParser();
-        parser.loadFromFile(emptyFile);
+        const parser = new GitIgnoreParser(emptyFile, null, null);
 
+        assert(parser.patterns.length === 0, 'Should have no patterns for empty file');
         assert(true, 'Should handle empty .gitignore file');
     } finally {
         fs.rmSync(tempDir, { recursive: true, force: true });
