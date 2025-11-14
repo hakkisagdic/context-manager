@@ -91,12 +91,19 @@ import { SelectInput } from './lib/ui/index.js';
 // Before (deprecated)
 import SelectInput from 'ink-select-input';
 
-// After (custom component)
+// After (custom component) - npm package import
+import { SelectInput } from '@hakkisagdic/context-manager/ui';
+
+// Or direct import (for local development)
 import { SelectInput } from './lib/ui/index.js';
 
 // API is backward compatible - existing code works!
 <SelectInput items={items} onSelect={handleSelect} />
 ```
+
+**Package Exports:**
+- Main exports: `import { TokenCalculator, PresetManager } from '@hakkisagdic/context-manager'`
+- UI exports: `import { SelectInput, Wizard, Dashboard } from '@hakkisagdic/context-manager/ui'`
 
 #### Performance
 

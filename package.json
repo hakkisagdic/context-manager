@@ -8,7 +8,8 @@
     "context-manager": "bin/cli.js"
   },
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./ui": "./lib/ui/index.js"
   },
   "scripts": {
     "test": "node test/test.js",
