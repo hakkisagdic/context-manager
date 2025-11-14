@@ -60,6 +60,7 @@
     "test:token-calculator-extended": "node test/test-token-calculator-extended.js",
     "test:token-calculator-reports": "node test/test-token-calculator-reports.js",
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
+    "test:gitingest-formatter-comprehensive": "node test/test-gitingest-formatter-comprehensive.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
     "test:api-server-extended": "node test/test-api-server-extended.js",
     "test:file-watcher-extended": "node test/test-file-watcher-extended.js",
