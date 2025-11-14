@@ -67,6 +67,7 @@
     "test:blame-tracker": "node test/test-blame-tracker.js",
     "test:diff-analyzer": "node test/test-diff-analyzer.js",
     "test:git-client": "node test/test-git-client.js",
+    "test:git-integration-extended": "node test/test-git-integration-extended.js",
     "test:toon-formatter-v13": "node test/test-toon-formatter-v13.js",
     "test:toon-decoder": "node test/test-toon-decoder.js",
     "test:git-utils-comprehensive": "node test/test-git-utils-comprehensive.js",
