@@ -79,6 +79,8 @@
     "test:git-integration-extended": "node test/test-git-integration-extended.js",
     "test:toon-formatter-v13": "node test/test-toon-formatter-v13.js",
     "test:toon-decoder": "node test/test-toon-decoder.js",
+    "test:toon-comprehensive": "node test/test-toon-formatter-comprehensive.js",
+    "test:toon-advanced": "node test/test-toon-advanced-features.js",
     "test:git-utils-comprehensive": "node test/test-git-utils-comprehensive.js",
     "test:git-utils-extended": "node test/test-git-utils-extended.js",
     "test:validation": "node test/test-validation-comprehensive.js",
