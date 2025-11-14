@@ -12,9 +12,11 @@ async function main() {
         const { default: React } = await import('react');
         const inkModule = await import('ink');
         const { render, Box, Text, Newline } = inkModule;
-        const { default: SelectInput } = await import('ink-select-input');
+        const { default: SelectInput } = await import('../lib/ui/select-input.js');
         const { default: Spinner } = await import('ink-spinner');
         const { default: TextInput } = await import('ink-text-input');
+        const { default: Wizard } = await import('../lib/ui/wizard.js');
+        const { default: Dashboard } = await import('../lib/ui/dashboard.js');
 
         console.log('✅ Dependencies loaded successfully!\n');
 
@@ -181,7 +183,6 @@ async function main() {
 
             // Wizard Test
             if (screen === 'wizard') {
-                const Wizard = require('../lib/ui/wizard');
                 const wizardComponents = {
                     Box: inkModule.Box,
                     Text: inkModule.Text,
@@ -199,7 +200,6 @@ async function main() {
 
             // Dashboard Test
             if (screen === 'dashboard') {
-                const Dashboard = require('../lib/ui/dashboard');
                 const mockStats = {
                     totalFiles: 64,
                     totalTokens: 181480,
@@ -242,7 +242,7 @@ async function main() {
         console.error('\n❌ Ink UI Test Failed!\n');
         console.error('Error:', error.message);
         console.error('\nMake sure Ink dependencies are installed:');
-        console.error('  npm install ink react ink-select-input ink-spinner ink-text-input\n');
+        console.error('  npm install ink react ink-spinner ink-text-input\n');
 
         if (error.stack) {
             console.error('Stack trace:');
