@@ -1,0 +1,6 @@
+# Ignore everything in build/
+build/
+# Except build/public/
+!build/public/
+# But ignore build/public/temp/
+build/public/temp/

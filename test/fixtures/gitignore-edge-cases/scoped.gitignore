@@ -1,0 +1,5 @@
+# Ignore in specific directory (root-relative)
+docs/*.pdf
+src/temp/
+# Match at any level
+*.tmp

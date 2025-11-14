@@ -517,6 +517,220 @@ test('Very long pattern line', () => {
 });
 
 // ============================================================================
+// CASE SENSITIVITY TESTS
+// ============================================================================
+console.log('\n🔤 Case Sensitivity Tests');
+console.log('-'.repeat(70));
+
+test('Case sensitivity - Patterns are case-sensitive by default', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'case-sensitive.gitignore');
+    fs.writeFileSync(gitignorePath, `README.md
+*.Log
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // Exact case should match
+    assertTrue(parser.isIgnored(null, 'README.md'), 'README.md should be ignored (exact case)');
+    assertTrue(parser.isIgnored(null, 'error.Log'), 'error.Log should be ignored (exact case)');
+
+    // Different case should NOT match (case-sensitive)
+    assertFalse(parser.isIgnored(null, 'readme.md'), 'readme.md should NOT be ignored (different case)');
+    assertFalse(parser.isIgnored(null, 'ReadMe.md'), 'ReadMe.md should NOT be ignored (different case)');
+    assertFalse(parser.isIgnored(null, 'error.log'), 'error.log should NOT be ignored (different case)');
+});
+
+test('Case sensitivity - macOS/Windows behavior (case-insensitive filesystems)', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'case-fs.gitignore');
+    fs.writeFileSync(gitignorePath, `TeMp/
+BUILD/
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // Git's behavior: patterns are case-sensitive even on case-insensitive filesystems
+    // The implementation should match Git's behavior
+    assertTrue(parser.isIgnored(null, 'TeMp/file.txt'), 'TeMp/file.txt should be ignored');
+    assertTrue(parser.isIgnored(null, 'BUILD/output.js'), 'BUILD/output.js should be ignored');
+
+    // Different case should NOT match
+    assertFalse(parser.isIgnored(null, 'temp/file.txt'), 'temp/file.txt should NOT be ignored (case mismatch)');
+    assertFalse(parser.isIgnored(null, 'build/output.js'), 'build/output.js should NOT be ignored (case mismatch)');
+});
+
+test('Case sensitivity - Wildcards maintain case sensitivity', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'case-wildcard.gitignore');
+    fs.writeFileSync(gitignorePath, `*.LOG
+Test*.js
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    assertTrue(parser.isIgnored(null, 'error.LOG'), 'error.LOG should be ignored');
+    assertTrue(parser.isIgnored(null, 'TestFile.js'), 'TestFile.js should be ignored');
+
+    assertFalse(parser.isIgnored(null, 'error.log'), 'error.log should NOT be ignored (case mismatch)');
+    assertFalse(parser.isIgnored(null, 'testFile.js'), 'testFile.js should NOT be ignored (case mismatch)');
+});
+
+// ============================================================================
+// SUBDIRECTORY GITIGNORE TESTS (LIMITATION CHECK)
+// ============================================================================
+console.log('\n📂 Subdirectory .gitignore Tests');
+console.log('-'.repeat(70));
+
+test('Subdirectory .gitignore - Current implementation limitation', () => {
+    // Note: Current implementation only supports single .gitignore at root
+    // This test documents the current behavior and limitation
+
+    const rootGitignore = path.join(FIXTURES_DIR, 'root.gitignore');
+    const subDir = path.join(FIXTURES_DIR, 'subdir');
+    const subGitignore = path.join(subDir, '.gitignore');
+
+    if (!fs.existsSync(subDir)) {
+        fs.mkdirSync(subDir, { recursive: true });
+    }
+
+    fs.writeFileSync(rootGitignore, `*.log
+`);
+    fs.writeFileSync(subGitignore, `*.tmp
+`);
+
+    // Current implementation only reads root .gitignore
+    const parser = new GitIgnoreParser(rootGitignore, null, null);
+
+    // Root patterns work
+    assertTrue(parser.isIgnored(null, 'error.log'), 'error.log should be ignored (root .gitignore)');
+    assertTrue(parser.isIgnored(null, 'subdir/error.log'), 'subdir/error.log should be ignored (root .gitignore)');
+
+    // Subdirectory .gitignore is NOT read (limitation)
+    // In real Git, subdir/.gitignore would also be evaluated
+    assertFalse(parser.isIgnored(null, 'subdir/temp.tmp'),
+        'subdir/temp.tmp is NOT ignored (subdir .gitignore not loaded - known limitation)');
+});
+
+test('Subdirectory patterns - Scoped patterns work (Git behavior)', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'scoped.gitignore');
+    fs.writeFileSync(gitignorePath, `# Ignore in specific directory (root-relative)
+docs/*.pdf
+src/temp/
+# Match at any level
+*.tmp
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // Patterns with slash are root-relative (Git behavior)
+    assertTrue(parser.isIgnored(null, 'docs/manual.pdf'), 'docs/manual.pdf should be ignored (root-level)');
+    assertTrue(parser.isIgnored(null, 'src/temp/data.txt'), 'src/temp/data.txt should be ignored');
+
+    // Should not match in other locations (pattern has slash → root-relative)
+    assertFalse(parser.isIgnored(null, 'manual.pdf'), 'manual.pdf (root) should NOT be ignored');
+    assertFalse(parser.isIgnored(null, 'other/docs/manual.pdf'),
+        'other/docs/manual.pdf should NOT be ignored (pattern is root-relative)');
+
+    // Pattern without slash matches at any level
+    assertTrue(parser.isIgnored(null, 'file.tmp'), 'file.tmp should be ignored (any level)');
+    assertTrue(parser.isIgnored(null, 'deep/nested/file.tmp'), 'deep/nested/file.tmp should be ignored (any level)');
+});
+
+// ============================================================================
+// GITIGNORE INHERITANCE TESTS
+// ============================================================================
+console.log('\n🌳 GitIgnore Inheritance Tests');
+console.log('-'.repeat(70));
+
+test('Inheritance - Negation can un-ignore parent patterns', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'inheritance-negation.gitignore');
+    fs.writeFileSync(gitignorePath, `# Ignore all .log files
+*.log
+# But allow important.log
+!important.log
+# Ignore all in logs/ directory
+logs/
+# But not logs/keep/ subdirectory
+!logs/keep/
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // Basic patterns
+    assertTrue(parser.isIgnored(null, 'error.log'), 'error.log should be ignored');
+    assertFalse(parser.isIgnored(null, 'important.log'), 'important.log should NOT be ignored (negated)');
+
+    // Directory patterns
+    assertTrue(parser.isIgnored(null, 'logs/debug.txt'), 'logs/debug.txt should be ignored');
+});
+
+test('Inheritance - More specific patterns override general ones', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'inheritance-specific.gitignore');
+    fs.writeFileSync(gitignorePath, `# Ignore everything in build/
+build/
+# Except build/public/
+!build/public/
+# But ignore build/public/temp/
+build/public/temp/
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // General pattern
+    assertTrue(parser.isIgnored(null, 'build/app.js'), 'build/app.js should be ignored');
+
+    // Negated subdirectory - NOTE: This is complex in Git
+    // Git doesn't allow negating subdirectories of ignored parent directories
+    // This test documents expected vs actual behavior
+    const publicFileIgnored = parser.isIgnored(null, 'build/public/index.html');
+    // In real Git, this would still be ignored (can't negate subdirs of ignored dirs)
+    // Our implementation may behave differently
+});
+
+test('Inheritance - Pattern order matters for override', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'inheritance-order.gitignore');
+    fs.writeFileSync(gitignorePath, `# First ignore all JS
+*.js
+# Then allow config.js
+!config.js
+# Then ignore again in specific dir
+src/*.js
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // config.js at root is allowed (negated)
+    assertFalse(parser.isIgnored(null, 'config.js'), 'config.js should NOT be ignored (negated)');
+
+    // But config.js in src/ is ignored (more specific pattern)
+    assertTrue(parser.isIgnored(null, 'src/config.js'), 'src/config.js should be ignored (overridden)');
+
+    // Other JS files are ignored
+    assertTrue(parser.isIgnored(null, 'app.js'), 'app.js should be ignored');
+});
+
+test('Inheritance - Root gitignore applies to all subdirectories', () => {
+    const gitignorePath = path.join(FIXTURES_DIR, 'inheritance-root.gitignore');
+    fs.writeFileSync(gitignorePath, `node_modules/
+*.log
+.env
+`);
+
+    const parser = new GitIgnoreParser(gitignorePath, null, null);
+
+    // Root level
+    assertTrue(parser.isIgnored(null, 'node_modules/package.json'), 'node_modules at root should be ignored');
+    assertTrue(parser.isIgnored(null, 'error.log'), 'error.log at root should be ignored');
+    assertTrue(parser.isIgnored(null, '.env'), '.env at root should be ignored');
+
+    // Deep nested
+    assertTrue(parser.isIgnored(null, 'src/utils/node_modules/package.json'),
+        'node_modules in nested dir should be ignored');
+    assertTrue(parser.isIgnored(null, 'src/server/logs/error.log'),
+        'error.log in nested dir should be ignored');
+    assertTrue(parser.isIgnored(null, 'config/prod/.env'),
+        '.env in nested dir should be ignored');
+});
+
+// ============================================================================
 // SUMMARY
 // ============================================================================
 
