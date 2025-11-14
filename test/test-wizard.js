@@ -70,7 +70,7 @@ async function testWizard() {
         console.log('╚════════════════════════════════════════════════════════╝');
 
         console.log('\nTo fix:');
-        console.log('  npm install ink react ink-select-input\n');
+        console.log('  npm install ink react\n');
 
         process.exit(1);
     }

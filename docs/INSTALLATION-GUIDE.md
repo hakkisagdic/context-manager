@@ -230,7 +230,7 @@ These features use React + Ink for beautiful terminal UI:
 
 ```bash
 # Install interactive dependencies
-npm install -g ink react ink-select-input ink-text-input ink-spinner
+npm install -g ink react ink-text-input ink-spinner
 
 # Or with the package
 npm install -g @hakkisagdic/context-manager
@@ -356,7 +356,7 @@ npm install -g @hakkisagdic/context-manager
 
 ```bash
 # Install interactive dependencies
-npm install -g ink react ink-select-input ink-text-input ink-spinner
+npm install -g ink react ink-text-input ink-spinner
 
 # Or use simple mode
 context-manager --simple

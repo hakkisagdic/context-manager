@@ -242,7 +242,7 @@ async function main() {
         console.error('\n❌ Ink UI Test Failed!\n');
         console.error('Error:', error.message);
         console.error('\nMake sure Ink dependencies are installed:');
-        console.error('  npm install ink react ink-select-input ink-spinner ink-text-input\n');
+        console.error('  npm install ink react ink-spinner ink-text-input\n');
 
         if (error.stack) {
             console.error('Stack trace:');
