@@ -53,9 +53,9 @@ test('Filter: Simple literal pattern', () => {
     fs.writeFileSync(includePath, 'myMethod');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('myMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('myMethod', 'test.js');
 
-    if (!result.included) throw new Error('Should match literal pattern');
+    if (!result) throw new Error('Should match literal pattern');
 
     fs.unlinkSync(includePath);
 });
@@ -65,13 +65,13 @@ test('Filter: Wildcard pattern (*)', () => {
     fs.writeFileSync(includePath, 'test*');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('testMethod', 'test.js');
-    const result2 = parser.matchMethod('testing', 'test.js');
-    const result3 = parser.matchMethod('myTest', 'test.js');
+    const result1 = parser.shouldIncludeMethod('testMethod', 'test.js');
+    const result2 = parser.shouldIncludeMethod('testing', 'test.js');
+    const result3 = parser.shouldIncludeMethod('myTest', 'test.js');
 
-    if (!result1.included) throw new Error('Should match testMethod');
-    if (!result2.included) throw new Error('Should match testing');
-    if (result3.included) throw new Error('Should not match myTest');
+    if (!result1) throw new Error('Should match testMethod');
+    if (!result2) throw new Error('Should match testing');
+    if (result3) throw new Error('Should not match myTest');
 
     fs.unlinkSync(includePath);
 });
@@ -81,11 +81,11 @@ test('Filter: Negation pattern (!)', () => {
     fs.writeFileSync(includePath, 'test*\n!testPrivate');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('testPublic', 'test.js');
-    const result2 = parser.matchMethod('testPrivate', 'test.js');
+    const result1 = parser.shouldIncludeMethod('testPublic', 'test.js');
+    const result2 = parser.shouldIncludeMethod('testPrivate', 'test.js');
 
-    if (!result1.included) throw new Error('Should match testPublic');
-    if (result2.included) throw new Error('Should not match testPrivate');
+    if (!result1) throw new Error('Should match testPublic');
+    if (result2) throw new Error('Should not match testPrivate');
 
     fs.unlinkSync(includePath);
 });
@@ -95,11 +95,11 @@ test('Filter: Class.method pattern', () => {
     fs.writeFileSync(includePath, 'MyClass.*');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('MyClass.method1', 'test.js');
-    const result2 = parser.matchMethod('OtherClass.method1', 'test.js');
+    const result1 = parser.shouldIncludeMethod('MyClass.method1', 'test.js');
+    const result2 = parser.shouldIncludeMethod('OtherClass.method1', 'test.js');
 
-    if (!result1.included) throw new Error('Should match MyClass.method1');
-    if (result2.included) throw new Error('Should not match OtherClass');
+    if (!result1) throw new Error('Should match MyClass.method1');
+    if (result2) throw new Error('Should not match OtherClass');
 
     fs.unlinkSync(includePath);
 });
@@ -115,11 +115,11 @@ test('Filter: Exclude mode basic', () => {
     fs.writeFileSync(ignorePath, 'private*');
 
     const parser = new MethodFilterParser(null, ignorePath);
-    const result1 = parser.matchMethod('publicMethod', 'test.js');
-    const result2 = parser.matchMethod('privateMethod', 'test.js');
+    const result1 = parser.shouldIncludeMethod('publicMethod', 'test.js');
+    const result2 = parser.shouldIncludeMethod('privateMethod', 'test.js');
 
-    if (!result1.included) throw new Error('Should include publicMethod');
-    if (result2.included) throw new Error('Should exclude privateMethod');
+    if (!result1) throw new Error('Should include publicMethod');
+    if (result2) throw new Error('Should exclude privateMethod');
 
     fs.unlinkSync(ignorePath);
 });
@@ -129,15 +129,15 @@ test('Filter: Multiple exclude patterns', () => {
     fs.writeFileSync(ignorePath, 'private*\ninternal*\n_*');
 
     const parser = new MethodFilterParser(null, ignorePath);
-    const result1 = parser.matchMethod('publicMethod', 'test.js');
-    const result2 = parser.matchMethod('privateMethod', 'test.js');
-    const result3 = parser.matchMethod('internalHelper', 'test.js');
-    const result4 = parser.matchMethod('_hiddenMethod', 'test.js');
+    const result1 = parser.shouldIncludeMethod('publicMethod', 'test.js');
+    const result2 = parser.shouldIncludeMethod('privateMethod', 'test.js');
+    const result3 = parser.shouldIncludeMethod('internalHelper', 'test.js');
+    const result4 = parser.shouldIncludeMethod('_hiddenMethod', 'test.js');
 
-    if (!result1.included) throw new Error('Should include publicMethod');
-    if (result2.included) throw new Error('Should exclude privateMethod');
-    if (result3.included) throw new Error('Should exclude internalHelper');
-    if (result4.included) throw new Error('Should exclude _hiddenMethod');
+    if (!result1) throw new Error('Should include publicMethod');
+    if (result2) throw new Error('Should exclude privateMethod');
+    if (result3) throw new Error('Should exclude internalHelper');
+    if (result4) throw new Error('Should exclude _hiddenMethod');
 
     fs.unlinkSync(ignorePath);
 });
@@ -155,10 +155,10 @@ test('Filter: Include mode takes priority', () => {
     fs.writeFileSync(ignorePath, '*');
 
     const parser = new MethodFilterParser(includePath, ignorePath);
-    const result = parser.matchMethod('publicMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('publicMethod', 'test.js');
 
     // When include file exists, it switches to include mode
-    if (!result.included) throw new Error('Include mode should override');
+    if (!result) throw new Error('Include mode should override');
 
     fs.unlinkSync(includePath);
     fs.unlinkSync(ignorePath);
@@ -169,11 +169,11 @@ test('Filter: Negation in include mode', () => {
     fs.writeFileSync(includePath, 'public*\n!publicPrivate');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('publicMethod', 'test.js');
-    const result2 = parser.matchMethod('publicPrivate', 'test.js');
+    const result1 = parser.shouldIncludeMethod('publicMethod', 'test.js');
+    const result2 = parser.shouldIncludeMethod('publicPrivate', 'test.js');
 
-    if (!result1.included) throw new Error('Should include publicMethod');
-    if (result2.included) throw new Error('Should exclude publicPrivate');
+    if (!result1) throw new Error('Should include publicMethod');
+    if (result2) throw new Error('Should exclude publicPrivate');
 
     fs.unlinkSync(includePath);
 });
@@ -189,10 +189,10 @@ test('Filter: Empty pattern file', () => {
     fs.writeFileSync(includePath, '');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('anyMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('anyMethod', 'test.js');
 
     // Empty include file means nothing included
-    if (result.included) throw new Error('Empty include should exclude all');
+    if (result) throw new Error('Empty include should exclude all');
 
     fs.unlinkSync(includePath);
 });
@@ -202,9 +202,9 @@ test('Filter: Pattern with comments', () => {
     fs.writeFileSync(includePath, '# This is a comment\npublic*\n# Another comment');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('publicMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('publicMethod', 'test.js');
 
-    if (!result.included) throw new Error('Should ignore comments');
+    if (!result) throw new Error('Should ignore comments');
 
     fs.unlinkSync(includePath);
 });
@@ -214,9 +214,9 @@ test('Filter: Pattern with whitespace', () => {
     fs.writeFileSync(includePath, '  test*  \n  \n  public*  ');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('testMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('testMethod', 'test.js');
 
-    if (!result.included) throw new Error('Should handle whitespace');
+    if (!result) throw new Error('Should handle whitespace');
 
     fs.unlinkSync(includePath);
 });
@@ -226,10 +226,10 @@ test('Filter: Case sensitivity', () => {
     fs.writeFileSync(includePath, 'MyMethod');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('MyMethod', 'test.js');
-    const result2 = parser.matchMethod('mymethod', 'test.js');
+    const result1 = parser.shouldIncludeMethod('MyMethod', 'test.js');
+    const result2 = parser.shouldIncludeMethod('mymethod', 'test.js');
 
-    if (!result1.included) throw new Error('Should match exact case');
+    if (!result1) throw new Error('Should match exact case');
     // Case sensitivity behavior may vary - both acceptable
 });
 
@@ -238,7 +238,7 @@ test('Filter: Pattern with special regex characters', () => {
     fs.writeFileSync(includePath, 'method.*test');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('method123test', 'test.js');
+    const result = parser.shouldIncludeMethod('method123test', 'test.js');
 
     // Should treat .* as wildcard
 });
@@ -259,7 +259,7 @@ test('Filter: Unicode in patterns', () => {
     fs.writeFileSync(includePath, '处理*\nметод*');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('处理Data', 'test.js');
+    const result = parser.shouldIncludeMethod('处理Data', 'test.js');
 
     // Should handle unicode patterns
     fs.unlinkSync(includePath);
@@ -276,15 +276,15 @@ test('Filter: Multiple include patterns', () => {
     fs.writeFileSync(includePath, 'get*\nset*\nupdate*');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('getData', 'test.js');
-    const result2 = parser.matchMethod('setData', 'test.js');
-    const result3 = parser.matchMethod('updateData', 'test.js');
-    const result4 = parser.matchMethod('deleteData', 'test.js');
+    const result1 = parser.shouldIncludeMethod('getData', 'test.js');
+    const result2 = parser.shouldIncludeMethod('setData', 'test.js');
+    const result3 = parser.shouldIncludeMethod('updateData', 'test.js');
+    const result4 = parser.shouldIncludeMethod('deleteData', 'test.js');
 
-    if (!result1.included) throw new Error('Should include getData');
-    if (!result2.included) throw new Error('Should include setData');
-    if (!result3.included) throw new Error('Should include updateData');
-    if (result4.included) throw new Error('Should not include deleteData');
+    if (!result1) throw new Error('Should include getData');
+    if (!result2) throw new Error('Should include setData');
+    if (!result3) throw new Error('Should include updateData');
+    if (result4) throw new Error('Should not include deleteData');
 
     fs.unlinkSync(includePath);
 });
@@ -294,10 +294,10 @@ test('Filter: Order of patterns matters for negation', () => {
     fs.writeFileSync(includePath, 'test*\n!testPrivate');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result = parser.matchMethod('testPrivate', 'test.js');
+    const result = parser.shouldIncludeMethod('testPrivate', 'test.js');
 
     // Negation should override previous include
-    if (result.included) throw new Error('Negation should exclude');
+    if (result) throw new Error('Negation should exclude');
 
     fs.unlinkSync(includePath);
 });
@@ -309,7 +309,7 @@ test('Filter: Large number of patterns (performance)', () => {
 
     const parser = new MethodFilterParser(includePath, null);
     const start = Date.now();
-    const result = parser.matchMethod('method500', 'test.js');
+    const result = parser.shouldIncludeMethod('method500', 'test.js');
     const elapsed = Date.now() - start;
 
     if (elapsed > 1000) {
@@ -330,11 +330,11 @@ test('Filter: Method matching across different files', () => {
     fs.writeFileSync(includePath, 'test*');
 
     const parser = new MethodFilterParser(includePath, null);
-    const result1 = parser.matchMethod('testMethod', 'file1.js');
-    const result2 = parser.matchMethod('testMethod', 'file2.js');
+    const result1 = parser.shouldIncludeMethod('testMethod', 'file1.js');
+    const result2 = parser.shouldIncludeMethod('testMethod', 'file2.js');
 
-    if (!result1.included) throw new Error('Should match in file1');
-    if (!result2.included) throw new Error('Should match in file2');
+    if (!result1) throw new Error('Should match in file1');
+    if (!result2) throw new Error('Should match in file2');
 
     fs.unlinkSync(includePath);
 });
@@ -347,25 +347,25 @@ console.log('-'.repeat(70));
 
 test('Filter: Non-existent include file', () => {
     const parser = new MethodFilterParser('/nonexistent/path', null);
-    const result = parser.matchMethod('anyMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('anyMethod', 'test.js');
 
     // Should handle gracefully
 });
 
 test('Filter: Non-existent exclude file', () => {
     const parser = new MethodFilterParser(null, '/nonexistent/path');
-    const result = parser.matchMethod('anyMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('anyMethod', 'test.js');
 
     // Should default to include all
-    if (!result.included) throw new Error('Should include by default');
+    if (!result) throw new Error('Should include by default');
 });
 
 test('Filter: Both files non-existent', () => {
     const parser = new MethodFilterParser(null, null);
-    const result = parser.matchMethod('anyMethod', 'test.js');
+    const result = parser.shouldIncludeMethod('anyMethod', 'test.js');
 
     // Should include all by default
-    if (!result.included) throw new Error('Should include all when no filters');
+    if (!result) throw new Error('Should include all when no filters');
 });
 
 test('Filter: Corrupted filter file (non-UTF8)', () => {

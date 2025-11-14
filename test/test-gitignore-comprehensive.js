@@ -53,11 +53,11 @@ test('GitIgnore: Simple file pattern', () => {
     fs.writeFileSync(gitignorePath, 'test.log');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('test.log');
-    const shouldIgnore2 = parser.shouldIgnore('other.log');
+    const ignored1 = parser.isIgnored(null, 'test.log');
+    const ignored2 = parser.isIgnored(null, 'other.log');
 
-    if (!shouldIgnore1) throw new Error('Should ignore test.log');
-    if (shouldIgnore2) throw new Error('Should not ignore other.log');
+    if (!ignored1) throw new Error('Should ignore test.log');
+    if (ignored2) throw new Error('Should not ignore other.log');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -67,13 +67,13 @@ test('GitIgnore: Wildcard pattern (*.log)', () => {
     fs.writeFileSync(gitignorePath, '*.log');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('test.log');
-    const shouldIgnore2 = parser.shouldIgnore('error.log');
-    const shouldIgnore3 = parser.shouldIgnore('test.txt');
+    const ignored1 = parser.isIgnored(null, 'test.log');
+    const ignored2 = parser.isIgnored(null, 'error.log');
+    const ignored3 = parser.isIgnored(null, 'test.txt');
 
-    if (!shouldIgnore1) throw new Error('Should ignore test.log');
-    if (!shouldIgnore2) throw new Error('Should ignore error.log');
-    if (shouldIgnore3) throw new Error('Should not ignore test.txt');
+    if (!ignored1) throw new Error('Should ignore test.log');
+    if (!ignored2) throw new Error('Should ignore error.log');
+    if (ignored3) throw new Error('Should not ignore test.txt');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -83,10 +83,10 @@ test('GitIgnore: Directory pattern (dir/)', () => {
     fs.writeFileSync(gitignorePath, 'node_modules/');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('node_modules/');
-    const shouldIgnore2 = parser.shouldIgnore('node_modules/package.json');
+    const ignored1 = parser.isIgnored(null, 'node_modules/');
+    const ignored2 = parser.isIgnored(null, 'node_modules/package.json');
 
-    if (!shouldIgnore1) throw new Error('Should ignore node_modules/');
+    if (!ignored1) throw new Error('Should ignore node_modules/');
     // Behavior for nested files may vary
 
     fs.unlinkSync(gitignorePath);
@@ -97,11 +97,11 @@ test('GitIgnore: Negation pattern (!file)', () => {
     fs.writeFileSync(gitignorePath, '*.log\n!important.log');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('test.log');
-    const shouldIgnore2 = parser.shouldIgnore('important.log');
+    const ignored1 = parser.isIgnored(null, 'test.log');
+    const ignored2 = parser.isIgnored(null, 'important.log');
 
-    if (!shouldIgnore1) throw new Error('Should ignore test.log');
-    if (shouldIgnore2) throw new Error('Should NOT ignore important.log');
+    if (!ignored1) throw new Error('Should ignore test.log');
+    if (ignored2) throw new Error('Should NOT ignore important.log');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -111,13 +111,13 @@ test('GitIgnore: Recursive wildcard (**/file)', () => {
     fs.writeFileSync(gitignorePath, '**/test.js');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('test.js');
-    const shouldIgnore2 = parser.shouldIgnore('src/test.js');
-    const shouldIgnore3 = parser.shouldIgnore('src/utils/test.js');
+    const ignored1 = parser.isIgnored(null, 'test.js');
+    const ignored2 = parser.isIgnored(null, 'src/test.js');
+    const ignored3 = parser.isIgnored(null, 'src/utils/test.js');
 
-    if (!shouldIgnore1) throw new Error('Should ignore root test.js');
-    if (!shouldIgnore2) throw new Error('Should ignore src/test.js');
-    if (!shouldIgnore3) throw new Error('Should ignore nested test.js');
+    if (!ignored1) throw new Error('Should ignore root test.js');
+    if (!ignored2) throw new Error('Should ignore src/test.js');
+    if (!ignored3) throw new Error('Should ignore nested test.js');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -136,11 +136,11 @@ test('ContextIgnore: Basic exclude pattern', () => {
     fs.writeFileSync(contextignorePath, 'test/');
 
     const parser = new GitIgnoreParser(gitignorePath, contextignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('test.log');
-    const shouldIgnore2 = parser.shouldIgnore('test/file.js');
+    const ignored1 = parser.isIgnored(null, 'test.log');
+    const ignored2 = parser.isIgnored(null, 'test/file.js');
 
-    if (!shouldIgnore1) throw new Error('Should respect gitignore');
-    if (!shouldIgnore2) throw new Error('Should respect contextignore');
+    if (!ignored1) throw new Error('Should respect gitignore');
+    if (!ignored2) throw new Error('Should respect contextignore');
 
     fs.unlinkSync(gitignorePath);
     fs.unlinkSync(contextignorePath);
@@ -185,13 +185,13 @@ test('ContextInclude: Multiple include patterns', () => {
     fs.writeFileSync(contextincludePath, 'src/\nlib/\n*.js');
 
     const parser = new GitIgnoreParser(null, null, contextincludePath);
-    const shouldIgnore1 = parser.shouldIgnore('src/file.js');
-    const shouldIgnore2 = parser.shouldIgnore('test/file.js');
+    const ignored1 = parser.isIgnored(null, 'src/file.js');
+    const ignored2 = parser.isIgnored(null, 'test/file.js');
 
     // src/ should be included (not ignored)
     // test/ should be ignored (not in include list)
-    if (shouldIgnore1) throw new Error('src/ should be included');
-    if (!shouldIgnore2) throw new Error('test/ should be excluded');
+    if (ignored1) throw new Error('src/ should be included');
+    if (!ignored2) throw new Error('test/ should be excluded');
 
     fs.unlinkSync(contextincludePath);
 });
@@ -207,10 +207,10 @@ test('GitIgnore: Empty file', () => {
     fs.writeFileSync(gitignorePath, '');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('anyfile.js');
+    const ignored = parser.isIgnored(null, 'anyfile.js');
 
     // Empty gitignore should not ignore anything
-    if (shouldIgnore) throw new Error('Empty gitignore should not ignore files');
+    if (ignored) throw new Error('Empty gitignore should not ignore files');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -220,9 +220,9 @@ test('GitIgnore: Comments only', () => {
     fs.writeFileSync(gitignorePath, '# This is a comment\n# Another comment');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('test.js');
+    const ignored = parser.isIgnored(null, 'test.js');
 
-    if (shouldIgnore) throw new Error('Comments should not ignore files');
+    if (ignored) throw new Error('Comments should not ignore files');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -232,9 +232,9 @@ test('GitIgnore: Whitespace handling', () => {
     fs.writeFileSync(gitignorePath, '  \n  *.log  \n  \n');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('test.log');
+    const ignored = parser.isIgnored(null, 'test.log');
 
-    if (!shouldIgnore) throw new Error('Should handle whitespace');
+    if (!ignored) throw new Error('Should handle whitespace');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -244,9 +244,9 @@ test('GitIgnore: Trailing spaces in patterns', () => {
     fs.writeFileSync(gitignorePath, '*.log   ');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('test.log');
+    const ignored = parser.isIgnored(null, 'test.log');
 
-    if (!shouldIgnore) throw new Error('Should trim trailing spaces');
+    if (!ignored) throw new Error('Should trim trailing spaces');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -266,7 +266,7 @@ test('GitIgnore: Unicode in patterns', () => {
     fs.writeFileSync(gitignorePath, '文件.log\n*.日志');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('文件.log');
+    const ignored = parser.isIgnored(null, '文件.log');
 
     // Should handle unicode
     fs.unlinkSync(gitignorePath);
@@ -294,10 +294,10 @@ test('GitIgnore: Later patterns override earlier', () => {
     fs.writeFileSync(gitignorePath, '*.log\n!important.log\nimportant.log');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('important.log');
+    const ignored = parser.isIgnored(null, 'important.log');
 
     // Last pattern should win
-    if (!shouldIgnore) throw new Error('Last pattern should override');
+    if (!ignored) throw new Error('Last pattern should override');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -307,10 +307,10 @@ test('GitIgnore: Negation before ignore', () => {
     fs.writeFileSync(gitignorePath, '!important.log\n*.log');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore = parser.shouldIgnore('important.log');
+    const ignored = parser.isIgnored(null, 'important.log');
 
     // Negation comes first, then ignore - should be ignored
-    if (!shouldIgnore) throw new Error('Later ignore should override earlier negation');
+    if (!ignored) throw new Error('Later ignore should override earlier negation');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -326,12 +326,12 @@ test('GitIgnore: Root vs any directory', () => {
     fs.writeFileSync(gitignorePath, '/temp');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('temp');
-    const shouldIgnore2 = parser.shouldIgnore('src/temp');
+    const ignored1 = parser.isIgnored(null, 'temp');
+    const ignored2 = parser.isIgnored(null, 'src/temp');
 
     // Leading / means only root
-    if (!shouldIgnore1) throw new Error('Should ignore /temp at root');
-    if (shouldIgnore2) throw new Error('Should not ignore temp in subdirs');
+    if (!ignored1) throw new Error('Should ignore /temp at root');
+    if (ignored2) throw new Error('Should not ignore temp in subdirs');
 
     fs.unlinkSync(gitignorePath);
 });
@@ -341,9 +341,9 @@ test('GitIgnore: Nested directory patterns', () => {
     fs.writeFileSync(gitignorePath, 'build/**/cache');
 
     const parser = new GitIgnoreParser(gitignorePath);
-    const shouldIgnore1 = parser.shouldIgnore('build/cache');
-    const shouldIgnore2 = parser.shouldIgnore('build/dist/cache');
-    const shouldIgnore3 = parser.shouldIgnore('build/a/b/c/cache');
+    const ignored1 = parser.isIgnored(null, 'build/cache');
+    const ignored2 = parser.isIgnored(null, 'build/dist/cache');
+    const ignored3 = parser.isIgnored(null, 'build/a/b/c/cache');
 
     // Should match cache at any depth under build
     fs.unlinkSync(gitignorePath);
@@ -362,7 +362,7 @@ test('GitIgnore: Large number of patterns (1000)', () => {
 
     const parser = new GitIgnoreParser(gitignorePath);
     const start = Date.now();
-    const shouldIgnore = parser.shouldIgnore('file500.log');
+    const ignored = parser.isIgnored(null, 'file500.log');
     const elapsed = Date.now() - start;
 
     if (elapsed > 500) {
@@ -380,9 +380,9 @@ test('GitIgnore: Repeated lookups (caching)', () => {
 
     const start = Date.now();
     for (let i = 0; i < 1000; i++) {
-        parser.shouldIgnore('test.log');
-        parser.shouldIgnore('src/file.js');
-        parser.shouldIgnore('node_modules/pkg');
+        parser.isIgnored(null, 'test.log');
+        parser.isIgnored(null, 'src/file.js');
+        parser.isIgnored(null, 'node_modules/pkg');
     }
     const elapsed = Date.now() - start;
 
@@ -401,10 +401,10 @@ console.log('-'.repeat(70));
 
 test('GitIgnore: Non-existent file', () => {
     const parser = new GitIgnoreParser('/nonexistent/.gitignore');
-    const shouldIgnore = parser.shouldIgnore('test.js');
+    const ignored = parser.isIgnored(null, 'test.js');
 
     // Should handle gracefully and not ignore
-    if (shouldIgnore) throw new Error('Should not ignore when file missing');
+    if (ignored) throw new Error('Should not ignore when file missing');
 });
 
 test('GitIgnore: Corrupted file (non-UTF8)', () => {
@@ -428,7 +428,7 @@ test('GitIgnore: Invalid regex pattern', () => {
 
     try {
         const parser = new GitIgnoreParser(gitignorePath);
-        parser.shouldIgnore('test.js');
+        parser.isIgnored(null, 'test.js');
         // Should handle invalid patterns gracefully
     } catch (e) {
         // May throw on invalid regex
