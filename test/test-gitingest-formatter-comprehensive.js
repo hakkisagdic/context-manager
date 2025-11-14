@@ -22,6 +22,7 @@
 import GitIngestFormatter from '../lib/formatters/gitingest-formatter.js';
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { execSync } from 'child_process';
@@ -34,6 +35,9 @@ let testsFailed = 0;
 
 const FIXTURES_DIR = path.join(__dirname, 'fixtures', 'gitingest-comprehensive');
 const TEST_PROJECT_DIR = path.join(FIXTURES_DIR, 'test-project');
+
+// Global references to test directories
+let srcDir, libDir, testDir, docsDir;
 
 function test(name, fn) {
     try {
@@ -84,10 +88,10 @@ function setupFixtures() {
     fs.mkdirSync(TEST_PROJECT_DIR, { recursive: true });
 
     // Create various test files with different characteristics
-    const srcDir = path.join(TEST_PROJECT_DIR, 'src');
-    const libDir = path.join(TEST_PROJECT_DIR, 'lib');
-    const testDir = path.join(TEST_PROJECT_DIR, 'test');
-    const docsDir = path.join(TEST_PROJECT_DIR, 'docs');
+    srcDir = path.join(TEST_PROJECT_DIR, 'src');
+    libDir = path.join(TEST_PROJECT_DIR, 'lib');
+    testDir = path.join(TEST_PROJECT_DIR, 'test');
+    docsDir = path.join(TEST_PROJECT_DIR, 'docs');
 
     fs.mkdirSync(srcDir, { recursive: true });
     fs.mkdirSync(libDir, { recursive: true });
@@ -776,6 +780,285 @@ test('Save: saveToFile with chunking creates proper content', () => {
     // Verify index file has content
     const indexContent = fs.readFileSync(indexFile, 'utf8');
     assertContains(indexContent, 'Chunk', 'Index should contain chunk info');
+});
+
+// ============================================================================
+// 13. TIMESTAMP HANDLING
+// ============================================================================
+console.log('\n⏰ Timestamp Handling Tests');
+console.log('-'.repeat(70));
+
+test('Timestamp: getFileTimestamp returns Date object', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeTimestamps: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const timestamp = formatter.getFileTimestamp(testFile);
+
+    assertTrue(timestamp instanceof Date, 'Should return Date object');
+    assertTrue(!isNaN(timestamp.getTime()), 'Should be valid date');
+});
+
+test('Timestamp: Cached timestamps are reused', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeTimestamps: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const timestamp1 = formatter.getFileTimestamp(testFile);
+    const timestamp2 = formatter.getFileTimestamp(testFile);
+
+    assertEquals(timestamp1.getTime(), timestamp2.getTime(), 'Cached timestamps should match');
+});
+
+test('Timestamp: includeTimestamps adds timestamps to digest', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeTimestamps: true
+    });
+
+    const digest = formatter.generateDigest();
+    assertContains(digest, 'Last Modified:', 'Should include timestamp info');
+});
+
+test('Timestamp: JSON format includes timestamps', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json',
+        includeTimestamps: true
+    });
+
+    const digest = formatter.generateDigest();
+    const jsonData = JSON.parse(digest);
+
+    assertTrue(jsonData.files[0].lastModified !== undefined, 'Should have lastModified field');
+    assertContains(jsonData.files[0].lastModified, 'T', 'Should be ISO format');
+});
+
+// ============================================================================
+// 14. AUTHOR INFORMATION
+// ============================================================================
+console.log('\n👤 Author Information Tests');
+console.log('-'.repeat(70));
+
+test('Author: getFileAuthorInfo returns author object', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeAuthorInfo: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const authorInfo = formatter.getFileAuthorInfo(testFile);
+
+    assertTrue(typeof authorInfo === 'object', 'Should return object');
+    assertTrue(authorInfo.primary !== undefined, 'Should have primary author');
+    assertTrue(Array.isArray(authorInfo.contributors), 'Should have contributors array');
+});
+
+test('Author: Cached author info is reused', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeAuthorInfo: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const author1 = formatter.getFileAuthorInfo(testFile);
+    const author2 = formatter.getFileAuthorInfo(testFile);
+
+    assertEquals(author1.primary, author2.primary, 'Cached author should match');
+});
+
+test('Author: includeAuthorInfo adds authors to digest', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeAuthorInfo: true
+    });
+
+    const digest = formatter.generateDigest();
+    assertContains(digest, 'Primary Author:', 'Should include author info');
+});
+
+test('Author: JSON format includes author info', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json',
+        includeAuthorInfo: true
+    });
+
+    const digest = formatter.generateDigest();
+    const jsonData = JSON.parse(digest);
+
+    assertTrue(jsonData.files[0].author !== undefined, 'Should have author field');
+    assertTrue(jsonData.files[0].author.primary !== undefined, 'Should have primary author');
+});
+
+// ============================================================================
+// 15. DIFF INTEGRATION
+// ============================================================================
+console.log('\n📝 Diff Integration Tests');
+console.log('-'.repeat(70));
+
+test('Diff: getFileDiffInfo returns diff object', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeDiffInfo: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const diffInfo = formatter.getFileDiffInfo(testFile);
+
+    assertTrue(typeof diffInfo === 'object', 'Should return object');
+    assertTrue(typeof diffInfo.hasChanges === 'boolean', 'Should have hasChanges field');
+    assertTrue(typeof diffInfo.additions === 'number', 'Should have additions count');
+    assertTrue(typeof diffInfo.deletions === 'number', 'Should have deletions count');
+});
+
+test('Diff: Cached diff info is reused', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeDiffInfo: true
+    });
+
+    const testFile = path.join(srcDir, 'index.js');
+    const diff1 = formatter.getFileDiffInfo(testFile);
+    const diff2 = formatter.getFileDiffInfo(testFile);
+
+    assertEquals(diff1.hasChanges, diff2.hasChanges, 'Cached diff should match');
+});
+
+test('Diff: includeDiffInfo adds diff to digest', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        includeDiffInfo: true
+    });
+
+    const digest = formatter.generateDigest();
+    // Diff info only appears if there are changes, so we just check it doesn't crash
+    assertTrue(digest.length > 0, 'Should generate digest with diff info enabled');
+});
+
+test('Diff: JSON format includes diff info', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json',
+        includeDiffInfo: true
+    });
+
+    const digest = formatter.generateDigest();
+    const jsonData = JSON.parse(digest);
+
+    assertTrue(jsonData.files[0].diff !== undefined, 'Should have diff field');
+    assertTrue(typeof jsonData.files[0].diff.hasChanges === 'boolean', 'Should have hasChanges');
+});
+
+// ============================================================================
+// 16. JSON FORMAT
+// ============================================================================
+console.log('\n📄 JSON Format Tests');
+console.log('-'.repeat(70));
+
+test('JSON: outputFormat=json produces valid JSON', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json'
+    });
+
+    const digest = formatter.generateDigest();
+
+    // Should be valid JSON
+    const jsonData = JSON.parse(digest);
+    assertTrue(typeof jsonData === 'object', 'Should parse as object');
+});
+
+test('JSON: JSON includes project metadata', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json'
+    });
+
+    const digest = formatter.generateDigest();
+    const jsonData = JSON.parse(digest);
+
+    assertTrue(jsonData.project !== undefined, 'Should have project field');
+    assertTrue(jsonData.project.totalFiles > 0, 'Should have file count');
+    assertTrue(jsonData.project.totalTokens > 0, 'Should have token count');
+    assertTrue(jsonData.project.generatedAt !== undefined, 'Should have timestamp');
+});
+
+test('JSON: JSON includes file array', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        outputFormat: 'json'
+    });
+
+    const digest = formatter.generateDigest();
+    const jsonData = JSON.parse(digest);
+
+    assertTrue(Array.isArray(jsonData.files), 'Should have files array');
+    assertTrue(jsonData.files.length > 0, 'Should have files');
+    assertTrue(jsonData.files[0].path !== undefined, 'Files should have path');
+    assertTrue(jsonData.files[0].content !== undefined, 'Files should have content');
+});
+
+test('JSON: Text format is default', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults);
+    const digest = formatter.generateDigest();
+
+    // Should not be JSON (should be text)
+    assertTrue(typeof digest === 'string', 'Should be string');
+    assertTrue(digest.includes('Directory:'), 'Should have text format markers');
+});
+
+// ============================================================================
+// 17. COMPRESSION
+// ============================================================================
+console.log('\n🗜️  Compression Tests');
+console.log('-'.repeat(70));
+
+test('Compression: saveToFile with compression creates .gz file', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        compression: true
+    });
+
+    const outputFile = path.join(FIXTURES_DIR, 'test-compressed.txt');
+    formatter.saveToFile(outputFile);
+
+    assertTrue(fs.existsSync(outputFile + '.gz'), 'Should create .gz file');
+    assertTrue(!fs.existsSync(outputFile), 'Should not create uncompressed file');
+});
+
+test('Compression: Compressed file is smaller', () => {
+    const formatter1 = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults);
+    const formatter2 = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        compression: true
+    });
+
+    const uncompressedFile = path.join(FIXTURES_DIR, 'test-uncompressed.txt');
+    const compressedFile = path.join(FIXTURES_DIR, 'test-compressed2.txt');
+
+    formatter1.saveToFile(uncompressedFile);
+    formatter2.saveToFile(compressedFile);
+
+    const uncompressedSize = fs.statSync(uncompressedFile).size;
+    const compressedSize = fs.statSync(compressedFile + '.gz').size;
+
+    assertTrue(compressedSize < uncompressedSize, 'Compressed should be smaller');
+});
+
+test('Compression: Compressed content can be decompressed', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        compression: true
+    });
+
+    const outputFile = path.join(FIXTURES_DIR, 'test-decompress.txt');
+    formatter.saveToFile(outputFile);
+
+    const compressed = fs.readFileSync(outputFile + '.gz');
+    const decompressed = zlib.gunzipSync(compressed).toString('utf8');
+
+    assertTrue(decompressed.length > 0, 'Should decompress');
+    assertContains(decompressed, 'Directory:', 'Decompressed should have content');
+});
+
+test('Compression: Chunked digest with compression creates .gz files', () => {
+    const formatter = new GitIngestFormatter(TEST_PROJECT_DIR, mockStats, analysisResults, {
+        chunking: { enabled: true, maxTokensPerChunk: 200 },
+        compression: true
+    });
+
+    const outputFile = path.join(FIXTURES_DIR, 'test-chunked-compressed.txt');
+    formatter.saveToFile(outputFile);
+
+    const chunk1File = path.join(FIXTURES_DIR, 'test-chunked-compressed-chunk-1.txt.gz');
+    assertTrue(fs.existsSync(chunk1File), 'Should create compressed chunk file');
 });
 
 // ============================================================================
