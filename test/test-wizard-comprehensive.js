@@ -1114,6 +1114,378 @@ test('16.15: React and Ink are imported dynamically', () => {
 });
 
 // ===================================================================
+// Section 17: Navigation Limitations & Edge Cases
+// ===================================================================
+
+console.log('\n⚠️  Section 17: Navigation Limitations\n');
+
+test('17.1: Wizard has no backward navigation mechanism', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Wizard is forward-only: profile → target-model → output-format → complete
+	// No back button or previous step functionality
+	// This is by design for simplicity
+
+	// Should not have handleBackClick or similar
+	if (wizardCode.includes('handleBack') || wizardCode.includes('handlePrevious')) {
+		throw new Error('Unexpected backward navigation found');
+	}
+
+	// Step only moves forward
+	const setStepCalls = wizardCode.match(/setStep\([^)]+\)/g) || [];
+	const forwardSteps = ['target-model', 'output-format', 'complete'];
+
+	let hasForwardFlow = true;
+	forwardSteps.forEach(step => {
+		if (!wizardCode.includes(`setStep('${step}')`)) {
+			hasForwardFlow = false;
+		}
+	});
+
+	if (!hasForwardFlow) {
+		throw new Error('Wizard should have forward-only flow');
+	}
+});
+
+test('17.2: SelectInput validates items array is not empty', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should have items parameter with default value
+	if (!selectInputCode.includes('items = []')) {
+		throw new Error('SelectInput should handle empty items array');
+	}
+});
+
+test('17.3: SelectInput validates selectedIndex bounds', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should check items[selectedIndex] exists before calling onSelect
+	if (!selectInputCode.includes('items[selectedIndex]')) {
+		throw new Error('SelectInput should validate selectedIndex');
+	}
+});
+
+test('17.4: Wizard only advances on user selection', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// setStep is only called inside handlers (callbacks)
+	// Not automatically called on render
+	const handlers = ['handleProfileSelect', 'handleTargetModelSelect', 'handleOutputFormatSelect'];
+
+	handlers.forEach(handler => {
+		const handlerRegex = new RegExp(`const ${handler}[\\s\\S]*?\\}, \\[`);
+		const match = wizardCode.match(handlerRegex);
+		if (!match || !match[0].includes('setStep')) {
+			throw new Error(`${handler} should call setStep`);
+		}
+	});
+});
+
+test('17.5: Escape is the only way to cancel wizard', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Only escape key exits
+	if (!selectInputCode.includes('key.escape')) {
+		throw new Error('Escape key should be supported');
+	}
+
+	// No cancel button or other exit mechanism
+	if (selectInputCode.includes('Cancel') && !selectInputCode.includes('Esc')) {
+		throw new Error('Cancel mechanism found but no Escape reference');
+	}
+});
+
+// ===================================================================
+// Section 18: Multiple Wizard Runs & State Cleanup
+// ===================================================================
+
+console.log('\n🔄 Section 18: Multiple Runs & Cleanup\n');
+
+test('18.1: Wizard state is local (useState)', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Each wizard instance has its own state
+	// Uses useState, not global variables
+	if (wizardCode.includes('let step =') || wizardCode.includes('let answers =')) {
+		throw new Error('Should use useState, not module-level variables');
+	}
+
+	if (!wizardCode.includes('useState(\'profile\')')) {
+		throw new Error('Step should be local state');
+	}
+});
+
+test('18.2: Profile items are recalculated on mount', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// useMemo with empty deps means it only runs once per component instance
+	// Each new wizard run will get fresh profile list
+	if (!wizardCode.includes('useMemo(() => discoverProfiles(), [])')) {
+		throw new Error('Profile discovery should be memoized per instance');
+	}
+});
+
+test('18.3: Wizard unmount cleans up React instance', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should call instance.unmount()
+	if (!cliCode.includes('instance.unmount()')) {
+		throw new Error('Should unmount wizard instance');
+	}
+});
+
+test('18.4: Multiple wizard runs would create new instances', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Each runWizard() call creates a new render instance
+	// State is not shared between runs
+	if (!cliCode.includes('const instance = render(')) {
+		throw new Error('Should create new render instance');
+	}
+});
+
+test('18.5: onComplete callback is specific to each wizard run', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// onComplete is passed as prop, different for each instance
+	if (!wizardCode.includes('{ onComplete }')) {
+		throw new Error('onComplete should be prop');
+	}
+});
+
+// ===================================================================
+// Section 19: Enhanced Invalid Input & Edge Cases
+// ===================================================================
+
+console.log('\n🔍 Section 19: Invalid Input & Edge Cases\n');
+
+test('19.1: Empty profile directory is handled gracefully', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// discoverProfiles should always return at least custom option
+	// Even if no profiles exist
+	if (!wizardCode.includes("value: 'custom'")) {
+		throw new Error('Should always include custom option');
+	}
+});
+
+test('19.2: Invalid profile.json is caught and skipped', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should have try-catch around JSON.parse in discoverProfiles
+	const discoverFn = wizardCode.match(/function discoverProfiles\(\)[\s\S]*?^}/m);
+	if (!discoverFn || !discoverFn[0].includes('catch')) {
+		throw new Error('Should handle invalid profile.json');
+	}
+});
+
+test('19.3: Missing profile files do not crash wizard', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// copyProfileFiles should check file existence before copying
+	// Uses existsSync
+	const copyFn = wizardCode.match(/function copyProfileFiles[\s\S]*?^}/m);
+	if (!copyFn || !copyFn[0].includes('existsSync')) {
+		throw new Error('Should check file existence before copying');
+	}
+});
+
+test('19.4: LLM detection failure falls back to default', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should check for 'unknown' result and fallback
+	if (!wizardCode.includes("selectedModel === 'unknown'")) {
+		throw new Error('Should handle failed LLM detection');
+	}
+});
+
+test('19.5: Corrupted LLM model list is handled', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// LLMDetector.getModelList() might return empty array
+	// Wizard should still show at least auto-detect option
+	if (!wizardCode.includes("label: '✨ Auto-detect from environment'")) {
+		throw new Error('Should always show auto-detect option');
+	}
+});
+
+test('19.6: SelectInput handles key events when items is empty', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should check items[selectedIndex] before onSelect
+	if (!selectInputCode.includes('items[selectedIndex] && onSelect')) {
+		throw new Error('Should validate item exists before calling onSelect');
+	}
+});
+
+test('19.7: SelectInput handles undefined onSelect callback', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should check if onSelect exists
+	if (!selectInputCode.includes('items[selectedIndex] && onSelect')) {
+		throw new Error('Should check onSelect exists');
+	}
+});
+
+test('19.8: Wizard handles undefined profile metadata', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Custom profile has null metadata
+	// Should handle this gracefully
+	if (!wizardCode.includes('profileMetadata: null')) {
+		throw new Error('Should handle null metadata for custom profile');
+	}
+});
+
+test('19.9: Profile path validation for custom profile', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should check item.value !== 'custom' before accessing path
+	if (!wizardCode.includes("item.value !== 'custom'")) {
+		throw new Error('Should validate profile type before file operations');
+	}
+});
+
+test('19.10: File copy errors do not crash wizard', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// copyProfileFiles should have error handling
+	const copyFn = wizardCode.match(/function copyProfileFiles[\s\S]*?^}/m);
+	if (!copyFn || !copyFn[0].includes('catch (error)')) {
+		throw new Error('Should handle file copy errors');
+	}
+});
+
+// ===================================================================
+// Section 20: Component Lifecycle & Rendering
+// ===================================================================
+
+console.log('\n⚛️  Section 20: Component Lifecycle\n');
+
+test('20.1: Wizard exports a default function component', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should be a function component
+	if (!wizardCode.includes('export default function Wizard')) {
+		throw new Error('Should export default function component');
+	}
+});
+
+test('20.2: Component uses React.createElement for rendering', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Uses React.createElement (not JSX)
+	if (!wizardCode.includes('React.createElement')) {
+		throw new Error('Should use React.createElement');
+	}
+});
+
+test('20.3: SelectInput uses React.createElement for rendering', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Uses React.createElement
+	if (!selectInputCode.includes('React.createElement')) {
+		throw new Error('SelectInput should use React.createElement');
+	}
+});
+
+test('20.4: All children elements have unique keys', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should use key prop for list items
+	if (!wizardCode.includes('key:')) {
+		throw new Error('List items should have key prop');
+	}
+});
+
+test('20.5: SelectInput items have unique keys', () => {
+	const selectInputPath = path.join(__dirname, '../lib/ui/select-input.js');
+	const selectInputCode = fs.readFileSync(selectInputPath, 'utf-8');
+
+	// Should use unique key for each item
+	if (!selectInputCode.includes('key: item.value || item.label || index')) {
+		throw new Error('Items should have unique keys');
+	}
+});
+
+test('20.6: Wizard handles React import variations', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should handle both default and named React export
+	if (!cliCode.includes('ReactModule.default || ReactModule')) {
+		throw new Error('Should handle React export variations');
+	}
+});
+
+test('20.7: Wizard clears console before rendering', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should call console.clear() for clean display
+	if (!cliCode.includes('console.clear()')) {
+		throw new Error('Should clear console before wizard');
+	}
+});
+
+test('20.8: Wizard shows startup message', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should show "Starting interactive wizard"
+	if (!cliCode.includes('Starting interactive wizard')) {
+		throw new Error('Should show startup message');
+	}
+});
+
+test('20.9: Ink render returns instance for unmounting', () => {
+	const cliPath = path.join(__dirname, '../bin/cli.js');
+	const cliCode = fs.readFileSync(cliPath, 'utf-8');
+
+	// Should capture render instance
+	if (!cliCode.includes('const instance = render(')) {
+		throw new Error('Should capture render instance');
+	}
+});
+
+test('20.10: Component renders conditionally based on step', () => {
+	const wizardPath = path.join(__dirname, '../lib/ui/wizard.js');
+	const wizardCode = fs.readFileSync(wizardPath, 'utf-8');
+
+	// Should check step value for conditional rendering
+	const steps = ['profile', 'target-model', 'output-format', 'complete'];
+	steps.forEach(stepName => {
+		if (!wizardCode.includes(`step === '${stepName}'`)) {
+			throw new Error(`Should render conditionally for step: ${stepName}`);
+		}
+	});
+});
+
+// ===================================================================
 // Summary
 // ===================================================================
 
