@@ -291,6 +291,76 @@ function coerceToType(value, targetType) {
     }
 }
 
+function validateFilePath(filePath) {
+    if (typeof filePath !== 'string' || filePath.trim().length === 0) {
+        throw new Error('File path must be a non-empty string');
+    }
+
+    const trimmed = filePath.trim();
+
+    // Check for null bytes (security risk)
+    if (trimmed.includes('\0')) {
+        throw new Error('File path contains null bytes');
+    }
+
+    // Check for obviously invalid characters on most systems
+    const invalidChars = ['<', '>', '"', '|', '\0', '\r', '\n'];
+    for (const char of invalidChars) {
+        if (trimmed.includes(char)) {
+            throw new Error(`File path contains invalid character: ${char}`);
+        }
+    }
+
+    // Check for path traversal attempts (basic)
+    if (trimmed.includes('..\\..\\') || trimmed.includes('../../../')) {
+        // Allow single ../ but warn about excessive traversal
+        const traversalCount = (trimmed.match(/\.\.[\/\\]/g) || []).length;
+        if (traversalCount > 3) {
+            throw new Error('Suspicious path traversal detected');
+        }
+    }
+
+    // Check reasonable length (most filesystems limit around 255 chars per component, 4096 total)
+    if (trimmed.length > 4096) {
+        throw new Error('File path exceeds maximum length (4096 characters)');
+    }
+
+    return trimmed;
+}
+
+function validateDirectoryPath(dirPath) {
+    if (typeof dirPath !== 'string' || dirPath.trim().length === 0) {
+        throw new Error('Directory path must be a non-empty string');
+    }
+
+    const trimmed = dirPath.trim();
+
+    // Use same validation as file path
+    validateFilePath(trimmed);
+
+    // Additional directory-specific validation
+    // Directory paths shouldn't typically have file extensions (though not strictly invalid)
+    // This is more of a warning check
+
+    return trimmed;
+}
+
+function validateTokenCount(tokenCount) {
+    if (typeof tokenCount !== 'number') {
+        throw new Error('Token count must be a number');
+    }
+    if (!Number.isInteger(tokenCount)) {
+        throw new Error('Token count must be an integer');
+    }
+    if (tokenCount < 0) {
+        throw new Error('Token count cannot be negative');
+    }
+    if (tokenCount > 10000000) { // 10M tokens seems like a reasonable upper limit
+        throw new Error('Token count exceeds maximum (10,000,000)');
+    }
+    return tokenCount;
+}
+
 // ============================================================================
 // Test Suite: CLI Argument Validation
 // ============================================================================
@@ -422,6 +492,94 @@ test('Method: Case-insensitive pattern validation', () => {
 test('Method: Reject invalid method patterns', () => {
     assertThrows(() => validateMethodPattern(''), 'non-empty string', 'Should reject empty pattern');
     assertThrows(() => validateMethodPattern('   '), 'non-empty string', 'Should reject whitespace-only');
+});
+
+// ============================================================================
+// Test Suite: File Path Validation
+// ============================================================================
+
+console.log('\n🧪 Testing File Path Validation\n');
+
+test('FilePath: Accept valid file paths', () => {
+    assertEquals(validateFilePath('/home/user/test.js'), '/home/user/test.js', 'Should accept absolute path');
+    assertEquals(validateFilePath('./src/index.js'), './src/index.js', 'Should accept relative path');
+    assertEquals(validateFilePath('../lib/utils.js'), '../lib/utils.js', 'Should accept parent directory path');
+    assertEquals(validateFilePath('C:\\Users\\test\\file.txt'), 'C:\\Users\\test\\file.txt', 'Should accept Windows path');
+    assertEquals(validateFilePath('test.js'), 'test.js', 'Should accept simple filename');
+});
+
+test('FilePath: Trim whitespace from paths', () => {
+    assertEquals(validateFilePath('  /home/user/test.js  '), '/home/user/test.js', 'Should trim whitespace');
+});
+
+test('FilePath: Reject invalid file paths', () => {
+    assertThrows(() => validateFilePath(''), 'non-empty string', 'Should reject empty path');
+    assertThrows(() => validateFilePath('   '), 'non-empty string', 'Should reject whitespace-only');
+    assertThrows(() => validateFilePath('file\0name.txt'), 'null bytes', 'Should reject null bytes');
+    assertThrows(() => validateFilePath('file<name>.txt'), 'invalid character', 'Should reject invalid characters');
+    assertThrows(() => validateFilePath('file|name.txt'), 'invalid character', 'Should reject pipe character');
+});
+
+test('FilePath: Reject suspicious path traversal', () => {
+    // Excessive path traversal (more than 3 levels)
+    assertThrows(() => validateFilePath('../../../../../../../../etc/passwd'), 'Suspicious path traversal', 'Should reject excessive traversal');
+});
+
+test('FilePath: Reject excessively long paths', () => {
+    const longPath = 'a'.repeat(5000);
+    assertThrows(() => validateFilePath(longPath), 'exceeds maximum length', 'Should reject paths > 4096 chars');
+});
+
+test('FilePath: Accept reasonable path traversal', () => {
+    // Up to 3 levels should be acceptable
+    assertEquals(validateFilePath('../../src/index.js'), '../../src/index.js', 'Should accept 2-level traversal');
+    assertEquals(validateFilePath('../../../lib/utils.js'), '../../../lib/utils.js', 'Should accept 3-level traversal');
+});
+
+// ============================================================================
+// Test Suite: Directory Path Validation
+// ============================================================================
+
+console.log('\n🧪 Testing Directory Path Validation\n');
+
+test('DirectoryPath: Accept valid directory paths', () => {
+    assertEquals(validateDirectoryPath('/home/user/project'), '/home/user/project', 'Should accept absolute dir path');
+    assertEquals(validateDirectoryPath('./src'), './src', 'Should accept relative dir path');
+    assertEquals(validateDirectoryPath('../lib'), '../lib', 'Should accept parent dir path');
+    assertEquals(validateDirectoryPath('C:\\Users\\test'), 'C:\\Users\\test', 'Should accept Windows dir path');
+});
+
+test('DirectoryPath: Reject invalid directory paths', () => {
+    assertThrows(() => validateDirectoryPath(''), 'non-empty string', 'Should reject empty path');
+    assertThrows(() => validateDirectoryPath('   '), 'non-empty string', 'Should reject whitespace-only');
+    assertThrows(() => validateDirectoryPath('dir\0name'), 'null bytes', 'Should reject null bytes');
+});
+
+test('DirectoryPath: Inherit file path security checks', () => {
+    // Should use same validation as file paths
+    assertThrows(() => validateDirectoryPath('dir<name>'), 'invalid character', 'Should reject invalid characters');
+    assertThrows(() => validateDirectoryPath('../../../../../../../../../etc'), 'Suspicious path traversal', 'Should reject excessive traversal');
+});
+
+// ============================================================================
+// Test Suite: Token Count Validation
+// ============================================================================
+
+console.log('\n🧪 Testing Token Count Validation\n');
+
+test('TokenCount: Accept valid token counts', () => {
+    assertEquals(validateTokenCount(0), 0, 'Should accept zero tokens');
+    assertEquals(validateTokenCount(100), 100, 'Should accept small count');
+    assertEquals(validateTokenCount(100000), 100000, 'Should accept 100k tokens');
+    assertEquals(validateTokenCount(1000000), 1000000, 'Should accept 1M tokens');
+    assertEquals(validateTokenCount(10000000), 10000000, 'Should accept 10M tokens (max)');
+});
+
+test('TokenCount: Reject invalid token counts', () => {
+    assertThrows(() => validateTokenCount('100'), 'must be a number', 'Should reject string');
+    assertThrows(() => validateTokenCount(100.5), 'must be an integer', 'Should reject decimal');
+    assertThrows(() => validateTokenCount(-1), 'cannot be negative', 'Should reject negative');
+    assertThrows(() => validateTokenCount(10000001), 'exceeds maximum', 'Should reject > 10M tokens');
 });
 
 // ============================================================================
