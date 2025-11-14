@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 14+ programming languages, generating optimized context for AI assistants.
+**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 15+ programming languages, generating optimized context for AI assistants.
 
 **Core Capabilities (v3.0.0):**
 - **Plugin Architecture**: Modular system for languages and exporters
@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **REST API**: HTTP server with 6 endpoints for programmatic access
 - **Performance**: Caching system and parallel processing (5-10x faster)
 - **LLM Optimization**: Auto-detect target LLM and optimize context
-- **Multi-language**: 14+ languages with method-level analysis
+- **Multi-language**: 15+ languages with method-level analysis
 - **Multiple Formats**: TOON (40-50% reduction), JSON, YAML, CSV, XML, GitIngest, Markdown
 
 **Phase 1 Core Enhancements (v3.1.0):**
@@ -102,6 +102,7 @@ npm run test:git          # Git integration tests
 npm run test:plugin       # Plugin system tests
 npm run test:api          # API server tests
 npm run test:watch        # Watch mode tests
+npm run test:sqlserver    # SQL Server T-SQL support tests (30 tests)
 npm run test:phase1       # v3.1.0 Phase 1 tests (presets, budget, tracer)
 npm run test:phase1:presets  # Preset system tests
 npm run test:phase1:budget   # Token budget fitter tests
@@ -306,6 +307,15 @@ Method-level format includes method names, line numbers, and token counts per fi
 **Scala:** Detects methods and functions:
 - Methods: `def methodName` with optional `override`
 - Lambda assignments: `val name = () => ...`
+
+**SQL Server (T-SQL):** Uses 4 regex patterns to detect database objects:
+- Stored Procedures: `CREATE/ALTER PROCEDURE name` (supports `PROC` shorthand and `CREATE OR ALTER`)
+- Functions: `CREATE/ALTER FUNCTION name` (supports scalar, table-valued, and inline table-valued functions)
+- Triggers: `CREATE/ALTER TRIGGER name` (supports `AFTER`, `INSTEAD OF`, and all trigger types)
+- Views: `CREATE/ALTER VIEW name` (supports `CREATE OR ALTER`)
+- Supports schema-qualified names: `dbo.ProcedureName`
+- Case-insensitive matching for T-SQL keywords
+- Filters out T-SQL reserved keywords
 
 ### Phase 1 Module Details (v3.1.0)
 
