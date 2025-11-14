@@ -17,12 +17,12 @@ async function testWizard() {
         console.log('✅ Ink imported successfully');
         console.log('   Available components:', Object.keys(inkModule).join(', '));
 
-        console.log('\nStep 3: Importing ink-select-input...');
-        const { default: InkSelectInput } = await import('ink-select-input');
-        console.log('✅ ink-select-input imported successfully');
+        console.log('\nStep 3: Importing SelectInput...');
+        const { default: InkSelectInput } = await import('../lib/ui/select-input.js');
+        console.log('✅ SelectInput imported successfully');
 
         console.log('\nStep 4: Importing Wizard component...');
-        const Wizard = require('../lib/ui/wizard');
+        const { default: Wizard } = await import('../lib/ui/wizard.js');
         console.log('✅ Wizard component loaded');
 
         console.log('\nStep 5: Creating Wizard instance...');
