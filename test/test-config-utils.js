@@ -120,7 +120,7 @@ test('ConfigUtils: initMethodFilter creates parser with .methodinclude', () => {
 
     const result = ConfigUtils.initMethodFilter(testDir);
     if (!result) throw new Error('Should create parser');
-    if (!result.matchMethod) throw new Error('Parser missing matchMethod');
+    if (!result.shouldIncludeMethod) throw new Error('Parser missing shouldIncludeMethod');
 
     fs.unlinkSync(includePath);
 });
@@ -131,7 +131,7 @@ test('ConfigUtils: initMethodFilter creates parser with .methodignore', () => {
 
     const result = ConfigUtils.initMethodFilter(testDir);
     if (!result) throw new Error('Should create parser');
-    if (!result.matchMethod) throw new Error('Parser missing matchMethod');
+    if (!result.shouldIncludeMethod) throw new Error('Parser missing shouldIncludeMethod');
 
     fs.unlinkSync(ignorePath);
 });
@@ -218,7 +218,7 @@ console.log('-'.repeat(70));
 test('ConfigUtils: initGitIgnore creates parser', () => {
     const result = ConfigUtils.initGitIgnore(testDir);
     if (!result) throw new Error('Should create GitIgnoreParser');
-    if (!result.shouldIgnore) throw new Error('Parser missing shouldIgnore method');
+    if (!result.isIgnored) throw new Error('Parser missing isIgnored method');
 });
 
 test('ConfigUtils: initGitIgnore with .contextignore', () => {

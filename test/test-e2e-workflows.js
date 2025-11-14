@@ -425,11 +425,11 @@ test('E2E: TokenBudgetFitter programmatic usage', () => {
         return;
     }
 
-    const fitter = new TokenBudgetFitter();
-    const fitted = fitter.fitToBudget(result.files, 50000, 'auto');
+    const fitter = new TokenBudgetFitter(50000, 'auto');
+    const fitted = fitter.fitToWindow(result.files);
 
     if (!fitted) throw new Error('Fitter returned no result');
-    if (!fitted.selectedFiles) throw new Error('No selected files');
+    if (!fitted.files) throw new Error('No fitted files');
 
     cleanupTestFiles(testProjectPath);
 });
@@ -438,9 +438,19 @@ test('E2E: RuleTracer programmatic usage', () => {
     const tracer = new RuleTracer();
     tracer.enable();
 
-    // Trace some decisions
-    tracer.traceDecision('file', 'test.js', 'included', 'Matches pattern');
-    tracer.traceDecision('method', 'myFunction', 'excluded', 'Filtered out');
+    // Record some decisions
+    tracer.recordFileDecision('test.js', {
+        included: true,
+        reason: 'Matches pattern',
+        rule: '*.js',
+        ruleSource: '.contextinclude'
+    });
+    tracer.recordMethodDecision('test.js', 'myFunction', {
+        included: false,
+        reason: 'Filtered out',
+        rule: 'internal*',
+        ruleSource: '.methodignore'
+    });
 
     const report = tracer.generateReport();
     if (!report) throw new Error('Tracer report generation failed');
