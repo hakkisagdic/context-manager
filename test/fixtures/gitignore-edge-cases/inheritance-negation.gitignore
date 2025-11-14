@@ -1,0 +1,8 @@
+# Ignore all .log files
+*.log
+# But allow important.log
+!important.log
+# Ignore all in logs/ directory
+logs/
+# But not logs/keep/ subdirectory
+!logs/keep/

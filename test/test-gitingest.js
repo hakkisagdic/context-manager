@@ -72,8 +72,8 @@ const test4a = formatter.formatTokenCount(1500);
 const test4b = formatter.formatTokenCount(1500000);
 const test4c = formatter.formatTokenCount(500);
 
-if (test4a !== '1.5k') {
-    console.error(`❌ FAIL: Expected "1.5k", got "${test4a}"`);
+if (test4a !== '1.5K') {
+    console.error(`❌ FAIL: Expected "1.5K", got "${test4a}"`);
     process.exit(1);
 }
 if (test4b !== '1.5M') {
@@ -92,7 +92,7 @@ if (!summary.includes('Files analyzed: 3')) {
     console.error('❌ FAIL: Summary missing file count');
     process.exit(1);
 }
-if (!summary.includes('Estimated tokens: 9.4k')) {
+if (!summary.includes('Estimated tokens: 9.4K')) {
     console.error('❌ FAIL: Summary missing token count');
     process.exit(1);
 }

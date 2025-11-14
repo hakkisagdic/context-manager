@@ -1,0 +1,6 @@
+# First ignore all JS
+*.js
+# Then allow config.js
+!config.js
+# Then ignore again in specific dir
+src/*.js

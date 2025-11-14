@@ -14,7 +14,17 @@ import MethodFilterParser from './lib/parsers/method-filter-parser.js';
 // Formatters
 import GitIngestFormatter from './lib/formatters/gitingest-formatter.js';
 import ToonFormatter from './lib/formatters/toon-formatter.js';
+import ToonFormatterV13 from './lib/formatters/toon-formatter-v1.3.js';
 import FormatRegistry from './lib/formatters/format-registry.js';
+
+// TOON Advanced Features
+import ToonStreamEncoder from './lib/formatters/toon-stream-encoder.js';
+import ToonStreamDecoder from './lib/formatters/toon-stream-decoder.js';
+import ToonIncrementalParser from './lib/formatters/toon-incremental-parser.js';
+import ToonValidator from './lib/formatters/toon-validator.js';
+import ToonDiff from './lib/formatters/toon-diff.js';
+import ToonBenchmark from './lib/formatters/toon-benchmark.js';
+import ToonMessagePackComparison from './lib/formatters/toon-messagepack-comparison.js';
 
 // Utils
 import TokenUtils from './lib/utils/token-utils.js';
@@ -38,6 +48,11 @@ import RuleTracer from './lib/debug/rule-tracer.js';
 // Orchestrator functions
 import { generateDigestFromReport, generateDigestFromContext } from './context-manager.js';
 
+// NOTE: UI Components (ProgressBar, SpinnerWithText, Wizard, Dashboard, SelectInput)
+// are available via the '/ui' export but require optional dependencies (ink, react).
+// Import them directly if needed:
+//   import { SelectInput, Wizard, Dashboard } from '@hakkisagdic/context-manager/ui';
+
 export {
     // Analyzers
     TokenCalculator,
@@ -50,7 +65,17 @@ export {
     // Formatters
     GitIngestFormatter,
     ToonFormatter,
+    ToonFormatterV13,
     FormatRegistry,
+
+    // TOON Advanced Features
+    ToonStreamEncoder,
+    ToonStreamDecoder,
+    ToonIncrementalParser,
+    ToonValidator,
+    ToonDiff,
+    ToonBenchmark,
+    ToonMessagePackComparison,
 
     // Utils
     TokenUtils,

@@ -33,6 +33,10 @@ token-analysis-report.json
 # Testing
 coverage/
 .nyc_output/
+test/fixtures/performance-results.json
+test/fixtures/performance-integration-results.json
+test/fixtures/temp-perf/
+test/fixtures/temp-perf-integration/
 
 # Logs
 logs/
