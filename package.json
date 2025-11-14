@@ -42,6 +42,7 @@
     "test:language-edge-cases-extended": "node test/test-language-edge-cases-extended.js",
     "test:method-filter-comprehensive": "node test/test-method-filter-comprehensive.js",
     "test:gitignore-comprehensive": "node test/test-gitignore-comprehensive.js",
+    "test:integration-workflows": "node test/test-integration-workflows.js",
     "test:watch": "node test/test-watch-mode.js",
     "test:phase1": "node test/test-phase1-all.js",
     "test:phase1:presets": "node test/test-phase1-presets.js",
