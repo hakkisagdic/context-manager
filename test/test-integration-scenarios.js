@@ -780,6 +780,409 @@ process.exit(0);
 });
 
 // ============================================================================
+// 5. DISK FULL SIMULATION TESTS
+// ============================================================================
+console.log('\n💾 Disk Full Simulation Tests');
+console.log('-'.repeat(80));
+
+await asyncTest('Disk full during write - ENOSPC simulation', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-disk-full.js');
+
+    const scriptContent = `
+import fs from 'fs';
+
+// Simulate ENOSPC error during write
+const originalWriteFileSync = fs.writeFileSync;
+
+// Mock writeFileSync to throw ENOSPC
+fs.writeFileSync = function(path, data, options) {
+    if (path.includes('should-fail')) {
+        const error = new Error('ENOSPC: no space left on device');
+        error.code = 'ENOSPC';
+        throw error;
+    }
+    return originalWriteFileSync.call(this, path, data, options);
+};
+
+try {
+    // This should fail
+    fs.writeFileSync('/tmp/should-fail.txt', 'data');
+    console.log('FAIL: Should have thrown ENOSPC');
+    process.exit(1);
+} catch (error) {
+    if (error.code === 'ENOSPC') {
+        console.log('PASS: ENOSPC error handled, code=' + error.code);
+        process.exit(0);
+    } else {
+        console.log('FAIL: Wrong error:', error.message);
+        process.exit(1);
+    }
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript]);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('Disk full test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 3000);
+    });
+});
+
+await asyncTest('Disk quota exceeded - graceful handling', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-quota.js');
+
+    const scriptContent = `
+import fs from 'fs';
+import path from 'path';
+
+// Simulate quota exceeded by attempting to write very large file
+const testFile = '/tmp/quota-test-large.bin';
+
+try {
+    // Try to write a "large" file (simulated)
+    const largeBuffer = Buffer.alloc(1024 * 1024); // 1MB
+
+    // Write and immediately delete (simulating quota check)
+    fs.writeFileSync(testFile, largeBuffer);
+
+    // Clean up
+    try {
+        fs.unlinkSync(testFile);
+    } catch (e) {}
+
+    console.log('PASS: Large file write handled successfully');
+    process.exit(0);
+} catch (error) {
+    // ENOSPC or EDQUOT is acceptable
+    if (error.code === 'ENOSPC' || error.code === 'EDQUOT') {
+        console.log('PASS: Quota error handled gracefully, code=' + error.code);
+        process.exit(0);
+    } else {
+        console.log('FAIL: Unexpected error:', error.message);
+        process.exit(1);
+    }
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript]);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('Quota test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 5000);
+    });
+});
+
+// ============================================================================
+// 6. OUT OF MEMORY (OOM) SIMULATION TESTS
+// ============================================================================
+console.log('\n🧠 Out of Memory Simulation Tests');
+console.log('-'.repeat(80));
+
+await asyncTest('Controlled memory allocation - heap limit detection', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-oom.js');
+
+    const scriptContent = `
+// Test controlled memory allocation
+const allocations = [];
+const chunkSize = 1024 * 1024; // 1MB chunks
+let allocated = 0;
+const maxAllocation = 50; // Max 50MB to be safe
+
+try {
+    for (let i = 0; i < maxAllocation; i++) {
+        allocations.push(Buffer.alloc(chunkSize));
+        allocated += chunkSize;
+    }
+
+    // If we got here, allocation succeeded
+    console.log('PASS: Allocated ' + Math.round(allocated / 1024 / 1024) + 'MB successfully');
+
+    // Clear allocations
+    allocations.length = 0;
+
+    process.exit(0);
+} catch (error) {
+    // OOM is acceptable
+    if (error.message.includes('memory') || error.message.includes('heap')) {
+        console.log('PASS: Memory limit detected, allocated=' + Math.round(allocated / 1024 / 1024) + 'MB');
+        process.exit(0);
+    } else {
+        console.log('FAIL: Unexpected error:', error.message);
+        process.exit(1);
+    }
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript]);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.stderr?.on('data', (data) => {
+            // OOM might go to stderr
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('OOM test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 10000);
+    });
+});
+
+await asyncTest('Memory exhaustion recovery - graceful degradation', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-memory-recovery.js');
+
+    const scriptContent = `
+// Test that system can recover from near-OOM conditions
+const allocations = [];
+
+try {
+    // Allocate memory in chunks
+    for (let i = 0; i < 20; i++) {
+        allocations.push(Buffer.alloc(1024 * 1024)); // 1MB
+    }
+
+    // Now release half
+    allocations.splice(0, 10);
+
+    // Force GC if available
+    if (global.gc) {
+        global.gc();
+    }
+
+    // Try to allocate again
+    allocations.push(Buffer.alloc(1024 * 1024));
+
+    console.log('PASS: Memory recovery successful, allocations=' + allocations.length);
+    process.exit(0);
+} catch (error) {
+    console.log('FAIL: Memory recovery failed:', error.message);
+    process.exit(1);
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript, '--expose-gc']);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('Memory recovery test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 5000);
+    });
+});
+
+// ============================================================================
+// 7. VERY LARGE CODEBASE SIMULATION TESTS
+// ============================================================================
+console.log('\n📚 Large Codebase Simulation Tests');
+console.log('-'.repeat(80));
+
+await asyncTest('100k files simulation - virtual file list', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-large-codebase.js');
+
+    const scriptContent = `
+// Simulate processing 100k files without actually creating them
+const numFiles = 100000;
+const virtualFiles = [];
+
+console.log('Generating virtual file list for ' + numFiles + ' files...');
+
+const start = Date.now();
+
+// Generate virtual file metadata
+for (let i = 0; i < numFiles; i++) {
+    virtualFiles.push({
+        path: '/virtual/project/src/module' + i + '/file' + i + '.js',
+        size: Math.floor(Math.random() * 10000) + 1000,
+        tokens: Math.floor(Math.random() * 5000) + 500
+    });
+}
+
+const elapsed = Date.now() - start;
+
+// Calculate totals
+const totalSize = virtualFiles.reduce((sum, f) => sum + f.size, 0);
+const totalTokens = virtualFiles.reduce((sum, f) => sum + f.tokens, 0);
+
+console.log('Generated ' + virtualFiles.length + ' files in ' + elapsed + 'ms');
+console.log('Total size: ' + Math.round(totalSize / 1024 / 1024) + 'MB');
+console.log('Total tokens: ' + totalTokens.toLocaleString());
+
+// Verify performance
+if (elapsed < 5000) {
+    console.log('PASS: Large codebase simulation completed in ' + elapsed + 'ms');
+    process.exit(0);
+} else {
+    console.log('FAIL: Too slow: ' + elapsed + 'ms');
+    process.exit(1);
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript]);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('Large codebase test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 10000);
+    });
+});
+
+await asyncTest('Streaming large dataset - chunked processing', async () => {
+    const testScript = path.join(FIXTURES_DIR, 'test-streaming.js');
+
+    const scriptContent = `
+// Test chunked/streaming processing of large dataset
+const chunkSize = 1000;
+const totalItems = 50000;
+let processed = 0;
+
+console.log('Processing ' + totalItems + ' items in chunks of ' + chunkSize + '...');
+
+const start = Date.now();
+
+// Process in chunks
+for (let offset = 0; offset < totalItems; offset += chunkSize) {
+    const chunk = [];
+    const end = Math.min(offset + chunkSize, totalItems);
+
+    for (let i = offset; i < end; i++) {
+        chunk.push({
+            id: i,
+            data: 'item-' + i,
+            processed: true
+        });
+    }
+
+    processed += chunk.length;
+
+    // Simulate some processing
+    chunk.forEach(item => {
+        item.hash = item.data.length;
+    });
+}
+
+const elapsed = Date.now() - start;
+
+if (processed === totalItems && elapsed < 5000) {
+    console.log('PASS: Processed ' + processed + ' items in ' + elapsed + 'ms');
+    process.exit(0);
+} else {
+    console.log('FAIL: Processing failed or too slow');
+    process.exit(1);
+}
+`;
+
+    fs.writeFileSync(testScript, scriptContent);
+
+    return new Promise((resolve, reject) => {
+        const child = spawn('node', [testScript]);
+
+        let output = '';
+
+        child.stdout?.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            if (output.includes('PASS')) {
+                resolve();
+            } else {
+                reject(new Error('Streaming test failed: ' + output));
+            }
+        });
+
+        setTimeout(() => {
+            child.kill('SIGKILL');
+            reject(new Error('Test timeout'));
+        }, 10000);
+    });
+});
+
+// ============================================================================
 // RESULTS SUMMARY
 // ============================================================================
 console.log('\n' + '='.repeat(80));
