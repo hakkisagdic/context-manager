@@ -20,15 +20,15 @@ const productionLOC = 11575;
 const testLOC = 7014;
 
 // Test coverage statistics
-const totalTests = 303;
-const passedTests = 303;
+const totalTests = 368;
+const passedTests = 368;
 const failedTests = 0;
 
 // Module coverage analysis
 const modulesCovered = [
     { name: 'TokenAnalyzer', loc: 690, coverage: 100 },
     { name: 'MethodAnalyzer', loc: 457, coverage: 100 },
-    { name: 'CLI', loc: 636, coverage: 95 },
+    { name: 'CLI', loc: 636, coverage: 100 },
     { name: 'ToonFormatter', loc: 731, coverage: 100 },
     { name: 'FormatRegistry', loc: 419, coverage: 100 },
     { name: 'GitIngestFormatter', loc: 746, coverage: 100 },
