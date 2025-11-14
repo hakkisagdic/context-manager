@@ -30,6 +30,7 @@
     "test:v3": "node test/test-v3-features.js",
     "test:git": "node test/test-git-integration.js",
     "test:plugin": "node test/test-plugin-system.js",
+    "test:plugin-extended": "node test/test-plugin-system-extended.js",
     "test:api": "node test/test-api-server.js",
     "test:watch": "node test/test-watch-mode.js",
     "test:sqlserver": "node test/test-sqlserver.js",
