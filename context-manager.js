@@ -233,5 +233,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 export {
     TokenCalculator,
     generateDigestFromReport,
-    generateDigestFromContext
+    generateDigestFromContext,
+    main,
+    printHelp,
+    printStartupInfo
 };
