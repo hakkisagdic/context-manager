@@ -130,6 +130,7 @@
     "test:context-manager-cli": "node test/test-context-manager-cli.js",
     "test:context-manager-direct": "node test/test-context-manager-direct.js",
     "test:toon-validator-coverage": "node test/test-toon-validator-coverage.js",
+    "test:format-registry": "node test/test-format-registry.js",
     "test:comprehensive": "npm run test && npm run test:unit && npm run test:utils && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:cm-gitingest && npm run test:llm && npm run test:v3 && npm run test:phase1",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
