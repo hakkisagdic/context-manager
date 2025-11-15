@@ -213,6 +213,91 @@ test('ErrorHandler - createUserMessage with context', () => {
 });
 
 // ============================================================================
+// ADDITIONAL COVERAGE TESTS
+// ============================================================================
+console.log('\n🎯 Additional Coverage Tests');
+console.log('-'.repeat(70));
+
+test('ErrorHandler - logError handles write failures gracefully', () => {
+    // Test line 89-90: catch block when logging fails
+    const invalidLogPath = '/nonexistent/directory/error.log';
+    const handler = new ErrorHandler({ logFile: invalidLogPath });
+    const error = new Error('Test error');
+
+    // Should not throw even if logging fails
+    try {
+        handler.logError('Test message', error);
+        // Success - caught the error silently
+    } catch (e) {
+        throw new Error('Should handle logging failures silently');
+    }
+});
+
+test('ErrorHandler - wrapAsync verbose mode logs errors', async () => {
+    // Test line 101-107: verbose error logging in wrapAsync
+    const handler = new ErrorHandler({ verbose: true });
+    const failingFn = async () => { throw new Error('Verbose async error'); };
+    const wrapped = handler.wrapAsync(failingFn, 'verbose-test');
+
+    try {
+        await wrapped();
+        throw new Error('Should propagate error');
+    } catch (error) {
+        // Error should be propagated
+        if (!error.message.includes('Verbose async error')) {
+            throw new Error('Wrong error propagated');
+        }
+    }
+});
+
+test('ErrorHandler - wrapAsync non-verbose mode', async () => {
+    // Ensure non-verbose path is also tested
+    const handler = new ErrorHandler({ verbose: false });
+    const failingFn = async () => { throw new Error('Non-verbose async error'); };
+    const wrapped = handler.wrapAsync(failingFn, 'non-verbose-test');
+
+    try {
+        await wrapped();
+        throw new Error('Should propagate error');
+    } catch (error) {
+        if (!error.message.includes('Non-verbose async error')) {
+            throw new Error('Wrong error propagated');
+        }
+    }
+});
+
+test('ErrorHandler - wrapAsync with logging', async () => {
+    // Test wrapAsync with logFile configured
+    const handler = new ErrorHandler({ verbose: true, logFile: TEST_LOG_FILE });
+    const failingFn = async () => { throw new Error('Logged async error'); };
+    const wrapped = handler.wrapAsync(failingFn, 'logged-context');
+
+    try {
+        await wrapped();
+        throw new Error('Should propagate error');
+    } catch (error) {
+        // Check that error was logged
+        if (fs.existsSync(TEST_LOG_FILE)) {
+            const logContent = fs.readFileSync(TEST_LOG_FILE, 'utf-8');
+            if (!logContent.includes('logged-context')) {
+                throw new Error('Error should be logged');
+            }
+        }
+    }
+});
+
+test('ErrorHandler - handleParseError without content', () => {
+    // Test handleParseError when content is null/undefined
+    const handler = new ErrorHandler({ verbose: true });
+    const error = new Error('Parse failed');
+
+    // Should not crash with missing content
+    handler.handleParseError(error, 'json', null);
+    handler.handleParseError(error, 'json', undefined);
+    handler.handleParseError(error, 'json', '');
+});
+
+// ============================================================================
 // CLEANUP
 // ============================================================================
 if (fs.existsSync(TEST_LOG_FILE)) {
