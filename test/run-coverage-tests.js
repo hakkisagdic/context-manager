@@ -132,4 +132,15 @@ try {
     console.log('❌ test-git-integration-complete');
 }
 
+try {
+    console.log('Running: test-phase3-coverage-boost.js');
+    execSync('node test/test-phase3-coverage-boost.js', { 
+        stdio: 'ignore',
+        timeout: 60000
+    });
+    console.log('✅ test-phase3-coverage-boost');
+} catch (error) {
+    console.log('❌ test-phase3-coverage-boost');
+}
+
 console.log('\n✅ All tests completed!');
