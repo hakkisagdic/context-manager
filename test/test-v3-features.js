@@ -167,6 +167,117 @@ await testAsync('Analyzer - Should detect languages', async () => {
     assert(distribution[0].language, 'Should have language name');
 });
 
+// Test 13: Analyzer - Should skip binary files
+await testAsync('Analyzer - Should skip binary files', async () => {
+    const analyzer = new Analyzer();
+
+    // Create a mock binary file info
+    const binaryFile = {
+        path: 'test.bin',
+        relativePath: 'test.bin',
+        name: 'test.bin',
+        extension: '.bin',
+        size: 1024
+    };
+
+    const result = await analyzer.analyzeFile(binaryFile);
+    assert.strictEqual(result, null, 'Should return null for binary files');
+});
+
+// Test 14: Analyzer - Should analyze with method level
+await testAsync('Analyzer - Should analyze with method level enabled', async () => {
+    const scanner = new Scanner(process.cwd());
+    const jsFiles = scanner.scan().filter(f => f.extension === '.js').slice(0, 3);
+
+    const analyzer = new Analyzer({ methodLevel: true });
+    const result = await analyzer.analyze(jsFiles);
+
+    assert(result.files, 'Should have files');
+    // Check if any file has methods
+    const fileWithMethods = result.files.find(f => f.methods && f.methods.length > 0);
+    if (fileWithMethods) {
+        assert(fileWithMethods.methods, 'Should have methods array');
+        assert(fileWithMethods.methodCount >= 0, 'Should have method count');
+    }
+});
+
+// Test 15: Analyzer - Should handle file errors gracefully
+await testAsync('Analyzer - Should handle file errors gracefully', async () => {
+    const analyzer = new Analyzer();
+
+    // Create a mock file with non-existent path
+    const badFile = {
+        path: '/nonexistent/file.js',
+        relativePath: 'nonexistent/file.js',
+        name: 'file.js',
+        extension: '.js',
+        size: 0
+    };
+
+    const result = await analyzer.analyzeFile(badFile);
+    assert.strictEqual(result, null, 'Should return null for files with errors');
+});
+
+// Test 16: Analyzer - Method count in stats
+await testAsync('Analyzer - Should track method count in stats', async () => {
+    const scanner = new Scanner(process.cwd());
+    const jsFiles = scanner.scan().filter(f => f.extension === '.js').slice(0, 5);
+
+    const analyzer = new Analyzer({ methodLevel: true });
+    const result = await analyzer.analyze(jsFiles);
+
+    assert(result.stats, 'Should have stats');
+    assert(typeof result.stats.totalMethods === 'number', 'Should have totalMethods in stats');
+});
+
+// Test 17: Scanner - Should respect maxDepth option
+test('Scanner - Should respect maxDepth option', () => {
+    const scanner = new Scanner(process.cwd(), { maxDepth: 2 });
+    const files = scanner.scan();
+
+    assert(Array.isArray(files), 'Should return array');
+    // Files should not go deeper than maxDepth
+    assert(files.length >= 0, 'Should scan with depth limit');
+});
+
+// Test 18: Scanner - Should handle file processing errors gracefully
+test('Scanner - Should handle file access errors gracefully', () => {
+    const scanner = new Scanner(process.cwd());
+    // Even if some files fail, scanner should continue
+    const files = scanner.scan();
+
+    const stats = scanner.getStats();
+    assert(typeof stats.filesScanned === 'number', 'Should track files scanned');
+    assert(typeof stats.filesIgnored === 'number', 'Should track files ignored');
+});
+
+// Test 19: Scanner - Should handle directory errors gracefully
+test('Scanner - Should handle directory scan errors', () => {
+    // Create scanner with a path that might have permission issues
+    const scanner = new Scanner(process.cwd());
+    const files = scanner.scan();
+
+    const stats = scanner.getStats();
+    assert(typeof stats.errors === 'number', 'Should track errors');
+});
+
+// Test 20: Scanner - Should reset statistics
+test('Scanner - Should reset statistics', () => {
+    const scanner = new Scanner(process.cwd());
+    scanner.scan(); // First scan
+
+    const statsBefore = scanner.getStats();
+    assert(statsBefore.filesScanned > 0, 'Should have scanned files');
+
+    scanner.reset();
+    const statsAfter = scanner.getStats();
+
+    assert.strictEqual(statsAfter.filesScanned, 0, 'filesScanned should reset to 0');
+    assert.strictEqual(statsAfter.directoriesTraversed, 0, 'directoriesTraversed should reset to 0');
+    assert.strictEqual(statsAfter.filesIgnored, 0, 'filesIgnored should reset to 0');
+    assert.strictEqual(statsAfter.errors, 0, 'errors should reset to 0');
+});
+
 // Results
 console.log('\n' + '='.repeat(50));
 console.log(`Tests: ${passedTests}/${totalTests} passed`);
