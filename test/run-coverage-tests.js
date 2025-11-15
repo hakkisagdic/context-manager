@@ -88,4 +88,15 @@ try {
     console.log('❌ test-zero-coverage-modules');
 }
 
+try {
+    console.log('Running: test-format-converter-complete.js');
+    execSync('node test/test-format-converter-complete.js', { 
+        stdio: 'ignore',
+        timeout: 60000
+    });
+    console.log('✅ test-format-converter-complete');
+} catch (error) {
+    console.log('❌ test-format-converter-complete');
+}
+
 console.log('\n✅ All tests completed!');
