@@ -3,15 +3,15 @@
 ## Current Status (Latest Run)
 
 **Overall Coverage:**
-- **Line Coverage: 70.62%** (11,108 of 15,729 lines) - Target: 100%
-- **Function Coverage: 71.16%** (427 of 600 functions) - Target: 100%  
-- **Branch Coverage: 84.99%** (1,682 of 1,979 branches) - Target: 95%+
+- **Line Coverage: 71.17%** (11,195 of 15,729 lines) - Target: 100%
+- **Function Coverage: 72.00%** (432 of 600 functions) - Target: 100%  
+- **Branch Coverage: 85.70%** (1,720 of 2,007 branches) - Target: 95%+
 
 **Progress from Baseline:**
-- Line Coverage: **18.99% → 70.62%** (+51.63 percentage points)
-- Function Coverage: **5.94% → 71.16%** (+65.22 percentage points)
-- Branch Coverage: **58.2% → 84.99%** (+26.79 percentage points)
-- **Lines Covered: +8,053 lines** (from 3,055 to 11,108)
+- Line Coverage: **18.99% → 71.17%** (+52.18 percentage points)
+- Function Coverage: **5.94% → 72.00%** (+66.06 percentage points)
+- Branch Coverage: **58.2% → 85.70%** (+27.50 percentage points)
+- **Lines Covered: +8,140 lines** (from 3,055 to 11,195)
 
 ## Module-by-Module Breakdown
 
@@ -52,6 +52,7 @@
 | clipboard-utils.js | 81.81% | 📈 Good |
 | toon-formatter.js | 87.62% | 📈 Good |
 | llm-detector.js | 78.97% | 📈 Good |
+| **GitClient.js** | **77.60%** | 📈 Good 🆕 |
 | CacheManager.js | 75.06% | 📈 Good |
 | go-method-analyzer.js | 79.39% | 📈 Good |
 | gitingest-formatter.js | 71.81% | 📈 Good |
@@ -61,11 +62,10 @@
 
 | Module | Coverage | Remaining Lines |
 |--------|----------|----------------|
-| GitClient.js | 59.30% | ~129 lines |
-| DiffAnalyzer.js | 56.53% | ~113 lines |
+| **DiffAnalyzer.js** | **58.07%** | ~107 lines 🆕 |
+| **git-utils.js** | **54.09%** | ~157 lines 🆕 |
 | PluginManager.js | 51.98% | ~145 lines |
-| BlameTracker.js | 49.29% | ~72 lines |
-| git-utils.js | 54.09% | ~157 lines |
+| **BlameTracker.js** | **47.18%** | ~74 lines 🆕 |
 
 ### ❌ Low/Zero Coverage (<40%)
 

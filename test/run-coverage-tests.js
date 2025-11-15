@@ -121,4 +121,15 @@ try {
     console.log('❌ test-git-utils-complete');
 }
 
+try {
+    console.log('Running: test-git-integration-complete.js');
+    execSync('node test/test-git-integration-complete.js', { 
+        stdio: 'ignore',
+        timeout: 60000
+    });
+    console.log('✅ test-git-integration-complete');
+} catch (error) {
+    console.log('❌ test-git-integration-complete');
+}
+
 console.log('\n✅ All tests completed!');
