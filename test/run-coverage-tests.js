@@ -110,4 +110,15 @@ try {
     console.log('❌ test-contextbuilder-complete');
 }
 
+try {
+    console.log('Running: test-git-utils-complete.js');
+    execSync('node test/test-git-utils-complete.js', { 
+        stdio: 'ignore',
+        timeout: 60000
+    });
+    console.log('✅ test-git-utils-complete');
+} catch (error) {
+    console.log('❌ test-git-utils-complete');
+}
+
 console.log('\n✅ All tests completed!');
