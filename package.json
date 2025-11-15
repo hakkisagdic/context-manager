@@ -91,6 +91,7 @@
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:gitingest-formatter-comprehensive": "node test/test-gitingest-formatter-comprehensive.js",
     "test:clipboard": "node test/test-clipboard-utils.js",
+    "test:clipboard-coverage": "c8 --reporter=text --reporter=html node test/test-clipboard-comprehensive-coverage.js",
     "test:cross-platform": "node test/test-cross-platform.js",
     "test:validation": "node test/test-validation-comprehensive.js",
     "test:config-utils": "node test/test-config-utils.js",
