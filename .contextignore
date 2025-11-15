@@ -1,0 +1,10 @@
+**/*.test.js
+**/*.spec.js
+**/*.test.ts
+**/*.spec.ts
+docs/**
+**/*.md
+node_modules/**
+dist/**
+build/**
+coverage/**
