@@ -133,7 +133,7 @@
     "test:format-registry": "node test/test-format-registry.js",
     "test:scanner-comprehensive": "node test/test-scanner-comprehensive.js",
     "test:analyzer-comprehensive": "node test/test-analyzer-comprehensive.js",
-    "test:comprehensive": "npm run test && npm run test:unit && npm run test:utils && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3 && npm run test:phase1 && npm run test:cache && npm run test:cache-extended && npm run test:plugin && npm run test:api && npm run test:git && npm run test:watch && npm run test:sqlserver && npm run test:sql-dialects && npm run test:markup && npm run test:cross-platform && npm run test:core-modules && npm run test:additional-utils",
+    "test:comprehensive": "npm run test && npm run test:unit && npm run test:utils && npm run test:v2.3 && npm run test:cli && npm run test:gitingest && npm run test:llm && npm run test:v3 && npm run test:phase1 && npm run test:cache && npm run test:cache-extended && npm run test:plugin && npm run test:api && npm run test:git && npm run test:watch && npm run test:sqlserver && npm run test:sql-dialects && npm run test:markup && npm run test:cross-platform && npm run test:core-modules && npm run test:additional-utils && npm run test:blame-tracker && npm run test:method-filter-comprehensive && npm run test:gitignore-comprehensive && npm run test:token-calculator && npm run test:formatters && npm run test:reporter",
     "analyze": "node bin/cli.js",
     "analyze:cli": "node bin/cli.js --cli",
     "analyze:methods": "node bin/cli.js --cli --method-level",
