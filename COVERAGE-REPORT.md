@@ -3,15 +3,15 @@
 ## Current Status (Latest Run)
 
 **Overall Coverage:**
-- **Line Coverage: 70.39%** (11,073 of 15,729 lines) - Target: 100%
-- **Function Coverage: 70.66%** (424 of 600 functions) - Target: 100%  
-- **Branch Coverage: 84.90%** (1,671 of 1,968 branches) - Target: 95%+
+- **Line Coverage: 70.62%** (11,108 of 15,729 lines) - Target: 100%
+- **Function Coverage: 71.16%** (427 of 600 functions) - Target: 100%  
+- **Branch Coverage: 84.99%** (1,682 of 1,979 branches) - Target: 95%+
 
 **Progress from Baseline:**
-- Line Coverage: **18.99% → 70.39%** (+51.40 percentage points)
-- Function Coverage: **5.94% → 70.66%** (+64.72 percentage points)
-- Branch Coverage: **58.2% → 84.90%** (+26.70 percentage points)
-- **Lines Covered: +8,018 lines** (from 3,055 to 11,073)
+- Line Coverage: **18.99% → 70.62%** (+51.63 percentage points)
+- Function Coverage: **5.94% → 71.16%** (+65.22 percentage points)
+- Branch Coverage: **58.2% → 84.99%** (+26.79 percentage points)
+- **Lines Covered: +8,053 lines** (from 3,055 to 11,108)
 
 ## Module-by-Module Breakdown
 
@@ -65,7 +65,7 @@
 | DiffAnalyzer.js | 56.53% | ~113 lines |
 | PluginManager.js | 51.98% | ~145 lines |
 | BlameTracker.js | 49.29% | ~72 lines |
-| git-utils.js | 50.87% | ~168 lines |
+| git-utils.js | 54.09% | ~157 lines |
 
 ### ❌ Low/Zero Coverage (<40%)
 
