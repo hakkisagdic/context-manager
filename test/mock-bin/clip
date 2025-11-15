@@ -1,0 +1,4 @@
+#!/bin/sh
+# Mock clip for testing
+while read line; do :; done
+exit 0
