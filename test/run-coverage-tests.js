@@ -99,4 +99,15 @@ try {
     console.log('❌ test-format-converter-complete');
 }
 
+try {
+    console.log('Running: test-contextbuilder-complete.js');
+    execSync('node test/test-contextbuilder-complete.js', { 
+        stdio: 'ignore',
+        timeout: 60000
+    });
+    console.log('✅ test-contextbuilder-complete');
+} catch (error) {
+    console.log('❌ test-contextbuilder-complete');
+}
+
 console.log('\n✅ All tests completed!');
