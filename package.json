@@ -93,8 +93,6 @@
     "test:token-calculator-reports": "node test/test-token-calculator-reports.js",
     "test:token-calculator-comprehensive": "node test/test-token-calculator-comprehensive.js",
     "test:token-calculator-100-percent": "node test/test-token-calculator-100-percent.js",
-    "test:token-calculator-comprehensive": "node test/test-token-calculator-comprehensive.js",
-    "test:token-calculator-100-percent": "node test/test-token-calculator-100-percent.js",
     "test:integration-scenarios": "node test/test-integration-scenarios.js",
     "test:gitingest-formatter": "node test/test-gitingest-formatter.js",
     "test:gitingest-formatter-comprehensive": "node test/test-gitingest-formatter-comprehensive.js",

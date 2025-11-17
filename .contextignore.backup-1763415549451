@@ -2,9 +2,9 @@
 **/*.spec.js
 **/*.test.ts
 **/*.spec.ts
-**/*.md
 docs/**
-examples/**
+**/*.md
 node_modules/**
 dist/**
 build/**
+coverage/**
