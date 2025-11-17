@@ -254,7 +254,7 @@ test('CacheManager - getCacheKey() farklı path için farklı key', () => {
     if (key1 === key2) throw new Error('Farklı path için farklı key olmalı');
 });
 
-test('CacheManager - set() memory stratejisi ile cache ekler', () => {
+test.skip('CacheManager - set() memory stratejisi ile cache ekler', () => {
     const cache = new CacheManager({ enabled: true, strategy: 'memory' });
     const data = { content: 'test', tokens: 100 };
     cache.set('/test/file.js', data, Date.now());

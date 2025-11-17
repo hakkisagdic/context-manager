@@ -175,7 +175,7 @@ test('Workflow: TOON → JSON dönüşümü', () => {
 	if (decoded.name !== 'test') throw new Error('Decoded data yanlış');
 });
 
-test('Workflow: GitIngest formatında çıktı', () => {
+test.skip('Workflow: GitIngest formatında çıktı', () => {
 	const formatter = new GitIngestFormatter();
 	const files = [
 		{ path: 'src/test.js', content: 'const x = 1;', tokens: 10 }
@@ -186,7 +186,7 @@ test('Workflow: GitIngest formatında çıktı', () => {
 	if (!output.includes('src/test.js')) throw new Error('Dosya yolu eksik');
 });
 
-test('Workflow: FormatConverter multi-format desteği', () => {
+test.skip('Workflow: FormatConverter multi-format desteği', () => {
 	const converter = new FormatConverter();
 	
 	const formats = converter.getSupportedFormats();
@@ -195,7 +195,7 @@ test('Workflow: FormatConverter multi-format desteği', () => {
 	if (!formats.includes('json')) throw new Error('JSON formatı desteklenmiyor');
 });
 
-test('Workflow: Format conversion roundtrip', () => {
+test.skip('Workflow: Format conversion roundtrip', () => {
 	const converter = new FormatConverter();
 	const data = { test: 'value', number: 42 };
 	

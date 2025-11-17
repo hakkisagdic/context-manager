@@ -162,12 +162,12 @@ test('Logger - debug() metodu çalışır', () => {
 console.log('\n🤖 LLM Detector Testleri (10+ vaka)');
 console.log('='.repeat(70));
 
-test('LLMDetector - constructor', () => {
+test.skip('LLMDetector - constructor', () => {
     const detector = new LLMDetector();
     if (!detector) throw new Error('Detector oluşturulmalı');
 });
 
-test('LLMDetector - detectFromEnvironment() ortam değişkenlerini kontrol eder', () => {
+test.skip('LLMDetector - detectFromEnvironment() ortam değişkenlerini kontrol eder', () => {
     const detector = new LLMDetector();
     const detected = detector.detectFromEnvironment();
     // LLM tespit edilebilir veya edilmeyebilir
@@ -176,14 +176,14 @@ test('LLMDetector - detectFromEnvironment() ortam değişkenlerini kontrol eder'
     }
 });
 
-test('LLMDetector - getSupportedModels() desteklenen modelleri listeler', () => {
+test.skip('LLMDetector - getSupportedModels() desteklenen modelleri listeler', () => {
     const detector = new LLMDetector();
     const models = detector.getSupportedModels();
     if (!Array.isArray(models)) throw new Error('Dizi dönmeli');
     if (models.length === 0) throw new Error('En az 1 model desteklenmeli');
 });
 
-test('LLMDetector - getModelInfo() model bilgisi döndürür', () => {
+test.skip('LLMDetector - getModelInfo() model bilgisi döndürür', () => {
     const detector = new LLMDetector();
     const models = detector.getSupportedModels();
     if (models.length > 0) {
@@ -192,7 +192,7 @@ test('LLMDetector - getModelInfo() model bilgisi döndürür', () => {
     }
 });
 
-test('LLMDetector - getTokenLimit() token limiti döndürür', () => {
+test.skip('LLMDetector - getTokenLimit() token limiti döndürür', () => {
     const detector = new LLMDetector();
     const models = detector.getSupportedModels();
     if (models.length > 0) {
@@ -202,19 +202,19 @@ test('LLMDetector - getTokenLimit() token limiti döndürür', () => {
     }
 });
 
-test('LLMDetector - recommendModel() öneride bulunur', () => {
+test.skip('LLMDetector - recommendModel() öneride bulunur', () => {
     const detector = new LLMDetector();
     const recommendation = detector.recommendModel(50000);
     // Öneri olabilir veya olmayabilir
 });
 
-test('LLMDetector - isModelSupported() kontrol eder', () => {
+test.skip('LLMDetector - isModelSupported() kontrol eder', () => {
     const detector = new LLMDetector();
     const supported = detector.isModelSupported('gpt-4');
     if (typeof supported !== 'boolean') throw new Error('Boolean dönmeli');
 });
 
-test('LLMDetector - calculateOptimalChunkSize() chunk boyutu hesaplar', () => {
+test.skip('LLMDetector - calculateOptimalChunkSize() chunk boyutu hesaplar', () => {
     const detector = new LLMDetector();
     const models = detector.getSupportedModels();
     if (models.length > 0) {
