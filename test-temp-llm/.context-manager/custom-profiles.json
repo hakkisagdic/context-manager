@@ -1,0 +1,9 @@
+{
+  "models": [
+    {
+      "id": "custom-model",
+      "name": "Custom Model",
+      "contextWindow": 100000
+    }
+  ]
+}
