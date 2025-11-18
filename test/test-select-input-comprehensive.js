@@ -1,36 +1,34 @@
-// Comprehensive tests for the SelectInput Component
-
-import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
-import SelectInput from '../path/to/SelectInput'; // Adjust the import path as necessary
+// test/test-select-input-comprehensive.js
+const assert = require('assert');
+const { render } = require('ink-testing-library');
+const SelectInput = require('../path/to/your/SelectInput'); // Update with the correct path to your component
 
 describe('SelectInput Component', () => {
-    test('renders correctly with options', () => {
-        render(<SelectInput options={[{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]} />);
-        expect(screen.getByRole('combobox')).toBeInTheDocument();
-        expect(screen.getByText('Option 1')).toBeInTheDocument();
-        expect(screen.getByText('Option 2')).toBeInTheDocument();
+    it('renders the SelectInput with default options', () => {
+        const { lastFrame } = render(<SelectInput options={['Option 1', 'Option 2']} />);
+        assert(lastFrame().includes('Option 1'));
+        assert(lastFrame().includes('Option 2'));
     });
 
-    test('calls onChange when option is selected', () => {
-        const handleChange = jest.fn();
-        render(<SelectInput options={[{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]} onChange={handleChange} />);
-        fireEvent.change(screen.getByRole('combobox'), { target: { value: '2' } });
-        expect(handleChange).toHaveBeenCalledWith('2');
+    it('handles user selection', () => {
+        const { lastFrame, stdin } = render(<SelectInput options={['Option 1', 'Option 2']} />);
+        
+        // Simulate user input
+        stdin.write('1');
+        stdin.write('\n');
+
+        const updatedFrame = lastFrame();
+        assert(updatedFrame.includes('You selected: Option 1'));
     });
 
-    test('displays placeholder when no option is selected', () => {
-        render(<SelectInput options={[{ value: '1', label: 'Option 1' }]} placeholder="Select an option" />);
-        expect(screen.getByText('Select an option')).toBeInTheDocument();
-    });
+    it('displays error message when invalid selection is made', () => {
+        const { lastFrame, stdin } = render(<SelectInput options={['Option 1', 'Option 2']} />);
+        
+        // Simulate invalid input
+        stdin.write('invalid');
+        stdin.write('\n');
 
-    test('renders disabled state correctly', () => {
-        render(<SelectInput options={[{ value: '1', label: 'Option 1' }]} disabled />);
-        expect(screen.getByRole('combobox')).toBeDisabled();
-    });
-
-    test('renders error message when provided', () => {
-        render(<SelectInput options={[{ value: '1', label: 'Option 1' }]} error="There is an error" />);
-        expect(screen.getByText('There is an error')).toBeInTheDocument();
+        const updatedFrame = lastFrame();
+        assert(updatedFrame.includes('Invalid selection. Please try again.'));
     });
 });
