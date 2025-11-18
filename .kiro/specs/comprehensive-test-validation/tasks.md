@@ -51,8 +51,8 @@
   - Generator suggestion testleri
   - _Requirements: Property extraction_
 
-- [ ] 5. Token Calculation property testlerini yaz
-- [ ] 5.1 Property 1: Token calculation consistency
+- [x] 5. Token Calculation property testlerini yaz
+- [x] 5.1 Property 1: Token calculation consistency
   - **Property 1: Token calculation consistency**
   - **Validates: Requirements 1.1**
   - fast-check ile string generator kullan
@@ -60,78 +60,78 @@
   - 100+ iterasyon çalıştır
   - _Requirements: 1.1_
 
-- [ ] 5.2 Property 2: Token estimation accuracy
+- [x] 5.2 Property 2: Token estimation accuracy
   - **Property 2: Token estimation accuracy**
   - **Validates: Requirements 1.2**
   - Tiktoken'ı mock'la
   - Tahmin doğruluğunu %5 toleransla kontrol et
   - _Requirements: 1.2_
 
-- [ ] 5.3 Property 3: Token summation correctness
+- [x] 5.3 Property 3: Token summation correctness
   - **Property 3: Token summation correctness**
   - **Validates: Requirements 1.3**
   - Rastgele dosya seti oluştur
   - Toplam token sayısının doğruluğunu kontrol et
   - _Requirements: 1.3_
 
-- [ ] 5.4 Property 4: File type grouping correctness
+- [x] 5.4 Property 4: File type grouping correctness
   - **Property 4: File type grouping correctness**
   - **Validates: Requirements 1.4**
   - Farklı extension'lara sahip dosyalar oluştur
   - Gruplama sonrası tüm dosyaların korunduğunu kontrol et
   - _Requirements: 1.4_
 
-- [ ] 5.5 Property 5: Largest files sorting correctness
+- [x] 5.5 Property 5: Largest files sorting correctness
   - **Property 5: Largest files sorting correctness**
   - **Validates: Requirements 1.5**
   - Rastgele token sayılarına sahip dosyalar oluştur
   - Sıralamanın descending order'da olduğunu kontrol et
   - _Requirements: 1.5_
 
-- [ ] 6. Method Extraction property testlerini yaz
-- [ ] 6.1 Property 6: JavaScript method extraction completeness
+- [x] 6. Method Extraction property testlerini yaz
+- [x] 6.1 Property 6: JavaScript method extraction completeness
   - **Property 6: JavaScript method extraction completeness**
   - **Validates: Requirements 2.1**
   - Rastgele JS/TS fonksiyonları oluştur
   - Tüm fonksiyonların çıkarıldığını kontrol et
   - _Requirements: 2.1_
 
-- [ ] 6.2 Property 7: Rust function extraction completeness
+- [x] 6.2 Property 7: Rust function extraction completeness
   - **Property 7: Rust function extraction completeness**
   - **Validates: Requirements 2.2**
   - Rastgele Rust fn tanımları oluştur
   - Tüm fn'lerin çıkarıldığını kontrol et
   - _Requirements: 2.2_
 
-- [ ] 6.3 Property 8: C# method extraction completeness
+- [x] 6.3 Property 8: C# method extraction completeness
   - **Property 8: C# method extraction completeness**
   - **Validates: Requirements 2.3**
   - Rastgele C# method tanımları oluştur
   - Tüm method'ların çıkarıldığını kontrol et
   - _Requirements: 2.3_
 
-- [ ] 6.4 Property 9: Go function extraction completeness
+- [x] 6.4 Property 9: Go function extraction completeness
   - **Property 9: Go function extraction completeness**
   - **Validates: Requirements 2.4**
   - Rastgele Go func tanımları oluştur
   - Tüm func'ların çıkarıldığını kontrol et
   - _Requirements: 2.4_
 
-- [ ] 6.5 Property 10: Java method extraction completeness
+- [x] 6.5 Property 10: Java method extraction completeness
   - **Property 10: Java method extraction completeness**
   - **Validates: Requirements 2.5**
   - Rastgele Java method tanımları oluştur
   - Tüm method'ların çıkarıldığını kontrol et
   - _Requirements: 2.5_
 
-- [ ] 6.6 Property 11: SQL procedure extraction completeness
+- [x] 6.6 Property 11: SQL procedure extraction completeness
   - **Property 11: SQL procedure extraction completeness**
   - **Validates: Requirements 2.6**
   - Rastgele SQL procedure/function tanımları oluştur
   - Tüm tanımların çıkarıldığını kontrol et
   - _Requirements: 2.6_
 
-- [ ] 6.7 Property 12: Method filtering correctness
+- [x] 6.7 Property 12: Method filtering correctness
   - **Property 12: Method filtering correctness**
   - **Validates: Requirements 2.7**
   - Rastgele method listesi ve filtre kuralları oluştur
