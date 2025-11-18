@@ -138,65 +138,65 @@
   - Filtreleme sonucunun doğruluğunu kontrol et
   - _Requirements: 2.7_
 
-- [ ] 7. File Filtering property testlerini yaz
-- [ ] 7.1 Property 13: Gitignore compliance
+- [x] 7. File Filtering property testlerini yaz
+- [x] 7.1 Property 13: Gitignore compliance
   - **Property 13: Gitignore compliance**
   - **Validates: Requirements 3.3**
   - Rastgele .gitignore kuralları ve dosya listesi oluştur
   - Her iki modda da gitignore'un uygulandığını kontrol et
   - _Requirements: 3.3_
 
-- [ ] 7.2 Property 14: Wildcard pattern matching
+- [x] 7.2 Property 14: Wildcard pattern matching
   - **Property 14: Wildcard pattern matching**
   - **Validates: Requirements 3.4**
   - Rastgele wildcard pattern'ler oluştur
   - Glob kurallarına göre eşleşmeyi kontrol et
   - _Requirements: 3.4_
 
-- [ ] 7.3 Property 15: Negation pattern correctness
+- [x] 7.3 Property 15: Negation pattern correctness
   - **Property 15: Negation pattern correctness**
   - **Validates: Requirements 3.5**
   - Negation pattern'leri test et
   - Doğru dosyaların dahil edildiğini kontrol et
   - _Requirements: 3.5_
 
-- [ ] 7.4 Property 16: Recursive directory matching
+- [x] 7.4 Property 16: Recursive directory matching
   - **Property 16: Recursive directory matching**
   - **Validates: Requirements 3.6**
   - Nested directory yapısı oluştur
   - Recursive matching'in doğruluğunu kontrol et
   - _Requirements: 3.6_
 
-- [ ] 8. TOON Format property testlerini yaz
-- [ ] 8.1 Property 17: TOON format validity
+- [x] 8. TOON Format property testlerini yaz
+- [x] 8.1 Property 17: TOON format validity
   - **Property 17: TOON format validity**
   - **Validates: Requirements 4.1**
   - Rastgele context objeleri oluştur
   - TOON encoding'in geçerli format ürettiğini kontrol et
   - _Requirements: 4.1_
 
-- [ ] 8.2 Property 18: TOON round-trip preservation
+- [x] 8.2 Property 18: TOON round-trip preservation
   - **Property 18: TOON round-trip preservation**
   - **Validates: Requirements 4.2**
   - Rastgele context objeleri oluştur
   - Encode-decode round-trip'in yapıyı koruduğunu kontrol et
   - _Requirements: 4.2_
 
-- [ ] 8.3 Property 19: TOON compression ratio
+- [x] 8.3 Property 19: TOON compression ratio
   - **Property 19: TOON compression ratio**
   - **Validates: Requirements 4.3**
   - Rastgele context objeleri oluştur
   - Compression oranının %40+ olduğunu kontrol et
   - _Requirements: 4.3_
 
-- [ ] 8.4 Property 20: TOON validation error detection
+- [x] 8.4 Property 20: TOON validation error detection
   - **Property 20: TOON validation error detection**
   - **Validates: Requirements 4.4**
   - Geçersiz TOON dosyaları oluştur
   - Validator'ın hataları tespit ettiğini kontrol et
   - _Requirements: 4.4_
 
-- [ ] 8.5 Property 21: TOON streaming correctness
+- [x] 8.5 Property 21: TOON streaming correctness
   - **Property 21: TOON streaming correctness**
   - **Validates: Requirements 4.5**
   - Büyük dosyalar oluştur
@@ -210,23 +210,23 @@
   - Diff'in tüm değişiklikleri bulduğunu kontrol et
   - _Requirements: 4.6_
 
-- [ ] 9. GitIngest Format property testlerini yaz
-- [ ] 9.1 Property 23: GitIngest content completeness
+- [x] 9. GitIngest Format property testlerini yaz
+- [x] 9.1 Property 23: GitIngest content completeness
   - **Property 23: GitIngest content completeness**
   - **Validates: Requirements 5.2, 5.3, 5.4**
   - Rastgele proje yapısı oluştur
   - Digest'in tüm gerekli içeriği içerdiğini kontrol et
   - _Requirements: 5.2, 5.3, 5.4_
 
-- [ ] 9.2 Property 24: GitIngest from-report efficiency
+- [x] 9.2 Property 24: GitIngest from-report efficiency
   - **Property 24: GitIngest from-report efficiency**
   - **Validates: Requirements 5.5**
   - JSON report oluştur
   - Report'tan digest üretiminin daha hızlı olduğunu kontrol et
   - _Requirements: 5.5_
 
-- [ ] 10. Preset System property testlerini yaz
-- [ ] 10.1 Property 25: Preset configuration application
+- [x] 10. Preset System property testlerini yaz
+- [x] 10.1 Property 25: Preset configuration application
   - **Property 25: Preset configuration application**
   - **Validates: Requirements 6.2, 6.5**
   - Rastgele preset konfigürasyonları oluştur
