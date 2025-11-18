@@ -2,5 +2,3 @@ src/**/*.js
 src/**/*.ts
 lib/**/*.js
 lib/**/*.ts
-index.js
-index.ts
