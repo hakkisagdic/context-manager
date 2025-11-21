@@ -1,0 +1,79 @@
+{
+    "name": "@hakkisagdic/context-manager-desktop",
+    "version": "3.3.0",
+    "description": "Desktop App for Context Manager - Visual interface for CLI",
+    "author": "Hakki Sagdic",
+    "main": "main/index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "electron:dev": "electron .",
+        "desktop:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && npm run electron:dev\"",
+        "desktop:build": "vite build && electron-builder",
+        "test": "vitest run"
+    },
+    "build": {
+        "appId": "com.hakkisagdic.context-manager",
+        "productName": "Context Manager",
+        "directories": {
+            "output": "dist-electron",
+            "buildResources": "build"
+        },
+        "files": [
+            "**/*",
+            {
+                "from": "../package.json",
+                "to": "package.json"
+            }
+        ],
+        "extraResources": [
+            {
+                "from": "../lib",
+                "to": "lib",
+                "filter": [
+                    "**/*"
+                ]
+            },
+            {
+                "from": "../bin",
+                "to": "bin",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ],
+        "mac": {
+            "category": "public.app-category.developer-tools",
+            "icon": "build/icon.png",
+            "target": [
+                "dmg",
+                "zip"
+            ]
+        },
+        "win": {
+            "icon": "build/icon.png",
+            "target": [
+                "nsis",
+                "zip"
+            ]
+        },
+        "linux": {
+            "icon": "build/icon.png",
+            "target": [
+                "AppImage",
+                "deb"
+            ]
+        }
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^6.0.2",
+        "@vue/test-utils": "^2.4.6",
+        "electron": "^39.2.3",
+        "electron-builder": "^26.0.12",
+        "jsdom": "^27.2.0",
+        "vite": "^7.2.4",
+        "vitest": "^4.0.13",
+        "vue": "^3.5.24"
+    }
+}

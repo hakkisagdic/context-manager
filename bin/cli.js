@@ -130,6 +130,7 @@ function parseArguments(args) {
         verbose: args.includes('--verbose') || args.includes('-v'),
         contextExport: args.includes('--context-export'),
         contextToClipboard: args.includes('--context-clipboard'),
+        json: args.includes('--json'), // NEW: JSON output mode
 
         // Analysis options
         methodLevel: args.includes('--method-level') || args.includes('-m'),
@@ -247,8 +248,8 @@ function printStartupInfo(options) {
 
     // Only show active options if any are set
     const hasOptions = options.outputFormat || options.methodLevel || options.chunking?.enabled ||
-                       options.saveReport || options.verbose || options.contextExport ||
-                       options.contextToClipboard || options.gitingest;
+        options.saveReport || options.verbose || options.contextExport ||
+        options.contextToClipboard || options.gitingest;
 
     if (hasOptions) {
         console.log('📋 Active options:');
@@ -632,5 +633,9 @@ function runFormatConversion(args) {
 // ESM entry point
 main().catch(error => {
     console.error('❌ Error:', error.message);
+    // Exit codes:
+    // 0: Success
+    // 1: General error
+    // 2: Validation/argument error
     process.exit(1);
 });
