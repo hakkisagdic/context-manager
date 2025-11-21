@@ -130,9 +130,7 @@ function generateDigestFromContext(contextPath) {
 /**
  * Main execution
  */
-function main() {
-    const args = process.argv.slice(2);
-
+async function main(args = process.argv.slice(2)) {
     if (args.includes('--help') || args.includes('-h')) {
         printHelp();
         return;
@@ -166,7 +164,7 @@ function main() {
     printStartupInfo();
 
     const calculator = new TokenCalculator(process.cwd(), options);
-    calculator.run();
+    await calculator.run();
 }
 
 function printStartupInfo() {
@@ -233,5 +231,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 export {
     TokenCalculator,
     generateDigestFromReport,
-    generateDigestFromContext
+    generateDigestFromContext,
+    main
 };
