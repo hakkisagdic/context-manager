@@ -209,6 +209,12 @@ onMounted(async () => {
   }
 });
 
+const refreshKey = ref(0);
+
+function refreshFileBrowser() {
+  refreshKey.value++;
+}
+
 // Project Management
 async function selectProject() {
   const path = await window.api.fs.selectDirectory();

@@ -3,15 +3,22 @@
  * Uses child_process to spawn context-manager CLI
  */
 
-import { spawn } from 'child_process';
-import path from 'path';
-import fs from 'fs';
-import { app } from 'electron';
-import { getLogger } from '../../lib/utils/logger.js';
+const { spawn } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const { app } = require('electron');
+// We need to import getLogger dynamically or use a CJS logger.
+// Since logger is ESM, we can't require it easily.
+// For now, let's use console.log/error or dynamic import.
+// But constructor is sync.
+// We'll use a simple console logger for bridge.
 
-const logger = getLogger('CliBridge');
+const logger = {
+    info: (msg) => console.log(`[CliBridge] ${msg}`),
+    error: (msg) => console.error(`[CliBridge] ${msg}`)
+};
 
-export class CliBridge {
+class CliBridge {
     constructor() {
         this.cliPath = this.resolveCliPath();
     }
@@ -21,11 +28,6 @@ export class CliBridge {
         const bundledPath = path.join(process.resourcesPath, 'bin', 'cli.js');
         if (fs.existsSync(bundledPath)) {
             logger.info(`Using bundled CLI at: ${bundledPath}`);
-            return { command: process.execPath, args: [bundledPath] }; // Use Electron's node or system node? Electron's node works for simple scripts
-            // Actually, better to use 'node' if available, or process.execPath (Electron binary) might have issues with some node modules if they are native.
-            // But our CLI is pure JS mostly.
-            // Safest is to assume 'node' is in path or bundle node.
-            // For now, let's try 'node' with the script.
             return { command: 'node', args: [bundledPath] };
         }
 
@@ -142,4 +144,4 @@ export class CliBridge {
     }
 }
 
-export default CliBridge;
+module.exports = { CliBridge };

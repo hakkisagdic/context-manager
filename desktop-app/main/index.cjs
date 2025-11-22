@@ -3,15 +3,10 @@
  * Entry point for the desktop application
  */
 
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { CliBridge } from './cli-bridge.js';
-import { McpClient } from './mcp-client.js';
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { app, BrowserWindow, ipcMain, dialog, globalShortcut } = require('electron');
+const path = require('path');
+const fs = require('fs');
+const { CliBridge } = require('./cli-bridge.cjs');
 
 let mainWindow;
 let cliBridge;
@@ -37,10 +32,8 @@ function createWindow() {
         mainWindow.webContents.openDevTools();
     } else {
         // Production: load built files
-        mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
+        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     }
-
-    const { globalShortcut } = require('electron');
 
     // Register shortcuts
     globalShortcut.register('CommandOrControl+O', () => {
@@ -56,9 +49,12 @@ function createWindow() {
     });
 }
 
-function setupIpcHandlers() {
+async function setupIpcHandlers() {
     // Initialize bridges
     cliBridge = new CliBridge();
+
+    // Dynamic import for ESM module
+    const { McpClient } = await import('./mcp-client.mjs');
     mcpClient = new McpClient();
 
     // CLI handlers
@@ -143,10 +139,6 @@ function setupIpcHandlers() {
             watcher.close();
         }
 
-        // Simple watcher using fs.watch for now to avoid extra dependencies if possible,
-        // but chokidar is better. Let's assume we can use the project's chokidar if available,
-        // or just fs.watch. Given the project has chokidar, let's try to import it dynamically or use fs.watch.
-        // For simplicity and reliability in this context without adding deps to desktop-app/package.json yet:
         try {
             const chokidar = require('chokidar');
             watcher = chokidar.watch(projectPath, {
@@ -159,7 +151,6 @@ function setupIpcHandlers() {
                 mainWindow.webContents.send('project:files-changed', { event, path });
             });
         } catch (e) {
-            // Fallback to fs.watch if chokidar not found (though it should be in root node_modules)
             watcher = fs.watch(projectPath, { recursive: true }, (eventType, filename) => {
                 mainWindow.webContents.send('project:files-changed', { event: eventType, path: filename });
             });
@@ -186,8 +177,8 @@ function setupIpcHandlers() {
 }
 
 // App lifecycle
-app.whenReady().then(() => {
-    setupIpcHandlers();
+app.whenReady().then(async () => {
+    await setupIpcHandlers();
     createWindow();
 
     app.on('activate', () => {
@@ -210,5 +201,4 @@ app.on('before-quit', async () => {
     }
 });
 
-// Export for testing
-export { createWindow };
+module.exports = { createWindow };
