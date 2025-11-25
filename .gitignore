@@ -10,6 +10,11 @@ dist/
 build/
 *.tsbuildinfo
 
+# Desktop app build artifacts (large binary files)
+desktop-app/dist-electron/
+desktop-app/dist/
+desktop-app/release/
+
 # Generated output files
 llm-context.json
 digest.txt
