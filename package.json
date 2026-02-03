@@ -76,20 +76,18 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "@lancedb/lancedb": "^0.23.0",
     "@modelcontextprotocol/sdk": "^1.21.1",
     "@toon-format/toon": "^0.7.0",
+    "@xenova/transformers": "^2.17.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "ink": "^6.4.0",
     "ink-spinner": "^5.0.0",
     "ink-text-input": "^6.0.0",
     "react": "^19.2.0",
+    "vitest": "^4.0.18",
     "zod": "^4.1.12"
-  },
-  "optionalDependencies": {
-    "@anthropic-ai/tokenizer": "^0.6.0",
-    "llama3-tokenizer-js": "^1.3.0",
-    "tiktoken": "^1.0.0"
   },
   "files": [
     "index.js",
@@ -101,26 +99,16 @@
     "README.md",
     "LICENSE"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hakkisagdic/context-manager.git"
-  },
-  "bugs": {
-    "url": "https://github.com/hakkisagdic/context-manager/issues"
-  },
-  "homepage": "https://github.com/hakkisagdic/context-manager#readme",
   "devDependencies": {
     "@anthropic-ai/tokenizer": "^0.0.4",
     "@vitejs/plugin-vue": "^6.0.2",
-    "@vitest/coverage-v8": "^4.0.10",
-    "electron": "^39.2.3",
-    "electron-builder": "^26.0.12",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.1",
     "llama3-tokenizer-js": "^1.2.0",
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
+    "tiktoken": "^1.0.18",
     "vite": "^7.2.4",
-    "vitest": "^4.0.10",
     "vue": "^3.5.24"
   }
 }

@@ -797,7 +797,7 @@ context-manager --method-level --save-report --verbose
 ### Programmatic Usage
 
 ```javascript
-const { TokenAnalyzer } = require('@cloudstack/context-manager');
+const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
 
 // Basic file-level analysis
 const analyzer = new TokenAnalyzer('./src', {
@@ -971,11 +971,11 @@ utils.debugLog
 
 ```bash
 # Ultra-compact method-level context
-code-analyzer --method-level --context-clipboard
+context-manager --method-level --context-clipboard
 
 # Focus on core business logic only
 echo "handleRequest\nprocessData\nvalidateInput" > .methodinclude
-code-analyzer --method-level --context-export
+context-manager --method-level --context-export
 ```
 
 **Result:** 89% smaller context compared to full codebase
@@ -985,10 +985,10 @@ code-analyzer --method-level --context-export
 
 ```bash
 # Analysis with detailed reports
-code-analyzer --save-report --verbose
+context-manager --save-report --verbose
 
 # Track largest files and methods
-code-analyzer --method-level --save-report
+context-manager --method-level --save-report
 ```
 
 ### 3. 🔍 Method-Level Debugging
@@ -997,11 +997,11 @@ code-analyzer --method-level --save-report
 ```bash
 # Debug authentication methods only
 echo "*auth*\n*login*\n*validate*" > .methodinclude
-code-analyzer --method-level --context-clipboard
+context-manager --method-level --context-clipboard
 
 # Exclude test and debug methods
 echo "*test*\n*debug*\nconsole\nlogger" > .methodignore
-code-analyzer --method-level
+context-manager --method-level
 ```
 
 ### 4. 🚀 CI/CD Integration
@@ -1009,10 +1009,10 @@ code-analyzer --method-level
 
 ```bash
 # Daily token analysis for monitoring
-code-analyzer --save-report > reports/analysis-$(date +%Y%m%d).json
+context-manager --save-report > reports/analysis-$(date +%Y%m%d).json
 
 # Check method complexity trends
-code-analyzer --method-level --save-report
+context-manager --method-level --save-report
 ```
 
 ### 5. 📈 Code Quality Gates
@@ -1020,7 +1020,7 @@ code-analyzer --method-level --save-report
 
 ```bash
 # Check if codebase exceeds LLM context limits
-TOKENS=$(code-analyzer --context-export | jq '.project.totalTokens')
+TOKENS=$(context-manager --context-export | jq '.project.totalTokens')
 if [ $TOKENS -gt 100000 ]; then
   echo "Codebase too large for LLM context!"
   exit 1
@@ -1078,7 +1078,7 @@ analyzer.run();
 ### Method-Level Analysis
 
 ```javascript
-const { TokenAnalyzer, MethodAnalyzer } = require('@hakkisagdic/code-analyzer');
+const { TokenAnalyzer, MethodAnalyzer } = require('@hakkisagdic/context-manager');
 
 // Method-level analysis with custom filtering
 const analyzer = new TokenAnalyzer('./src', {
