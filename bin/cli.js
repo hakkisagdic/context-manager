@@ -60,6 +60,15 @@ async function main() {
         return;
     }
 
+    // Check for RAG 'ask' mode (v3.1.0)
+    if (args.includes('ask')) {
+        const commandPath = resolve(__dirname, './cm-ask.js');
+        const askArgs = args.filter(arg => arg !== 'ask');
+        // Pass remaining args as the query
+        execSync(`node "${commandPath}" "${askArgs.join(' ')}"`, { stdio: 'inherit' });
+        return;
+    }
+
     // Check for API server mode (v3.0.0)
     if (args.includes('serve')) {
         await runAPIServer(args);
