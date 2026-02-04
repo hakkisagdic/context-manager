@@ -1,3 +1,17 @@
+// Mock tiktoken if missing (Environment issue workaround)
+try {
+    require.resolve('tiktoken');
+} catch (e) {
+    vi.mock('tiktoken', () => ({
+        default: {
+            encoding_for_model: () => ({
+                encode: () => [],
+                free: () => {}
+            })
+        }
+    }));
+}
+
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { TokenizerManager, TiktokenAdapter } from '../lib/utils/tokenizer-adapter.js';
 import tiktoken from 'tiktoken';

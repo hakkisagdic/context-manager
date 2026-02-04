@@ -1,15 +1,10 @@
-import { defineConfig } from 'vitest/config';
-import vue from '@vitejs/plugin-vue';
-import path from 'path';
-
-export default defineConfig({
-    plugins: [vue()],
-    test: {
-        globals: true,
-        environment: 'jsdom',
-        include: ['test/**/*.test.js'],
-        alias: {
-            '@': path.resolve(__dirname, './renderer')
-        }
-    }
-});
+export default {
+  extends: '../vitest.config.js',
+  test: {
+    name: 'desktop',
+    environment: 'jsdom',
+    include: ['test/**/*.{test,spec}.{js,mjs,jsx,tsx,vue}'],
+    // Exclude E2E from unit tests (handled by Playwright)
+    exclude: ['e2e/**'], 
+  }
+}
