@@ -1,7 +1,7 @@
 # Context Manager - Installation Guide
 
-**Version:** 2.3.6+
-**Last Updated:** November 3, 2025
+**Version:** 3.0.0
+**Last Updated:** April 2, 2026
 
 ---
 
@@ -32,11 +32,13 @@ context-manager --help
 ### One-Line Installers
 
 #### macOS / Linux
+
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh)
 ```
 
 #### Windows (PowerShell)
+
 ```powershell
 irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.ps1 | iex
 ```
@@ -48,6 +50,7 @@ irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/i
 ### macOS
 
 #### Option 1: Homebrew (Recommended)
+
 ```bash
 # Add tap (once)
 brew tap hakkisagdic/context-manager
@@ -60,11 +63,13 @@ brew upgrade context-manager
 ```
 
 #### Option 2: NPM
+
 ```bash
 npm install -g @hakkisagdic/context-manager
 ```
 
 #### Option 3: Installation Script
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh | bash
 ```
@@ -72,18 +77,20 @@ curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/sc
 ### Linux
 
 #### Option 1: Debian/Ubuntu (APT)
+
 ```bash
 # Download DEB package
-wget https://github.com/hakkisagdic/context-manager/releases/download/v2.3.5/context-manager_2.3.5_all.deb
+wget https://github.com/hakkisagdic/context-manager/releases/download/v3.0.0/context-manager_3.0.0_all.deb
 
 # Install
-sudo dpkg -i context-manager_2.3.5_all.deb
+sudo dpkg -i context-manager_3.0.0_all.deb
 
 # Install dependencies if needed
 sudo apt-get install -f
 ```
 
 #### Option 2: Red Hat/Fedora (YUM/DNF)
+
 ```bash
 # Coming soon - RPM package
 # For now, use NPM:
@@ -91,11 +98,13 @@ npm install -g @hakkisagdic/context-manager
 ```
 
 #### Option 3: NPM (Universal)
+
 ```bash
 npm install -g @hakkisagdic/context-manager
 ```
 
 #### Option 4: Installation Script
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh | bash
 ```
@@ -103,11 +112,13 @@ curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/sc
 ### Windows
 
 #### Option 1: NPM (Recommended)
+
 ```powershell
 npm install -g @hakkisagdic/context-manager
 ```
 
 #### Option 2: PowerShell Script
+
 ```powershell
 # Run as Administrator
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -115,6 +126,7 @@ irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/i
 ```
 
 #### Option 3: Manual Download
+
 1. Download from: https://github.com/hakkisagdic/context-manager/releases
 2. Extract to: `C:\Program Files\context-manager`
 3. Add to PATH: `C:\Program Files\context-manager\bin`
@@ -133,7 +145,7 @@ npm install -g @hakkisagdic/context-manager
 npm install @hakkisagdic/context-manager
 
 # Specific version
-npm install -g @hakkisagdic/context-manager@2.3.5
+npm install -g @hakkisagdic/context-manager@3.0.0
 
 # Insider/pre-release
 npm install -g @hakkisagdic/context-manager@next
@@ -222,31 +234,6 @@ context-manager convert test.json --from json --to toon
 
 ## 🎨 Optional Dependencies
 
-Context Manager has **optional interactive features** that require additional dependencies.
-
-### Interactive Wizard & Dashboard
-
-These features use React + Ink for beautiful terminal UI:
-
-```bash
-# Install interactive dependencies
-npm install -g ink react ink-select-input ink-text-input ink-spinner
-
-# Or with the package
-npm install -g @hakkisagdic/context-manager
-```
-
-**Features Enabled:**
-- ✨ Interactive Wizard (`--wizard`)
-- 📊 Live Dashboard (`--dashboard`)
-- 🎨 Progress bars and spinners
-- ⌨️ Keyboard navigation
-
-**Without these dependencies:**
-- Tool still works perfectly
-- Uses simple text-based output
-- All core features available
-
 ### Exact Token Counting
 
 For exact GPT-4 token counting (optional):
@@ -256,9 +243,11 @@ npm install -g tiktoken
 ```
 
 **With tiktoken:**
+
 - ✅ Exact token counts (100% accuracy)
 
 **Without tiktoken:**
+
 - ✅ Smart estimation (~95% accuracy)
 
 ---
@@ -305,6 +294,7 @@ Remove-Item -Path $env:USERPROFILE\.context-manager -Recurse
 ### "command not found: context-manager"
 
 **Solution:**
+
 ```bash
 # Check PATH
 echo $PATH
@@ -317,6 +307,7 @@ source ~/.bashrc  # or ~/.zshrc
 ### Permission Denied
 
 **Linux/macOS:**
+
 ```bash
 # Use sudo for global install
 sudo npm install -g @hakkisagdic/context-manager
@@ -326,6 +317,7 @@ npm install @hakkisagdic/context-manager
 ```
 
 **Windows:**
+
 ```powershell
 # Run PowerShell as Administrator
 ```
@@ -355,11 +347,12 @@ npm install -g @hakkisagdic/context-manager
 ### Wizard/Dashboard Not Working
 
 ```bash
-# Install interactive dependencies
-npm install -g ink react ink-select-input ink-text-input ink-spinner
-
-# Or use simple mode
+# Ink is bundled since v3.0.0, no manual install needed
+# If wizard still doesn't work, try simple mode
 context-manager --simple
+
+# Or reinstall to ensure all bundled dependencies are present
+npm install -g @hakkisagdic/context-manager
 ```
 
 ---
@@ -386,7 +379,7 @@ context-manager update rollback
 npm update -g @hakkisagdic/context-manager
 
 # Update to specific version
-npm install -g @hakkisagdic/context-manager@2.3.6
+npm install -g @hakkisagdic/context-manager@3.0.0
 ```
 
 ### Homebrew
@@ -400,30 +393,36 @@ brew upgrade context-manager
 ## 🎯 Installation Types
 
 ### Global Installation
+
 ```bash
 npm install -g @hakkisagdic/context-manager
 ```
+
 ✅ Available system-wide
 ✅ Use from any directory
 ✅ Simple `context-manager` command
 ❌ Requires admin/sudo (sometimes)
 
 ### Local Installation
+
 ```bash
 npm install @hakkisagdic/context-manager
 ```
+
 ✅ No admin rights needed
 ✅ Project-specific version
 ❌ Use via `npx` or npm scripts
 ❌ Not in system PATH
 
 ### Source Installation (Developers)
+
 ```bash
 git clone https://github.com/hakkisagdic/context-manager.git
 cd context-manager
 npm install
 npm link  # Make globally available
 ```
+
 ✅ Latest development version
 ✅ Easy to contribute
 ❌ Manual updates required
@@ -450,6 +449,6 @@ After installation:
 
 ---
 
-**Version:** 2.3.6+
+**Version:** 3.0.0
 **Maintainer:** Hakkı Sağdıç
 **License:** MIT
