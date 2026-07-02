@@ -1,4 +1,6 @@
-# Context Manager
+# ctxman
+
+> Formerly **@hakkisagdic/context-manager** — now published unscoped as `ctxman` (`npm i -g ctxman`). The old `context-manager` command keeps working as an alias.
 
 **AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, automatic LLM optimization, and real-time analysis. Perfect for AI-assisted development workflows.
 
@@ -20,7 +22,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 
 ## Files
 
-- **`context-manager.js`** - Main LLM context analysis script with exact token counting
+- **`ctxman.js`** - Main LLM context analysis script with exact token counting
 - **`.contextignore`** - Files to exclude from token calculation (EXCLUDE mode)
 - **`.contextinclude`** - Files to include in token calculation (INCLUDE mode)
 - **`README.md`** - This documentation file
@@ -66,7 +68,7 @@ If you find this tool helpful, consider buying me a coffee! Your support helps m
 ### 🧙 Interactive Wizard Mode (Default)
 ```bash
 # Launch interactive wizard (guides you through options)
-context-manager
+ctxman
 ```
 
 The wizard provides a user-friendly interface to:
@@ -79,39 +81,39 @@ The wizard provides a user-friendly interface to:
 ### 💻 CLI Mode
 ```bash
 # Use CLI mode instead of wizard
-context-manager --cli
+ctxman --cli
 
 # CLI mode with options
-context-manager --cli --save-report
-context-manager --cli --context-clipboard
-context-manager --cli --gitingest
-context-manager --cli --method-level
+ctxman --cli --save-report
+ctxman --cli --context-clipboard
+ctxman --cli --gitingest
+ctxman --cli --method-level
 
 # Any analysis flag automatically enables CLI mode
-context-manager -s              # Auto CLI (save report)
-context-manager -m              # Auto CLI (method-level)
-context-manager --context-export  # Auto CLI (export)
+ctxman -s              # Auto CLI (save report)
+ctxman -m              # Auto CLI (method-level)
+ctxman --context-export  # Auto CLI (export)
 
 # Combine multiple exports
-context-manager --cli -g -s  # GitIngest digest + detailed report
+ctxman --cli -g -s  # GitIngest digest + detailed report
 ```
 
 ### 🤖 LLM Optimization (v2.3.7)
 ```bash
 # Auto-detect LLM from environment
 export ANTHROPIC_API_KEY=sk-...
-context-manager  # Automatically optimizes for Claude
+ctxman  # Automatically optimizes for Claude
 
 # Explicit model selection
-context-manager --target-model claude-sonnet-4.5
-context-manager --target-model gpt-4o
-context-manager --target-model gemini-2.0-flash
+ctxman --target-model claude-sonnet-4.5
+ctxman --target-model gpt-4o
+ctxman --target-model gemini-2.0-flash
 
 # List all supported models
-context-manager --list-llms
+ctxman --list-llms
 
 # Context fit analysis
-context-manager --cli --target-model claude-sonnet-4.5
+ctxman --cli --target-model claude-sonnet-4.5
 # Output:
 # 📊 Context Window Analysis:
 #    Target Model: Claude Sonnet 4.5
@@ -126,20 +128,20 @@ Supported LLM models (9+ models):
 - **Google**: Gemini 1.5 Pro, Gemini 2.0 Flash
 - **DeepSeek**: DeepSeek Coder, DeepSeek Chat
 
-Custom models supported via `.context-manager/custom-profiles.json`
+Custom models supported via `.ctxman/custom-profiles.json`
 
 ### 🔀 Git Integration (v3.0.0)
 ```bash
 # Analyze only uncommitted changes
-context-manager --changed-only
+ctxman --changed-only
 
 # Analyze changes since a commit/branch
-context-manager --changed-since main
-context-manager --changed-since HEAD~5
-context-manager --changed-since v2.3.0
+ctxman --changed-since main
+ctxman --changed-since HEAD~5
+ctxman --changed-since v2.3.0
 
 # With author information
-context-manager --changed-only --with-authors
+ctxman --changed-only --with-authors
 
 # Output:
 # 🔀 Git Integration - Analyzing Changed Files
@@ -152,13 +154,13 @@ context-manager --changed-only --with-authors
 ### 👁️ Watch Mode (v3.0.0)
 ```bash
 # Start watch mode
-context-manager watch
+ctxman watch
 
 # With method-level analysis
-context-manager watch -m
+ctxman watch -m
 
 # Custom debounce (default: 1000ms)
-context-manager watch --debounce 2000
+ctxman watch --debounce 2000
 
 # Output:
 # 👁️ Watch mode active
@@ -170,10 +172,10 @@ context-manager watch --debounce 2000
 ### 🌐 API Server (v3.0.0)
 ```bash
 # Start API server
-context-manager serve
+ctxman serve
 
 # Custom port and authentication
-context-manager serve --port 8080 --auth-token my-secret-token
+ctxman serve --port 8080 --auth-token my-secret-token
 
 # API Endpoints:
 # GET  /api/v1/analyze       - Full project analysis
@@ -192,29 +194,29 @@ curl http://localhost:3000/api/v1/diff?since=main
 ### Wrapper Script Usage
 ```bash
 # Using the NPM package globally
-context-manager
-context-manager --save-report
-context-manager --context-clipboard
+ctxman
+ctxman --save-report
+ctxman --context-clipboard
 ```
 
 ## 🧪 Testing & Validation
 
 ### Test Repositories
 
-Context Manager includes real-world test repositories for validation:
+Ctxman includes real-world test repositories for validation:
 
 ```bash
 # Express.js test repo (git submodule)
 cd test-repos/express
 
 # Run full test suite
-context-manager --cli -m --target-model claude-sonnet-4.5
+ctxman --cli -m --target-model claude-sonnet-4.5
 
 # Git integration test
-context-manager --changed-since v5.0.0
+ctxman --changed-since v5.0.0
 
 # Watch mode test
-context-manager watch
+ctxman watch
 ```
 
 See [test-repos/README.md](test-repos/README.md) for complete testing guide.
@@ -272,19 +274,19 @@ The tool is configured to focus on **core application logic only**:
 ### Basic Analysis
 ```bash
 # Interactive analysis with export selection
-context-manager
+ctxman
 
 # Quiet mode (no file listing)
-context-manager --no-verbose
+ctxman --no-verbose
 
 # With detailed JSON report
-context-manager --save-report
+ctxman --save-report
 
 # Generate LLM context file list
-context-manager --context-export
+ctxman --context-export
 
 # Copy context directly to clipboard
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 ### Interactive Export Selection
@@ -293,7 +295,7 @@ When you run the tool without specifying export options (`--save-report`, `--con
 
 ```bash
 # Run analysis and get prompted for export options
-context-manager
+ctxman
 
 # The tool will show:
 # 📤 Export Options:
@@ -331,16 +333,16 @@ The token calculator supports two complementary filtering modes:
 ```bash
 # EXCLUDE mode: Include everything except patterns in .contextignore
 rm .contextinclude  # Remove include file
-context-manager
+ctxman
 
 # INCLUDE mode: Include only patterns in .contextinclude
 # (automatically ignores .contextignore)
-context-manager
+ctxman
 ```
 
 ### Help and Options
 ```bash
-context-manager --help
+ctxman --help
 ```
 
 ### Available Options
@@ -380,16 +382,16 @@ The token calculator can generate optimized file lists for LLM consumption, with
 
 ```bash
 # Generate minimal LLM context and save to llm-context.json (2.3k chars JSON)
-context-manager --context-export
+ctxman --context-export
 
 # Copy minimal context directly to clipboard (2.3k chars JSON - identical to file)
-context-manager --context-clipboard
+ctxman --context-clipboard
 
 # Copy detailed context to clipboard (8.6k chars)
-context-manager --detailed-context --context-clipboard
+ctxman --detailed-context --context-clipboard
 
 # Combine with regular analysis
-context-manager --save-report --context-clipboard
+ctxman --save-report --context-clipboard
 ```
 
 ### Output Format Examples
@@ -474,23 +476,23 @@ This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitinges
 
 ```bash
 # Standard workflow - analyze and generate digest in one step
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 
 # Combine with other exports
-context-manager -g -s  # digest.txt + token-analysis-report.json
+ctxman -g -s  # digest.txt + token-analysis-report.json
 
 # Two-step workflow - generate digest from existing JSON (fast, no re-scan)
-context-manager -s                                    # Step 1: Create report
-context-manager --gitingest-from-report               # Step 2: Generate digest
+ctxman -s                                    # Step 1: Create report
+ctxman --gitingest-from-report               # Step 2: Generate digest
 
 # Or from LLM context
-context-manager --context-export                      # Step 1: Create context
-context-manager --gitingest-from-context              # Step 2: Generate digest
+ctxman --context-export                      # Step 1: Create context
+ctxman --gitingest-from-context              # Step 2: Generate digest
 
 # With custom filenames
-context-manager --gitingest-from-report my-report.json
-context-manager --gitingest-from-context my-context.json
+ctxman --gitingest-from-report my-report.json
+ctxman --gitingest-from-context my-context.json
 ```
 
 **Why use JSON-based digest?**
@@ -705,7 +707,7 @@ You can integrate this tool into:
 - Ensure files are recognized as text files
 - Use verbose mode to see exclusion reasons
 
-# Context Manager
+# Ctxman
 
 LLM context manager with method-level filtering and token optimization. The ultimate tool for AI-assisted development.
 
@@ -728,13 +730,13 @@ LLM context manager with method-level filtering and token optimization. The ulti
 ### Option 1: NPM Package (Recommended)
 ```bash
 # Local installation
-npm install @hakkisagdic/context-manager
+npm install ctxman
 
 # Global installation
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 
 # Run globally
-context-manager --help
+ctxman --help
 ```
 
 ### Option 2: Direct Usage
@@ -750,27 +752,27 @@ node token-calculator.js --help
 ### Basic Analysis
 ```bash
 # Interactive analysis with export selection
-context-manager
+ctxman
 
 # File-level analysis with clipboard export
-context-manager --context-clipboard
+ctxman --context-clipboard
 
 # Method-level analysis
-context-manager --method-level --context-export
+ctxman --method-level --context-export
 
 # Analysis with reports
-context-manager --method-level --save-report --verbose
+ctxman --method-level --save-report --verbose
 ```
 
 ### Advanced Usage
 ```bash
 # Focus on specific methods only
 echo "calculateTokens\nhandleRequest\n*Validator" > .methodinclude
-context-manager --method-level
+ctxman --method-level
 
 # Exclude test methods
 echo "*test*\n*debug*\nconsole" > .methodignore
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 ```
 
 ## Usage
@@ -779,25 +781,25 @@ context-manager --method-level --context-clipboard
 
 ```bash
 # Basic analysis
-context-manager
+ctxman
 
 # Method-level analysis
-context-manager --method-level
+ctxman --method-level
 
 # Save detailed report
-context-manager --save-report
+ctxman --save-report
 
 # Copy context to clipboard
-context-manager --context-clipboard
+ctxman --context-clipboard
 
 # Combine options
-context-manager --method-level --save-report --verbose
+ctxman --method-level --save-report --verbose
 ```
 
 ### Programmatic Usage
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 // Basic file-level analysis
 const analyzer = new TokenAnalyzer('./src', {
@@ -971,11 +973,11 @@ utils.debugLog
 
 ```bash
 # Ultra-compact method-level context
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 
 # Focus on core business logic only
 echo "handleRequest\nprocessData\nvalidateInput" > .methodinclude
-context-manager --method-level --context-export
+ctxman --method-level --context-export
 ```
 
 **Result:** 89% smaller context compared to full codebase
@@ -985,10 +987,10 @@ context-manager --method-level --context-export
 
 ```bash
 # Analysis with detailed reports
-context-manager --save-report --verbose
+ctxman --save-report --verbose
 
 # Track largest files and methods
-context-manager --method-level --save-report
+ctxman --method-level --save-report
 ```
 
 ### 3. 🔍 Method-Level Debugging
@@ -997,11 +999,11 @@ context-manager --method-level --save-report
 ```bash
 # Debug authentication methods only
 echo "*auth*\n*login*\n*validate*" > .methodinclude
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 
 # Exclude test and debug methods
 echo "*test*\n*debug*\nconsole\nlogger" > .methodignore
-context-manager --method-level
+ctxman --method-level
 ```
 
 ### 4. 🚀 CI/CD Integration
@@ -1009,10 +1011,10 @@ context-manager --method-level
 
 ```bash
 # Daily token analysis for monitoring
-context-manager --save-report > reports/analysis-$(date +%Y%m%d).json
+ctxman --save-report > reports/analysis-$(date +%Y%m%d).json
 
 # Check method complexity trends
-context-manager --method-level --save-report
+ctxman --method-level --save-report
 ```
 
 ### 5. 📈 Code Quality Gates
@@ -1020,7 +1022,7 @@ context-manager --method-level --save-report
 
 ```bash
 # Check if codebase exceeds LLM context limits
-TOKENS=$(context-manager --context-export | jq '.project.totalTokens')
+TOKENS=$(ctxman --context-export | jq '.project.totalTokens')
 if [ $TOKENS -gt 100000 ]; then
   echo "Codebase too large for LLM context!"
   exit 1
@@ -1033,30 +1035,30 @@ fi
 
 | Option | Short | Description | Example |
 |--------|-------|-------------|----------|
-| `--save-report` | `-s` | Save detailed JSON report | `context-manager -s` |
-| `--verbose` | `-v` | Show included files/methods | `context-manager -v` |
-| `--context-export` | | Generate LLM context file | `context-manager --context-export` |
-| `--context-clipboard` | | Copy context to clipboard | `context-manager --context-clipboard` |
-| `--method-level` | `-m` | Enable method-level analysis | `context-manager -m` |
-| `--help` | `-h` | Show help message | `context-manager -h` |
+| `--save-report` | `-s` | Save detailed JSON report | `ctxman -s` |
+| `--verbose` | `-v` | Show included files/methods | `ctxman -v` |
+| `--context-export` | | Generate LLM context file | `ctxman --context-export` |
+| `--context-clipboard` | | Copy context to clipboard | `ctxman --context-clipboard` |
+| `--method-level` | `-m` | Enable method-level analysis | `ctxman -m` |
+| `--help` | `-h` | Show help message | `ctxman -h` |
 
 ### Usage Patterns
 
 ```bash
 # Quick analysis with interactive export
-context-manager
+ctxman
 
 # Method-level analysis with all outputs
-context-manager --method-level --save-report --context-export --verbose
+ctxman --method-level --save-report --context-export --verbose
 
 # LLM-optimized context generation
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 
 # CI/CD monitoring
-context-manager --save-report --context-export
+ctxman --save-report --context-export
 
 # Development debugging
-context-manager --method-level --verbose
+ctxman --method-level --verbose
 ```
 
 ## 💻 Programmatic API
@@ -1064,7 +1066,7 @@ context-manager --method-level --verbose
 ### Basic Usage
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 // File-level analysis
 const analyzer = new TokenAnalyzer('./src', {
@@ -1078,7 +1080,7 @@ analyzer.run();
 ### Method-Level Analysis
 
 ```javascript
-const { TokenAnalyzer, MethodAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer, MethodAnalyzer } = require('ctxman');
 
 // Method-level analysis with custom filtering
 const analyzer = new TokenAnalyzer('./src', {
@@ -1121,7 +1123,7 @@ console.log('Analysis complete!');
 ### Custom Method Analysis
 
 ```javascript
-const { MethodAnalyzer, MethodFilterParser } = require('@hakkisagdic/context-manager');
+const { MethodAnalyzer, MethodFilterParser } = require('ctxman');
 
 // Create custom method filter
 const filter = new MethodFilterParser(
@@ -1157,9 +1159,9 @@ MIT License - see LICENSE file for details
 
 ## 📞 Support
 
-- 🐛 [Report Issues](https://github.com/hakkisagdic/context-manager/issues)
-- 📖 [Documentation](https://github.com/hakkisagdic/context-manager#readme)
-- 💬 [Discussions](https://github.com/hakkisagdic/context-manager/discussions)
+- 🐛 [Report Issues](https://github.com/hakkisagdic/ctxman/issues)
+- 📖 [Documentation](https://github.com/hakkisagdic/ctxman#readme)
+- 💬 [Discussions](https://github.com/hakkisagdic/ctxman/discussions)
 
 ---
 

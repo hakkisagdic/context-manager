@@ -32,7 +32,7 @@ describe('Updater Final Coverage', () => {
 
     describe('Installation Type Detection', () => {
         test('detectInstallationType identifies global install', () => {
-            child_process.execSync.mockReturnValue('@hakkisagdic/context-manager@1.0.0');
+            child_process.execSync.mockReturnValue('ctxman@1.0.0');
             const type = updater.detectInstallationType();
             expect(type).toBe('global');
         });
@@ -50,7 +50,7 @@ describe('Updater Final Coverage', () => {
             child_process.execSync.mockReturnValue('/usr/local/lib/node_modules\n');
 
             const dir = updater.getInstallDir();
-            expect(dir).toBe('/usr/local/lib/node_modules/@hakkisagdic/context-manager');
+            expect(dir).toBe('/usr/local/lib/node_modules/ctxman');
         });
 
         test('getInstallDir handles global install error', () => {

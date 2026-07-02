@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-Context Manager v2.3.6+ includes enterprise-grade logging and automatic update capabilities:
+Ctxman v2.3.6+ includes enterprise-grade logging and automatic update capabilities:
 
 1. **🔍 Logging System** - Multi-level logging with file output
 2. **🚀 Auto-Update** - Check and install updates automatically
@@ -32,7 +32,7 @@ Context Manager v2.3.6+ includes enterprise-grade logging and automatic update c
 #### Programmatic API
 
 ```javascript
-const { getLogger, createLogger } = require('@hakkisagdic/context-manager');
+const { getLogger, createLogger } = require('ctxman');
 
 // Get default logger
 const logger = getLogger();
@@ -69,8 +69,8 @@ const customLogger = createLogger({
 const logger = createLogger({
     level: 'info',              // Minimum level to log
     logToFile: true,            // Write to file
-    logDir: '.context-manager/logs',  // Log directory
-    logFile: 'context-manager-2025-11-03.log', // Log file name
+    logDir: '.ctxman/logs',  // Log directory
+    logFile: 'ctxman-2025-11-03.log', // Log file name
     silent: false               // Suppress console output
 });
 ```
@@ -80,18 +80,18 @@ const logger = createLogger({
 ```bash
 # Set log level via environment
 export LOG_LEVEL=debug
-context-manager --verbose
+ctxman --verbose
 
 # Disable file logging
 export LOG_TO_FILE=false
-context-manager
+ctxman
 ```
 
 ### Log File Management
 
 #### Location
 
-Logs are stored in: `~/.context-manager/logs/`
+Logs are stored in: `~/.ctxman/logs/`
 
 #### File Format
 
@@ -163,7 +163,7 @@ logger.custom('✨', 'info', 'Feature enabled');
 
 ```bash
 # Check for updates
-context-manager update check
+ctxman update check
 
 # Or use npm script
 npm run update:check
@@ -184,14 +184,14 @@ Output:
    - Added auto-update functionality
    - Bug fixes and improvements
 
-To install: context-manager update install
+To install: ctxman update install
 ```
 
 #### Install Update
 
 ```bash
 # Install latest update
-context-manager update install
+ctxman update install
 
 # Or use npm script
 npm run update:install
@@ -205,7 +205,7 @@ npm run update:install
 
 ```bash
 # Switch to stable
-context-manager update channel stable
+ctxman update channel stable
 ```
 
 - **Release Frequency**: Monthly
@@ -217,7 +217,7 @@ context-manager update channel stable
 
 ```bash
 # Switch to insider
-context-manager update channel insider
+ctxman update channel insider
 ```
 
 - **Release Frequency**: Weekly
@@ -229,7 +229,7 @@ context-manager update channel insider
 
 ```bash
 # Show update configuration
-context-manager update info
+ctxman update info
 ```
 
 Output:
@@ -242,10 +242,10 @@ Output:
 
 Available commands:
 
-   context-manager update check    - Check for updates
-   context-manager update install  - Install latest update
-   context-manager update channel  - Switch update channel
-   context-manager update info     - Show this information
+   ctxman update check    - Check for updates
+   ctxman update install  - Install latest update
+   ctxman update channel  - Switch update channel
+   ctxman update info     - Show this information
 
 Channels:
 
@@ -256,7 +256,7 @@ Channels:
 ### Programmatic API
 
 ```javascript
-const Updater = require('@hakkisagdic/context-manager').Updater;
+const Updater = require('ctxman').Updater;
 
 const updater = new Updater({
     channel: 'stable',
@@ -278,7 +278,7 @@ await updater.switchChannel('insider');
 
 ### Configuration
 
-Updates are configured in: `~/.context-manager/config.json`
+Updates are configured in: `~/.ctxman/config.json`
 
 ```json
 {
@@ -295,9 +295,9 @@ Currently configured endpoints:
 
 ```javascript
 {
-    stable: 'https://api.github.com/repos/hakkisagdic/context-manager/releases/latest',
-    insider: 'https://api.github.com/repos/hakkisagdic/context-manager/releases',
-    version: 'https://raw.githubusercontent.com/hakkisagdic/context-manager/main/package.json'
+    stable: 'https://api.github.com/repos/hakkisagdic/ctxman/releases/latest',
+    insider: 'https://api.github.com/repos/hakkisagdic/ctxman/releases',
+    version: 'https://raw.githubusercontent.com/hakkisagdic/ctxman/main/package.json'
 }
 ```
 
@@ -309,11 +309,11 @@ Currently configured endpoints:
 
 ### Install Script
 
-Install Context Manager system-wide:
+Install Ctxman system-wide:
 
 ```bash
 # Download and run install script
-bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.sh)
 
 # Or run locally
 npm run install:local
@@ -326,35 +326,35 @@ The script offers two installation methods:
 **1. Global Installation (Recommended)**
 ```bash
 # Installs via npm globally
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 
 # Available system-wide
-context-manager --help
+ctxman --help
 ```
 
 **2. Local Installation**
 ```bash
-# Installs to ~/.context-manager
+# Installs to ~/.ctxman
 # Creates symlink to /usr/local/bin
 # Custom configuration
 ```
 
 #### What Gets Installed
 
-- ✅ Context Manager binary
+- ✅ Ctxman binary
 - ✅ All dependencies
-- ✅ Configuration directory (`~/.context-manager`)
-- ✅ Log directory (`~/.context-manager/logs`)
+- ✅ Configuration directory (`~/.ctxman`)
+- ✅ Log directory (`~/.ctxman/logs`)
 - ✅ Default configuration file
 - ✅ Command symlink (local mode)
 
 ### Uninstall Script
 
-Remove Context Manager from your system:
+Remove Ctxman from your system:
 
 ```bash
 # Download and run uninstall script
-bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/uninstall.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/uninstall.sh)
 
 # Or run locally
 npm run uninstall:local
@@ -364,7 +364,7 @@ npm run uninstall:local
 
 **Keep Configuration** (default):
 - Removes binaries
-- Keeps `~/.context-manager` with settings and logs
+- Keeps `~/.ctxman` with settings and logs
 - Easy to reinstall with same settings
 
 **Full Removal**:
@@ -388,12 +388,12 @@ npm run uninstall:local
 ### Config Directory Structure
 
 ```
-~/.context-manager/
+~/.ctxman/
 ├── config.json          # Main configuration
 ├── update-cache.json    # Update check cache
 └── logs/                # Log files
-    ├── context-manager-2025-11-03.log
-    ├── context-manager-2025-11-02.log
+    ├── ctxman-2025-11-03.log
+    ├── ctxman-2025-11-02.log
     └── ...
 ```
 
@@ -433,7 +433,7 @@ npm run uninstall:local
 ### Example 1: Custom Logger in Analysis
 
 ```javascript
-const { TokenCalculator, getLogger } = require('@hakkisagdic/context-manager');
+const { TokenCalculator, getLogger } = require('ctxman');
 
 const logger = getLogger({ level: 'debug' });
 
@@ -456,7 +456,7 @@ logger.info('Analysis complete', {
 ### Example 2: Auto-Update Check on Startup
 
 ```javascript
-const { Updater, getLogger } = require('@hakkisagdic/context-manager');
+const { Updater, getLogger } = require('ctxman');
 
 const logger = getLogger();
 const updater = new Updater({ channel: 'stable' });
@@ -477,7 +477,7 @@ updater.checkAndNotify().then(updateInfo => {
 ### Example 3: Silent Mode with File Logging
 
 ```javascript
-const { createLogger } = require('@hakkisagdic/context-manager');
+const { createLogger } = require('ctxman');
 
 const logger = createLogger({
     level: 'debug',
@@ -502,11 +502,11 @@ console.log(logs);
 
 ### Logs Not Being Created
 
-**Symptom:** No log files in `~/.context-manager/logs/`
+**Symptom:** No log files in `~/.ctxman/logs/`
 
 **Solutions:**
-1. Check permissions: `ls -la ~/.context-manager/logs/`
-2. Verify directory exists: `mkdir -p ~/.context-manager/logs`
+1. Check permissions: `ls -la ~/.ctxman/logs/`
+2. Verify directory exists: `mkdir -p ~/.ctxman/logs`
 3. Check logToFile setting: `logger.logToFile === true`
 
 ### Update Check Failing
@@ -526,7 +526,7 @@ console.log(logs);
 **Solutions:**
 1. Ensure Node.js 14+ installed: `node --version`
 2. Check npm is available: `npm --version`
-3. Verify write permissions: `/usr/local/bin` or `~/.context-manager`
+3. Verify write permissions: `/usr/local/bin` or `~/.ctxman`
 4. Run with sudo if needed: `sudo bash scripts/install.sh`
 
 ---

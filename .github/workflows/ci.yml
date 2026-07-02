@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          # package lives at the repo ROOT (the old projects/context-manager
+          # package lives at the repo ROOT (the old projects/ctxman
           # monorepo layout is long gone — it kept CI red for months)
           cache-dependency-path: package-lock.json
 

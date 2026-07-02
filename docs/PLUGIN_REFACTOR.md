@@ -100,7 +100,7 @@ To support the new plugin type effectively, `PluginManager.js` needs the followi
 ## 4. Implementation Plan
 
 ### Phase 1: Core Framework
-1.  Create `projects/context-manager/lib/plugins/DataSourcePlugin.js`.
+1.  Create `projects/ctxman/lib/plugins/DataSourcePlugin.js`.
 2.  Update `PluginManager.js` to include `./lib/datasources` in default paths.
 3.  Add `getPluginsByType()` and `configurePlugin()` methods to `PluginManager`.
 
@@ -109,7 +109,7 @@ To support the new plugin type effectively, `PluginManager.js` needs the followi
 2.  Implement a real `LinearPlugin` or `JiraPlugin` (if credentials available) or a generic `HttpSourcePlugin`.
 
 ### Phase 3: Integration
-1.  Update the main Context Manager logic to allow querying data sources alongside file reading.
+1.  Update the main Ctxman logic to allow querying data sources alongside file reading.
 
 ## 5. Example: Linear Plugin
 

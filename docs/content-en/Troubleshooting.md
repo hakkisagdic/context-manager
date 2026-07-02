@@ -2,7 +2,7 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js) - *Updated in commit 6f5fea32*
+- [ctxman.js](file://ctxman.js) - *Updated in commit 6f5fea32*
 - [README.md](file://README.md) - *Updated in commit 6f5fea32*
 - [bin/cli.js](file://bin/cli.js)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in commit 6f5fea32*
@@ -23,20 +23,20 @@
 
 ## Include/Exclude Mode Confusion
 
-The context-manager tool uses a priority-based system for file inclusion and exclusion. The presence of a `.contextinclude` file takes precedence over `.contextignore`, which can lead to confusion when users expect files to be included but they're excluded.
+The ctxman tool uses a priority-based system for file inclusion and exclusion. The presence of a `.contextinclude` file takes precedence over `.contextignore`, which can lead to confusion when users expect files to be included but they're excluded.
 
 When `.contextinclude` exists, the tool operates in INCLUDE mode, meaning only files matching the patterns in this file will be included in the analysis. This overrides any `.contextignore` rules. Users might expect files to be included based on their `.contextignore` configuration, but if a `.contextinclude` file exists, those expectations will not be met.
 
 The tool clearly indicates which mode is active during execution. In INCLUDE mode, it displays "📅 Found calculator config - using INCLUDE mode", while in EXCLUDE mode it shows "📅 Found calculator config - using EXCLUDE mode". This visual cue helps identify the current filtering mode.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L134-L157)
-- [context-manager.js](file://context-manager.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L134-L157)
+- [ctxman.js](file://ctxman.js#L181-L217)
 - [README.md](file://README.md#L121-L150)
 
 ## Pattern Matching Issues
 
-Pattern matching in the context-manager tool follows specific syntax rules that users must understand to configure their `.contextignore` and `.methodinclude` files correctly. Common issues include incorrect syntax, missing negation patterns, and misunderstanding of wildcard behavior.
+Pattern matching in the ctxman tool follows specific syntax rules that users must understand to configure their `.contextignore` and `.methodinclude` files correctly. Common issues include incorrect syntax, missing negation patterns, and misunderstanding of wildcard behavior.
 
 The tool converts patterns to regular expressions for matching, with specific transformations:
 - `**` becomes `.*` (matches any number of directories)
@@ -46,13 +46,13 @@ The tool converts patterns to regular expressions for matching, with specific tr
 Negation patterns (prefixed with `!`) work differently in INCLUDE versus EXCLUDE modes. In INCLUDE mode, negation patterns exclude files from the included set, while in EXCLUDE mode, they re-include files that would otherwise be excluded. A common mistake is placing negation patterns in the wrong order, as the tool processes patterns sequentially.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L159-L179)
-- [context-manager.js](file://context-manager.js#L219-L257)
+- [ctxman.js](file://ctxman.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L219-L257)
 - [README.md](file://README.md#L544-L610)
 
 ## Token Counting Discrepancies
 
-The context-manager tool provides both exact and estimated token counts, which can lead to discrepancies that users might find confusing. The tool first attempts to use the tiktoken library for exact GPT-4 compatible token counting. If tiktoken is not available, it falls back to an estimation algorithm.
+The ctxman tool provides both exact and estimated token counts, which can lead to discrepancies that users might find confusing. The tool first attempts to use the tiktoken library for exact GPT-4 compatible token counting. If tiktoken is not available, it falls back to an estimation algorithm.
 
 The estimation algorithm uses predefined characters-per-token ratios for different file types:
 - JavaScript/TypeScript: 3.2 characters per token
@@ -64,8 +64,8 @@ The estimation algorithm uses predefined characters-per-token ratios for differe
 These estimates are typically around 95% accurate compared to exact counts. Users might notice differences between the estimated counts and what they expect from other tools. The tool clearly indicates which counting method is being used in the output: "🎯 Token calculation: ✅ Exact (using tiktoken)" for exact counts or "🎯 Token calculation: ⚠️ Estimated" for estimates.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L259-L292)
-- [context-manager.js](file://context-manager.js#L385-L400)
+- [ctxman.js](file://ctxman.js#L259-L292)
+- [ctxman.js](file://ctxman.js#L385-L400)
 - [README.md](file://README.md#L801-L879)
 
 ## Missing Files in Analysis
@@ -80,8 +80,8 @@ A file might be missing from analysis if it's excluded by any of these mechanism
 Additionally, the tool only analyzes text files, determined by file extension and basename. Files with extensions not in the recognized text extensions list or basenames not in the text files list will be skipped entirely, even if they're not explicitly ignored.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L181-L217)
-- [context-manager.js](file://context-manager.js#L414-L453)
+- [ctxman.js](file://ctxman.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L414-L453)
 - [README.md](file://README.md#L294-L356)
 
 ## Unexpected File Inclusions
@@ -93,8 +93,8 @@ Another cause is the use of broad patterns like `**/*.js` without proper negatio
 The tool's verbose output can help identify why files are being included. When running with the `--verbose` flag, the tool shows which mode is active and can help trace the inclusion logic.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L134-L157)
-- [context-manager.js](file://context-manager.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L134-L157)
+- [ctxman.js](file://ctxman.js#L181-L217)
 - [README.md](file://README.md#L544-L610)
 
 ## Performance Issues with Large Codebases
@@ -106,13 +106,13 @@ The tool automatically skips certain directories like `node_modules`, `.git`, `d
 Method-level analysis (`--method-level` flag) significantly increases processing time as the tool needs to parse each file to extract method definitions and calculate tokens for each method individually. For very large codebases, this can result in noticeable delays.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L455-L485)
-- [context-manager.js](file://context-manager.js#L521-L545)
+- [ctxman.js](file://ctxman.js#L455-L485)
+- [ctxman.js](file://ctxman.js#L521-L545)
 - [bin/cli.js](file://bin/cli.js#L20-L35)
 
 ## Diagnostic Steps
 
-To diagnose issues with the context-manager tool, users should follow these steps:
+To diagnose issues with the ctxman tool, users should follow these steps:
 
 1. Run the tool with the `--verbose` flag to see detailed output about which files are being processed and which rules are being applied.
 
@@ -127,8 +127,8 @@ To diagnose issues with the context-manager tool, users should follow these step
 The tool provides clear visual indicators in its output that help with diagnosis, such as the number of files ignored due to `.gitignore` rules versus context rules, and whether exact or estimated token counting is being used.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L609-L643)
-- [context-manager.js](file://context-manager.js#L715-L743)
+- [ctxman.js](file://ctxman.js#L609-L643)
+- [ctxman.js](file://ctxman.js#L715-L743)
 - [bin/cli.js](file://bin/cli.js#L41-L66)
 
 ## Common Environment Issues
@@ -140,8 +140,8 @@ Permission errors can occur when the tool doesn't have read access to certain fi
 Another common issue is running the tool from the wrong directory. The tool analyzes the current working directory by default, so users must ensure they're in the correct project root when executing the command.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L259-L292)
-- [context-manager.js](file://context-manager.js#L825-L840)
+- [ctxman.js](file://ctxman.js#L259-L292)
+- [ctxman.js](file://ctxman.js#L825-L840)
 - [README.md](file://README.md#L294-L356)
 
 ## GitIngest Digest Generation Issues
@@ -159,7 +159,7 @@ The GitIngestFormatter automatically detects and applies method-level filtering 
 When generating digests from existing JSON reports using `--gitingest-from-report` or `--gitingest-from-context`, ensure the specified JSON file exists and has the correct structure. The tool will display an error message if the file is not found or has invalid format.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L294-L382)
+- [ctxman.js](file://ctxman.js#L294-L382)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L1-L269)
 - [README.md](file://README.md#L100-L150)
 

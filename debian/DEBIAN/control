@@ -1,13 +1,13 @@
-Package: context-manager
+Package: ctxman
 Version: 2.3.5
 Section: devel
 Priority: optional
 Architecture: all
 Depends: nodejs (>= 14.0.0), npm (>= 6.0.0)
 Maintainer: Hakkı Sağdıç <hakkisagdic@gmail.com>
-Homepage: https://github.com/hakkisagdic/context-manager
+Homepage: https://github.com/hakkisagdic/ctxman
 Description: Universal LLM context manager with method-level filtering
- Context Manager is a universal LLM context optimization tool with
+ Ctxman is a universal LLM context optimization tool with
  method-level filtering and exact token counting. It analyzes codebases
  in 14+ programming languages and generates optimized file/method lists
  for AI assistant consumption.

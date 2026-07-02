@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [index.js](file://index.js)
 - [bin/cli.js](file://bin/cli.js)
 </cite>
@@ -17,7 +17,7 @@
 
 ## LLM Context Optimization
 
-The context-manager tool enables efficient management of token budgets for AI assistants by generating focused context files and filtering out non-essential code. It supports two primary modes of operation: EXCLUDE mode (via `.contextignore`) and INCLUDE mode (via `.contextinclude`), with the latter taking precedence. This dual filtering system ensures precise control over which files are included in the analysis, allowing developers to focus exclusively on core application logic.
+The ctxman tool enables efficient management of token budgets for AI assistants by generating focused context files and filtering out non-essential code. It supports two primary modes of operation: EXCLUDE mode (via `.contextignore`) and INCLUDE mode (via `.contextinclude`), with the latter taking precedence. This dual filtering system ensures precise control over which files are included in the analysis, allowing developers to focus exclusively on core application logic.
 
 For LLM context export, the tool provides two formats: an ultra-compact format (~2.3k characters) and a detailed format (~8.6k characters). The compact format generates structured JSON output ideal for programmatic processing and AI consumption, while the detailed format includes additional metadata such as file categories and importance scores. When using the `--context-clipboard` or `--context-export` options, the tool outputs a clean directory structure without token counts, making it suitable for frequent AI interactions.
 
@@ -25,11 +25,11 @@ Method-level filtering further enhances context optimization through `.methodinc
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L1-L865)
+- [ctxman.js](file://ctxman.js#L1-L865)
 
 ## Codebase Analysis
 
-The context-manager tool provides comprehensive insights into token distribution across the codebase, identifying large files and methods while tracking complexity over time. Using exact token counting via tiktoken (GPT-4 compatible), it delivers accurate metrics that help maintain optimal code health. In the absence of tiktoken, the tool falls back to smart estimation with ~95% accuracy.
+The ctxman tool provides comprehensive insights into token distribution across the codebase, identifying large files and methods while tracking complexity over time. Using exact token counting via tiktoken (GPT-4 compatible), it delivers accurate metrics that help maintain optimal code health. In the absence of tiktoken, the tool falls back to smart estimation with ~95% accuracy.
 
 Key analytical features include:
 - **Token distribution by file type**: Detailed breakdown of tokens per extension
@@ -41,15 +41,15 @@ The tool generates a detailed report showing total files analyzed, total tokens,
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L1-L865)
+- [ctxman.js](file://ctxman.js#L1-L865)
 
 ## CI/CD Integration
 
-The context-manager tool can be seamlessly integrated into CI/CD pipelines for automated code size monitoring, quality gates, and documentation generation. Its command-line interface supports non-interactive execution, making it suitable for use in pre-commit hooks, daily monitoring scripts, and continuous integration workflows.
+The ctxman tool can be seamlessly integrated into CI/CD pipelines for automated code size monitoring, quality gates, and documentation generation. Its command-line interface supports non-interactive execution, making it suitable for use in pre-commit hooks, daily monitoring scripts, and continuous integration workflows.
 
 Common integration patterns include:
-- **Pre-commit hooks**: Running `context-manager --context-clipboard` before commits to ensure only essential code is considered for AI review
-- **Daily monitoring scripts**: Executing `context-manager --save-report` to generate daily analysis reports for trend tracking
+- **Pre-commit hooks**: Running `ctxman --context-clipboard` before commits to ensure only essential code is considered for AI review
+- **Daily monitoring scripts**: Executing `ctxman --save-report` to generate daily analysis reports for trend tracking
 - **Quality gates**: Implementing token budget checks in pipelines using scriptable output (e.g., parsing JSON output to enforce maximum token limits)
 - **Automated documentation**: Generating up-to-date context files that reflect current codebase structure
 
@@ -61,7 +61,7 @@ The interactive export selection feature prompts users to choose between saving 
 
 ## Common Challenges and Solutions
 
-Several common challenges arise when using the context-manager tool, particularly around configuration and filtering behavior:
+Several common challenges arise when using the ctxman tool, particularly around configuration and filtering behavior:
 
 **Include vs Exclude Mode Confusion**: The presence of `.contextinclude` takes priority over `.contextignore`. If unexpected files are being included or excluded, verify which configuration file exists and remove the unwanted one.
 
@@ -75,11 +75,11 @@ Several common challenges arise when using the context-manager tool, particularl
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L1-L865)
+- [ctxman.js](file://ctxman.js#L1-L865)
 
 ## Best Practices and Performance Considerations
 
-To maximize effectiveness when using the context-manager tool, follow these best practices:
+To maximize effectiveness when using the ctxman tool, follow these best practices:
 
 **Configuration Management**: Use `.contextinclude` for precise control over analysis scope, especially in large repositories. Keep patterns simple and test them incrementally.
 
@@ -95,4 +95,4 @@ To maximize effectiveness when using the context-manager tool, follow these best
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L1-L865)
+- [ctxman.js](file://ctxman.js#L1-L865)

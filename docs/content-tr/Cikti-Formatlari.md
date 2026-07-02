@@ -3,7 +3,7 @@
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
 - [README.md](file://README.md) - *GitIngest format detayları ile güncellendi*
-- [context-manager.js](file://context-manager.js) - *GitIngest oluşturma fonksiyonları eklendi*
+- [ctxman.js](file://ctxman.js) - *GitIngest oluşturma fonksiyonları eklendi*
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Yeni GitIngest formatter uygulaması*
 </cite>
 
@@ -18,7 +18,7 @@
 
 ## Giriş
 
-context-manager aracı, AI destekli geliştirme iş akışlarında farklı kullanım senaryoları için üç temel çıktı formatı sağlar. Bu formatlar kod analizi, LLM context optimizasyonu ve proje dokümantasyonunda farklı amaçlara hizmet eder. Araç kapsamlı analiz için detaylı bir JSON raporu oluşturur, hem compact hem de detailed formatlarda LLM context dosyaları oluşturur ve hızlı paylaşım için pano entegrasyonunu destekler. Tüm export formatları dosya ve pano çıktıları arasında tutarlı yapı korur, farklı kullanım senaryolarında güvenilirlik sağlar.
+ctxman aracı, AI destekli geliştirme iş akışlarında farklı kullanım senaryoları için üç temel çıktı formatı sağlar. Bu formatlar kod analizi, LLM context optimizasyonu ve proje dokümantasyonunda farklı amaçlara hizmet eder. Araç kapsamlı analiz için detaylı bir JSON raporu oluşturur, hem compact hem de detailed formatlarda LLM context dosyaları oluşturur ve hızlı paylaşım için pano entegrasyonunu destekler. Tüm export formatları dosya ve pano çıktıları arasında tutarlı yapı korur, farklı kullanım senaryolarında güvenilirlik sağlar.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
@@ -69,15 +69,15 @@ DetailedJSONReport --> File
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 ## LLM Context Formatları
 
-context-manager aracı farklı kullanım senaryoları için optimize edilmiş iki farklı LLM context formatı sunar: varsayılan olarak kullanılan ultra-compact format ve `--detailed-context` flag'i ile etkinleştirilen detailed format. Her iki format da token kullanımını minimize ederken AI asistanları için gerekli proje context'ini sağlamak üzere tasarlanmıştır.
+ctxman aracı farklı kullanım senaryoları için optimize edilmiş iki farklı LLM context formatı sunar: varsayılan olarak kullanılan ultra-compact format ve `--detailed-context` flag'i ile etkinleştirilen detailed format. Her iki format da token kullanımını minimize ederken AI asistanları için gerekli proje context'ini sağlamak üzere tasarlanmıştır.
 
 ### Compact Format (~2.3k karakter)
 
@@ -131,17 +131,17 @@ LLMContext --> MethodStats
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L482-L503)
-- [context-manager.js](file://context-manager.js#L521-L545)
-- [context-manager.js](file://context-manager.js#L505-L519)
+- [ctxman.js](file://ctxman.js#L482-L503)
+- [ctxman.js](file://ctxman.js#L521-L545)
+- [ctxman.js](file://ctxman.js#L505-L519)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L482-L545)
+- [ctxman.js](file://ctxman.js#L482-L545)
 
 ## Pano Formatı
 
-context-manager'daki pano formatı, dosya tabanlı export'larla aynı yapıyı korur ve farklı çıktı methodları arasında tutarlılık sağlar. `--context-clipboard` flag'i kullanıldığında, araç llm-context.json'a kaydedilecek olan aynı JSON yapısını doğrudan sistem panosuna kopyalar.
+ctxman'daki pano formatı, dosya tabanlı export'larla aynı yapıyı korur ve farklı çıktı methodları arasında tutarlılık sağlar. `--context-clipboard` flag'i kullanıldığında, araç llm-context.json'a kaydedilecek olan aynı JSON yapısını doğrudan sistem panosuna kopyalar.
 
 Uygulama platformlar arası pano işlemlerini yönetir:
 - **macOS**: `pbcopy` komutunu kullanır
@@ -154,7 +154,7 @@ Pano işlemi herhangi bir nedenle başarısız olursa, araç otomatik olarak con
 ```mermaid
 sequenceDiagram
 participant User
-participant Tool as context-manager
+participant Tool as ctxman
 participant Clipboard
 participant File as llm-context.json
 User->>Tool : --context-clipboard
@@ -171,15 +171,15 @@ end
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L547-L579)
+- [ctxman.js](file://ctxman.js#L547-L579)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L547-L579)
+- [ctxman.js](file://ctxman.js#L547-L579)
 
 ## GitIngest Formatı
 
-context-manager aracı artık yeni bir çıktı formatını desteklemektedir: GitIngest-style digest dosyaları. Bu format, tüm kod tabanı analizini LLM tüketimi için ideal olan tek, prompt-dostu bir metin dosyasında birleştirir.
+ctxman aracı artık yeni bir çıktı formatını desteklemektedir: GitIngest-style digest dosyaları. Bu format, tüm kod tabanı analizini LLM tüketimi için ideal olan tek, prompt-dostu bir metin dosyasında birleştirir.
 
 ### GitIngest Format Genel Bakışı
 
@@ -199,26 +199,26 @@ GitIngest digest birden fazla yoldan oluşturulabilir:
 **Doğrudan Oluşturma**
 ```
 # Kod tabanı analizinden doğrudan digest oluştur
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 ```
 
 **JSON Tabanlı Oluşturma**
 ```
 # Mevcut JSON raporundan digest oluştur (anında, yeniden tarama yok)
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 
 # LLM context dosyasından digest oluştur
-context-manager --gitingest-from-context llm-context.json
+ctxman --gitingest-from-context llm-context.json
 ```
 
 **İki Adımlı İş Akışı**
 ```
 # Adım 1: Analiz raporu oluştur
-context-manager --save-report
+ctxman --save-report
 
 # Adım 2: Rapordan digest oluştur (anında)
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 ```
 
 ### Çıktı Yapısı
@@ -296,7 +296,7 @@ Formatter, method filtreleme yapılandırmasını otomatik olarak algılar ve ko
 
 **Bölüm kaynakları**
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
-- [context-manager.js](file://context-manager.js#L332-L339)
+- [ctxman.js](file://ctxman.js#L332-L339)
 - [README.md](file://README.md#L600-L700)
 
 ## Kullanım Senaryoları ve Performans
@@ -326,7 +326,7 @@ Farklı çıktı formatları geliştirme iş akışlarında belirli kullanım se
 
 ## Parsing Stratejileri
 
-context-manager çıktılarının downstream işlemesi, formatlar arasında tutarlı JSON yapısından yararlanabilir:
+ctxman çıktılarının downstream işlemesi, formatlar arasında tutarlı JSON yapısından yararlanabilir:
 
 **Detaylı JSON Raporları İçin:**
 - Audit trail'leri ve versiyon takibi için metadata çıkarın
@@ -349,4 +349,4 @@ context-manager çıktılarının downstream işlemesi, formatlar arasında tuta
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L482-L545)
+- [ctxman.js](file://ctxman.js#L482-L545)

@@ -268,7 +268,7 @@ describe('ToonFormatter Coverage', () => {
 
         test('shows TOON savings', () => {
             const data = {
-                project: 'context-manager',
+                project: 'ctxman',
                 totalFiles: 64,
                 totalTokens: 181480
             };

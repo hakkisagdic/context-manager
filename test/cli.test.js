@@ -62,7 +62,7 @@ describe('CLI Integration Tests', () => {
         test('--version flag shows version', () => {
             const result = runCommand('--version');
             expect(result.success).toBe(true);
-            expect(result.output).toContain('Context Manager v');
+            expect(result.output).toContain('Ctxman v');
         });
     });
 

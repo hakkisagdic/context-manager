@@ -7,11 +7,11 @@ YELLOW := \033[1;33m
 NC := \033[0m # No Color
 
 help:
-	@echo "$(BLUE)Context Manager - Build & Installation$(NC)"
+	@echo "$(BLUE)Ctxman - Build & Installation$(NC)"
 	@echo ""
 	@echo "$(GREEN)Available targets:$(NC)"
-	@echo "  make install        - Install context-manager locally (macOS/Linux)"
-	@echo "  make uninstall      - Uninstall context-manager"
+	@echo "  make install        - Install ctxman locally (macOS/Linux)"
+	@echo "  make uninstall      - Uninstall ctxman"
 	@echo "  make test           - Run all tests"
 	@echo "  make test-quick     - Run quick tests"
 	@echo "  make clean          - Clean build artifacts"
@@ -24,11 +24,11 @@ help:
 	@echo ""
 
 install:
-	@echo "$(BLUE)Installing Context Manager...$(NC)"
+	@echo "$(BLUE)Installing Ctxman...$(NC)"
 	@bash scripts/install.sh
 
 uninstall:
-	@echo "$(BLUE)Uninstalling Context Manager...$(NC)"
+	@echo "$(BLUE)Uninstalling Ctxman...$(NC)"
 	@bash scripts/uninstall.sh
 
 test:
@@ -42,7 +42,7 @@ test-quick:
 clean:
 	@echo "$(BLUE)Cleaning build artifacts...$(NC)"
 	@rm -rf node_modules/
-	@rm -rf .context-manager/logs/*
+	@rm -rf .ctxman/logs/*
 	@rm -f token-analysis-report.json
 	@rm -f llm-context.json
 	@rm -f digest.txt
@@ -51,11 +51,11 @@ clean:
 build-deb:
 	@echo "$(BLUE)Building Debian package...$(NC)"
 	@mkdir -p debian/usr/local/bin
-	@mkdir -p debian/usr/local/lib/context-manager
-	@cp -r lib bin index.js context-manager.js package.json debian/usr/local/lib/context-manager/
+	@mkdir -p debian/usr/local/lib/ctxman
+	@cp -r lib bin index.js ctxman.js package.json debian/usr/local/lib/ctxman/
 	@chmod 755 debian/DEBIAN/postinst
-	@dpkg-deb --build debian context-manager_2.3.5_all.deb
-	@echo "$(GREEN)✓ Debian package created: context-manager_2.3.5_all.deb$(NC)"
+	@dpkg-deb --build debian ctxman_2.3.5_all.deb
+	@echo "$(GREEN)✓ Debian package created: ctxman_2.3.5_all.deb$(NC)"
 
 build-rpm:
 	@echo "$(BLUE)Building RPM package...$(NC)"
@@ -68,10 +68,10 @@ homebrew:
 	@echo "$(YELLOW)Note: Formula must be published to Homebrew tap first$(NC)"
 	@echo ""
 	@echo "For now, use:"
-	@echo "  brew tap hakkisagdic/context-manager"
-	@echo "  brew install context-manager"
+	@echo "  brew tap hakkisagdic/ctxman"
+	@echo "  brew install ctxman"
 	@echo ""
 	@echo "Or install via npm:"
-	@echo "  npm install -g @hakkisagdic/context-manager"
+	@echo "  npm install -g ctxman"
 
 .DEFAULT_GOAL := help

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Context Manager - Update Command
+ * Ctxman - Update Command
  * Handles version updates and channel switching
  */
 
@@ -68,7 +68,7 @@ async function checkForUpdates(updater) {
             console.log('');
         }
 
-        console.log('To install: context-manager update install\n');
+        console.log('To install: ctxman update install\n');
     } else {
         console.log('✓ You are using the latest version\n');
         console.log(`   Version: ${updateInfo.currentVersion}`);
@@ -105,7 +105,7 @@ async function installUpdate(updater) {
 async function switchChannel(updater, newChannel) {
     if (!newChannel) {
         console.log('❌ Please specify a channel: stable or insider\n');
-        console.log('Usage: context-manager update channel <stable|insider>\n');
+        console.log('Usage: ctxman update channel <stable|insider>\n');
         return;
     }
 
@@ -119,7 +119,7 @@ async function switchChannel(updater, newChannel) {
         if (updateInfo.available) {
             console.log(`\n✨ Update available on ${newChannel} channel!\n`);
             console.log(`   Latest: ${updateInfo.latestVersion}\n`);
-            console.log('To install: context-manager update install\n');
+            console.log('To install: ctxman update install\n');
         }
     } catch (error) {
         console.log(`\n❌ ${error.message}\n`);
@@ -150,11 +150,11 @@ function showUpdateInfo(updater) {
     console.log(`   Auto-update:     ${updater.autoUpdate ? 'Enabled' : 'Disabled'}\n`);
 
     console.log('Available commands:\n');
-    console.log('   context-manager update check    - Check for updates');
-    console.log('   context-manager update install  - Install latest update');
-    console.log('   context-manager update rollback - Rollback to previous version');
-    console.log('   context-manager update channel  - Switch update channel');
-    console.log('   context-manager update info     - Show this information\n');
+    console.log('   ctxman update check    - Check for updates');
+    console.log('   ctxman update install  - Install latest update');
+    console.log('   ctxman update rollback - Rollback to previous version');
+    console.log('   ctxman update channel  - Switch update channel');
+    console.log('   ctxman update info     - Show this information\n');
 
     console.log('Channels:\n');
     console.log('   stable  - Stable releases (recommended)');
@@ -165,7 +165,7 @@ async function checkAndUpdate(updater) {
     const updateInfo = await updater.checkAndNotify();
 
     if (updateInfo && updateInfo.available) {
-        console.log('Run "context-manager update install" to update\n');
+        console.log('Run "ctxman update install" to update\n');
     }
 }
 

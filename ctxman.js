@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Context Manager - Main Orchestrator
+ * Ctxman - Main Orchestrator
  * LLM context optimization with method-level filtering and GitIngest support
  */
 
@@ -186,10 +186,10 @@ function printStartupInfo() {
 }
 
 function printHelp() {
-    console.log('Context Manager - LLM context optimization with method-level filtering');
+    console.log('Ctxman - LLM context optimization with method-level filtering');
     console.log();
-    console.log('Usage: context-manager [options]');
-    console.log('       node context-manager.js [options]  # Direct usage');
+    console.log('Usage: ctxman [options]');
+    console.log('       node ctxman.js [options]  # Direct usage');
     console.log();
     console.log('Options:');
     console.log('  -s, --save-report                    Save detailed JSON report');
@@ -208,18 +208,18 @@ function printHelp() {
     console.log();
     console.log('Examples:');
     console.log('  # Standard workflow');
-    console.log('  context-manager                      # Interactive export selection');
-    console.log('  context-manager --save-report        # Save JSON report');
-    console.log('  context-manager --gitingest          # Generate digest.txt');
-    console.log('  context-manager -g -s                # Both digest + report');
+    console.log('  ctxman                      # Interactive export selection');
+    console.log('  ctxman --save-report        # Save JSON report');
+    console.log('  ctxman --gitingest          # Generate digest.txt');
+    console.log('  ctxman -g -s                # Both digest + report');
     console.log();
     console.log('  # Generate digest from existing JSON files (fast, no re-scan)');
-    console.log('  context-manager --gitingest-from-report token-analysis-report.json');
-    console.log('  context-manager --gitingest-from-context llm-context.json');
+    console.log('  ctxman --gitingest-from-report token-analysis-report.json');
+    console.log('  ctxman --gitingest-from-context llm-context.json');
     console.log();
     console.log('  # Two-step workflow');
-    console.log('  context-manager -s                   # Step 1: Analyze and save report');
-    console.log('  context-manager --gitingest-from-report token-analysis-report.json');
+    console.log('  ctxman -s                   # Step 1: Analyze and save report');
+    console.log('  ctxman --gitingest-from-report token-analysis-report.json');
     console.log('                                       # Step 2: Generate digest (instant)');
 }
 

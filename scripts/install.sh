@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Context Manager - Installation Script
+# Ctxman - Installation Script
 # Version: 2.3.6+
-# Description: Installs context-manager globally on your system
+# Description: Installs ctxman globally on your system
 
 set -e
 
@@ -13,14 +13,14 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PACKAGE_NAME="@hakkisagdic/context-manager"
-INSTALL_DIR="$HOME/.context-manager"
-BIN_LINK="/usr/local/bin/context-manager"
-CONFIG_DIR="$HOME/.context-manager"
+PACKAGE_NAME="ctxman"
+INSTALL_DIR="$HOME/.ctxman"
+BIN_LINK="/usr/local/bin/ctxman"
+CONFIG_DIR="$HOME/.ctxman"
 LOG_DIR="$CONFIG_DIR/logs"
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     Context Manager - Installation Script v2.3.6      ║${NC}"
+echo -e "${BLUE}║     Ctxman - Installation Script v2.3.6      ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -156,9 +156,9 @@ fi
 echo ""
 echo -e "${YELLOW}➜${NC} Verifying installation..."
 
-if command -v context-manager &> /dev/null; then
-    echo -e "${GREEN}✓${NC} context-manager is installed and ready!"
-    echo -e "${GREEN}  Command available: context-manager${NC}"
+if command -v ctxman &> /dev/null; then
+    echo -e "${GREEN}✓${NC} ctxman is installed and ready!"
+    echo -e "${GREEN}  Command available: ctxman${NC}"
 else
     echo -e "${RED}✗${NC} Installation verification failed"
     echo -e "${YELLOW}  You may need to restart your terminal${NC}"
@@ -171,14 +171,14 @@ echo -e "${GREEN}║          Installation Complete! 🎉                     �
 echo -e "${GREEN}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
-echo -e "  1. Run: ${YELLOW}context-manager --help${NC}"
-echo -e "  2. Try wizard: ${YELLOW}context-manager --wizard${NC}"
-echo -e "  3. View docs: ${YELLOW}https://github.com/hakkisagdic/context-manager${NC}"
+echo -e "  1. Run: ${YELLOW}ctxman --help${NC}"
+echo -e "  2. Try wizard: ${YELLOW}ctxman --wizard${NC}"
+echo -e "  3. View docs: ${YELLOW}https://github.com/hakkisagdic/ctxman${NC}"
 echo ""
 echo -e "${BLUE}Configuration:${NC}"
 echo -e "  Directory: ${YELLOW}$CONFIG_DIR${NC}"
 echo -e "  Logs: ${YELLOW}$LOG_DIR${NC}"
 echo ""
 echo -e "${BLUE}Update channel: ${YELLOW}stable${NC}"
-echo -e "  Change to insider: ${YELLOW}context-manager config set updateChannel insider${NC}"
+echo -e "  Change to insider: ${YELLOW}ctxman config set updateChannel insider${NC}"
 echo ""

@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md) - *Updated with GitIngest format details*
-- [context-manager.js](file://context-manager.js) - *Added GitIngest generation functions*
+- [ctxman.js](file://ctxman.js) - *Added GitIngest generation functions*
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *New GitIngest formatter implementation*
 </cite>
 
@@ -18,7 +18,7 @@
 
 ## Introduction
 
-The context-manager tool provides three primary output formats for different use cases in AI-assisted development workflows. These formats serve distinct purposes in code analysis, LLM context optimization, and project documentation. The tool generates a detailed JSON report for comprehensive analysis, creates LLM context files in both compact and detailed formats, and supports clipboard integration for quick sharing. All export formats maintain consistent structure between file and clipboard outputs, ensuring reliability across different usage scenarios.
+The ctxman tool provides three primary output formats for different use cases in AI-assisted development workflows. These formats serve distinct purposes in code analysis, LLM context optimization, and project documentation. The tool generates a detailed JSON report for comprehensive analysis, creates LLM context files in both compact and detailed formats, and supports clipboard integration for quick sharing. All export formats maintain consistent structure between file and clipboard outputs, ensuring reliability across different usage scenarios.
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
@@ -69,15 +69,15 @@ DetailedJSONReport --> File
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 ## LLM Context Formats
 
-The context-manager tool offers two distinct LLM context formats optimized for different use cases: an ultra-compact format used by default and a detailed format activated with the `--detailed-context` flag. Both formats are designed to provide essential project context for AI assistants while minimizing token usage.
+The ctxman tool offers two distinct LLM context formats optimized for different use cases: an ultra-compact format used by default and a detailed format activated with the `--detailed-context` flag. Both formats are designed to provide essential project context for AI assistants while minimizing token usage.
 
 ### Compact Format (~2.3k characters)
 
@@ -131,17 +131,17 @@ LLMContext --> MethodStats
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L482-L503)
-- [context-manager.js](file://context-manager.js#L521-L545)
-- [context-manager.js](file://context-manager.js#L505-L519)
+- [ctxman.js](file://ctxman.js#L482-L503)
+- [ctxman.js](file://ctxman.js#L521-L545)
+- [ctxman.js](file://ctxman.js#L505-L519)
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L482-L545)
+- [ctxman.js](file://ctxman.js#L482-L545)
 
 ## Clipboard Format
 
-The clipboard format in context-manager maintains identical structure to the file-based exports, ensuring consistency across different output methods. When using the `--context-clipboard` flag, the tool copies the same JSON structure that would be saved to llm-context.json directly to the system clipboard.
+The clipboard format in ctxman maintains identical structure to the file-based exports, ensuring consistency across different output methods. When using the `--context-clipboard` flag, the tool copies the same JSON structure that would be saved to llm-context.json directly to the system clipboard.
 
 The implementation handles cross-platform clipboard operations:
 - **macOS**: Uses `pbcopy` command
@@ -154,7 +154,7 @@ If the clipboard operation fails for any reason, the tool automatically saves th
 ```mermaid
 sequenceDiagram
 participant User
-participant Tool as context-manager
+participant Tool as ctxman
 participant Clipboard
 participant File as llm-context.json
 User->>Tool : --context-clipboard
@@ -171,15 +171,15 @@ end
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L547-L579)
+- [ctxman.js](file://ctxman.js#L547-L579)
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L547-L579)
+- [ctxman.js](file://ctxman.js#L547-L579)
 
 ## GitIngest Format
 
-The context-manager tool now supports a new output format: GitIngest-style digest files. This format consolidates the entire codebase analysis into a single, prompt-friendly text file that is ideal for LLM consumption.
+The ctxman tool now supports a new output format: GitIngest-style digest files. This format consolidates the entire codebase analysis into a single, prompt-friendly text file that is ideal for LLM consumption.
 
 ### GitIngest Format Overview
 
@@ -199,26 +199,26 @@ The GitIngest digest can be generated through multiple pathways:
 **Direct Generation**
 ```bash
 # Generate digest directly from codebase analysis
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 ```
 
 **JSON-Based Generation**
 ```bash
 # Generate digest from existing JSON report (instant, no re-scan)
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 
 # Generate digest from LLM context file
-context-manager --gitingest-from-context llm-context.json
+ctxman --gitingest-from-context llm-context.json
 ```
 
 **Two-Step Workflow**
 ```bash
 # Step 1: Create analysis report
-context-manager --save-report
+ctxman --save-report
 
 # Step 2: Generate digest from report (instant)
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 ```
 
 ### Output Structure
@@ -319,7 +319,7 @@ class GitIngestFormatter --|> FileUtils
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L16-L127)
+- [ctxman.js](file://ctxman.js#L16-L127)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 
 ## Use Cases and Performance
@@ -358,7 +358,7 @@ The different output formats serve specific use cases in development workflows:
 
 ## Parsing Strategies
 
-Downstream processing of context-manager outputs can leverage the consistent JSON structure across formats:
+Downstream processing of ctxman outputs can leverage the consistent JSON structure across formats:
 
 **For Detailed JSON Reports:**
 - Extract metadata for audit trails and version tracking
@@ -387,4 +387,4 @@ Downstream processing of context-manager outputs can leverage the consistent JSO
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L482-L545)
+- [ctxman.js](file://ctxman.js#L482-L545)

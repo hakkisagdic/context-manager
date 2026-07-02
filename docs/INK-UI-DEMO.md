@@ -8,7 +8,7 @@
 
 ## 🎨 Interactive UI Demo Ekranı
 
-Context Manager'ın tüm Ink UI component'lerini test edebileceğiniz interaktif bir demo uygulaması.
+Ctxman'ın tüm Ink UI component'lerini test edebileceğiniz interaktif bir demo uygulaması.
 
 ## 🚀 Hızlı Başlangıç
 
@@ -252,12 +252,12 @@ npm install ink react ink-select-input ink-spinner ink-text-input
 ```bash
 # iTerm2 (önerilen)
 open -a iTerm
-cd /path/to/context-manager
+cd /path/to/ctxman
 npm run test:ink
 
 # Terminal.app
 open -a Terminal
-cd /path/to/context-manager
+cd /path/to/ctxman
 npm run test:ink
 ```
 
@@ -265,20 +265,20 @@ npm run test:ink
 
 ```bash
 # GNOME Terminal
-gnome-terminal -- bash -c "cd /path/to/context-manager && npm run test:ink"
+gnome-terminal -- bash -c "cd /path/to/ctxman && npm run test:ink"
 
 # Konsole (KDE)
-konsole -e "cd /path/to/context-manager && npm run test:ink"
+konsole -e "cd /path/to/ctxman && npm run test:ink"
 ```
 
 ### Windows
 
 ```powershell
 # Windows Terminal (önerilen)
-wt.exe -d C:\path\to\context-manager npm run test:ink
+wt.exe -d C:\path\to\ctxman npm run test:ink
 
 # PowerShell
-cd C:\path\to\context-manager
+cd C:\path\to\ctxman
 npm run test:ink
 ```
 
@@ -352,10 +352,10 @@ Demo başarılıysa, gerçek wizard ve dashboard hazır:
 
 ```bash
 # Production wizard
-context-manager --wizard
+ctxman --wizard
 
 # Production dashboard
-context-manager --dashboard
+ctxman --dashboard
 ```
 
 ---

@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-Context Manager v2.3.0+ includes two powerful interactive features:
+Ctxman v2.3.0+ includes two powerful interactive features:
 
 1. **🧙 Interactive Wizard** - Guided configuration for context generation
 2. **📊 Live Dashboard** - Real-time analysis with visual stats
@@ -22,7 +22,7 @@ These features are **optional** and require additional dependencies (React + Ink
 ### Install Interactive Features
 
 ```bash
-cd /path/to/context-manager
+cd /path/to/ctxman
 npm install
 ```
 
@@ -37,10 +37,10 @@ This will install all dependencies including:
 
 ```bash
 # Try wizard
-context-manager --wizard
+ctxman --wizard
 
 # Try dashboard
-context-manager --dashboard
+ctxman --dashboard
 ```
 
 If dependencies are missing, you'll see:
@@ -65,7 +65,7 @@ The wizard provides a **step-by-step guided experience** for configuring your co
 
 ```bash
 # Start the wizard
-context-manager --wizard
+ctxman --wizard
 ```
 
 ### Wizard Flow
@@ -226,10 +226,10 @@ The dashboard provides **real-time visual feedback** during analysis. Features:
 
 ```bash
 # Start dashboard
-context-manager --dashboard
+ctxman --dashboard
 
 # With watch mode (auto-refresh on file changes)
-context-manager --dashboard --watch
+ctxman --dashboard --watch
 ```
 
 ### Dashboard Interface
@@ -294,7 +294,7 @@ After analysis completes:
 Watch mode automatically refreshes when files change:
 
 ```bash
-context-manager --dashboard --watch
+ctxman --dashboard --watch
 ```
 
 ```
@@ -341,7 +341,7 @@ npm install ink react ink-select-input ink-text-input ink-spinner
 **Solutions:**
 ```bash
 # Option 1: Use simple mode
-context-manager --simple
+ctxman --simple
 
 # Option 2: Update terminal (macOS)
 # Use iTerm2 or latest Terminal.app
@@ -387,10 +387,10 @@ If interactive features don't work, you can always use standard CLI mode:
 
 ```bash
 # Instead of wizard, use CLI flags
-context-manager --output toon --method-level --context-clipboard
+ctxman --output toon --method-level --context-clipboard
 
 # Instead of dashboard, use verbose mode
-context-manager --verbose --save-report
+ctxman --verbose --save-report
 
 # View report after analysis
 cat token-analysis-report.json
@@ -406,11 +406,11 @@ Save wizard configuration for reuse:
 
 ```bash
 # After wizard generates config
-context-manager --wizard  # Complete wizard
+ctxman --wizard  # Complete wizard
 # Save as: bug-fix-profile
 
 # Reuse later
-context-manager --profile bug-fix-profile
+ctxman --profile bug-fix-profile
 ```
 
 ### 2. Dashboard in CI/CD
@@ -421,10 +421,10 @@ Use dashboard in CI for visual feedback:
 # In CI script
 if [ -t 1 ]; then
   # Interactive terminal detected
-  context-manager --dashboard
+  ctxman --dashboard
 else
   # Non-interactive (CI)
-  context-manager --simple
+  ctxman --simple
 fi
 ```
 
@@ -469,7 +469,7 @@ If wizard/dashboard still don't work after installing dependencies:
 
 1. Check Node.js version: `node --version` (should be 14+)
 2. Check terminal: `echo $TERM`
-3. Open issue: https://github.com/hakkisagdic/context-manager/issues
+3. Open issue: https://github.com/hakkisagdic/ctxman/issues
 
 Include:
 - Node.js version

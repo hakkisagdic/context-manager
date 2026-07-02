@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [lib/utils/token-utils.js](file://lib/utils/token-utils.js) - *Updated in recent commit*
-- [context-manager.js](file://context-manager.js) - *Modified in recent commit*
+- [ctxman.js](file://ctxman.js) - *Modified in recent commit*
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in recent commit*
 - [package.json](file://package.json#L35-L38)
 - [README.md](file://README.md#L294-L356)
@@ -32,15 +32,15 @@
 
 ## Introduction
 
-The context-manager tool provides sophisticated token counting functionality to support LLM context management and code analysis. The system implements a dual approach to token counting, combining exact GPT-4 compatible calculations with intelligent estimation methods. This documentation details the implementation, usage, and integration of the token counting system within the context-manager tool.
+The ctxman tool provides sophisticated token counting functionality to support LLM context management and code analysis. The system implements a dual approach to token counting, combining exact GPT-4 compatible calculations with intelligent estimation methods. This documentation details the implementation, usage, and integration of the token counting system within the ctxman tool.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L7-L8)
+- [ctxman.js](file://ctxman.js#L7-L8)
 - [README.md](file://README.md#L294-L356)
 
 ## Token Calculation Methods
 
-The token counting system in context-manager implements two complementary methods for determining token counts: exact counting using the tiktoken library and estimated counting using character-per-token ratios. The system automatically selects the appropriate method based on library availability and performance requirements.
+The token counting system in ctxman implements two complementary methods for determining token counts: exact counting using the tiktoken library and estimated counting using character-per-token ratios. The system automatically selects the appropriate method based on library availability and performance requirements.
 
 The primary entry point for token calculation is the `calculateTokens` method in the `TokenCalculator` class, which delegates to the `TokenUtils.calculate` method. This utility class serves as a dispatcher between the exact and estimated counting methods. When tiktoken is available, the system uses exact counting; otherwise, it falls back to estimation.
 
@@ -60,11 +60,11 @@ ReturnEstimate --> End
 
 **Section sources**
 - [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L20-L32)
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [ctxman.js](file://ctxman.js#L280-L292)
 
 ## Exact Token Counting with tiktoken
 
-The context-manager tool uses the tiktoken library to provide exact GPT-4 compatible token counts when available. The implementation follows a graceful degradation pattern, attempting to load tiktoken at initialization and falling back to estimation if the library is not present.
+The ctxman tool uses the tiktoken library to provide exact GPT-4 compatible token counts when available. The implementation follows a graceful degradation pattern, attempting to load tiktoken at initialization and falling back to estimation if the library is not present.
 
 The exact token counting process uses the cl100k_base encoding, which is the tokenizer used by GPT-4, GPT-3.5-Turbo, and other models. This ensures that token counts are accurate representations of how these models would process the text.
 
@@ -92,12 +92,12 @@ end
 - [package.json](file://package.json#L35-L38)
 
 **Section sources**
-- [lib/utils/token-utils.js](file:///Users/hakki.sagdiс/Documents/GitHub/context-manager/lib/utils/token-utils.js#L20-L32)
+- [lib/utils/token-utils.js](file:///Users/hakki.sagdiс/Documents/GitHub/ctxman/lib/utils/token-utils.js#L20-L32)
 - [package.json](file://package.json#L35-L38)
 
 ## Estimated Token Counting Implementation
 
-When the tiktoken library is unavailable, the context-manager tool falls back to an estimation method that uses extension-specific character-per-token ratios. This approach provides reasonably accurate estimates (~95% accuracy) while maintaining performance and reducing dependencies.
+When the tiktoken library is unavailable, the ctxman tool falls back to an estimation method that uses extension-specific character-per-token ratios. This approach provides reasonably accurate estimates (~95% accuracy) while maintaining performance and reducing dependencies.
 
 The estimation algorithm follows these steps:
 1. Determine the file extension from the filePath parameter
@@ -139,7 +139,7 @@ The system determines if a file should be analyzed as a text file through the `i
 
 **Section sources**
 - [lib/utils/token-utils.js](file://lib/utils/token-utils.js#L45-L65)
-- [context-manager.js](file://context-manager.js#L306-L321)
+- [ctxman.js](file://ctxman.js#L306-L321)
 
 ## Integration with File and Project Statistics
 
@@ -198,12 +198,12 @@ StatsObject --> DirStats : "contains"
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L323-L351)
-- [context-manager.js](file://context-manager.js#L455-L480)
+- [ctxman.js](file://ctxman.js#L323-L351)
+- [ctxman.js](file://ctxman.js#L455-L480)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L323-L351)
-- [context-manager.js](file://context-manager.js#L455-L480)
+- [ctxman.js](file://ctxman.js#L323-L351)
+- [ctxman.js](file://ctxman.js#L455-L480)
 
 ## LLM Context Generation
 
@@ -218,7 +218,7 @@ The context generation supports two formats:
 The choice of format affects how token counts are presented in the output, with the compact format focusing on file organization and the detailed format providing comprehensive token information for each method.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L482-L503)
+- [ctxman.js](file://ctxman.js#L482-L503)
 
 ## Performance Implications
 
@@ -233,12 +233,12 @@ The system is designed to prefer exact counting when available, as indicated by 
 For large codebases, the performance difference becomes more significant, making estimated counting preferable when absolute precision is not required. The estimation method's O(n) complexity for text cleaning and simple division makes it highly efficient even for large files.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L659-L659)
+- [ctxman.js](file://ctxman.js#L659-L659)
 - [README.md](file://README.md#L294-L356)
 
 ## Common Issues and Troubleshooting
 
-Common issues with token counting in the context-manager tool typically relate to inaccurate estimates for non-standard file types or problems with tiktoken installation. The most frequent issues include:
+Common issues with token counting in the ctxman tool typically relate to inaccurate estimates for non-standard file types or problems with tiktoken installation. The most frequent issues include:
 
 1. **Inaccurate estimates for non-standard file types**: When a file has an uncommon extension not included in the predefined mapping, the system uses a default ratio of 3.5 characters per token. This may lead to inaccurate estimates for specialized file formats.
 
@@ -256,7 +256,7 @@ To troubleshoot token counting issues, users should first verify tiktoken instal
 
 ## Installation and Configuration
 
-To ensure exact token counting, the tiktoken library must be properly installed. The context-manager tool lists tiktoken as both a dependency and optionalDependency in package.json, allowing the tool to function without it while encouraging installation for exact counting.
+To ensure exact token counting, the tiktoken library must be properly installed. The ctxman tool lists tiktoken as both a dependency and optionalDependency in package.json, allowing the tool to function without it while encouraging installation for exact counting.
 
 Installation is performed via npm:
 ```bash

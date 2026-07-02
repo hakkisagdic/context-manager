@@ -210,7 +210,7 @@ describe('Reporter', () => {
         test('generates summary text', () => {
             const summary = reporter.generateSummary(mockContext);
 
-            expect(summary).toContain('Context Manager Analysis Summary');
+            expect(summary).toContain('Ctxman Analysis Summary');
             expect(summary).toContain('Files: 10');
             expect(summary).toContain('Tokens: 1,000');
         });

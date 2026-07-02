@@ -56,7 +56,7 @@ async function testWizard() {
             console.log('║            Wizard Test: PASSED ✅                      ║');
             console.log('╚════════════════════════════════════════════════════════╝');
             console.log('\nTo use wizard interactively:');
-            console.log('  context-manager --wizard\n');
+            console.log('  ctxman --wizard\n');
 
             process.exit(0);
         }, 2000);

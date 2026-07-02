@@ -30,7 +30,7 @@
 
 ## Giriş
 
-context-manager aracı, LLM context oluşturmasına hangi methodların dahil edileceği üzerinde ayrıntılı kontrol sağlayan gelişmiş bir method seviyesinde filtreleme sistemi sunar. Bu sistem, hangi methodların analiz edilip nihai context çıktısına dahil edileceğini belirlemek için `MethodFilterParser` class'ı ile birlikte çalışan iki yapilandirma dosyası aracılığıyla çalışır: `.methodinclude` ve `.methodignore`. Filtreleme sistemi, geliştiricilerin LLM context'ine gürültü ekleyen utility, test ve debugging methodlarını hariç tutarken core business logic'e odaklanarak token kullanımını optimize etmelerine yardımcı olmak için tasarlanmıştır.
+ctxman aracı, LLM context oluşturmasına hangi methodların dahil edileceği üzerinde ayrıntılı kontrol sağlayan gelişmiş bir method seviyesinde filtreleme sistemi sunar. Bu sistem, hangi methodların analiz edilip nihai context çıktısına dahil edileceğini belirlemek için `MethodFilterParser` class'ı ile birlikte çalışan iki yapilandirma dosyası aracılığıyla çalışır: `.methodinclude` ve `.methodignore`. Filtreleme sistemi, geliştiricilerin LLM context'ine gürültü ekleyen utility, test ve debugging methodlarını hariç tutarken core business logic'e odaklanarak token kullanımını optimize etmelerine yardımcı olmak için tasarlanmıştır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
@@ -151,12 +151,12 @@ TC->>TC : generateLLMContext()
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [ctxman.js](file://ctxman.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L358-L383)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L358-L383)
+- [ctxman.js](file://ctxman.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L358-L383)
 
 ## Pratik Örnekler
 

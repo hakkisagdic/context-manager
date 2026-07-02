@@ -1,6 +1,6 @@
 /**
  * CliBridge - Executes CLI commands from Desktop App
- * Uses child_process to spawn context-manager CLI
+ * Uses child_process to spawn ctxman CLI
  */
 
 const { spawn } = require('child_process');
@@ -38,8 +38,8 @@ class CliBridge {
             return { command: 'node', args: [devPath] };
         }
 
-        logger.info('Using global context-manager command');
-        return { command: 'context-manager', args: [] };
+        logger.info('Using global ctxman command');
+        return { command: 'ctxman', args: [] };
     }
 
     /**

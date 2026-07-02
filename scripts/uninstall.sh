@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Context Manager - Uninstallation Script
+# Ctxman - Uninstallation Script
 # Version: 2.3.6+
-# Description: Removes context-manager from your system
+# Description: Removes ctxman from your system
 
 set -e
 
@@ -13,18 +13,18 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PACKAGE_NAME="@hakkisagdic/context-manager"
-INSTALL_DIR="$HOME/.context-manager"
-BIN_LINK="/usr/local/bin/context-manager"
-CONFIG_DIR="$HOME/.context-manager"
+PACKAGE_NAME="ctxman"
+INSTALL_DIR="$HOME/.ctxman"
+BIN_LINK="/usr/local/bin/ctxman"
+CONFIG_DIR="$HOME/.ctxman"
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║    Context Manager - Uninstallation Script v2.3.6     ║${NC}"
+echo -e "${BLUE}║    Ctxman - Uninstallation Script v2.3.6     ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
 # Confirm uninstallation
-echo -e "${YELLOW}⚠${NC}  This will remove Context Manager from your system"
+echo -e "${YELLOW}⚠${NC}  This will remove Ctxman from your system"
 echo ""
 read -p "Are you sure you want to uninstall? [y/N]: " confirm
 
@@ -85,11 +85,11 @@ fi
 echo ""
 echo -e "${YELLOW}➜${NC} Verifying uninstallation..."
 
-if command -v context-manager &> /dev/null; then
-    echo -e "${YELLOW}⚠${NC}  Warning: context-manager command still found"
+if command -v ctxman &> /dev/null; then
+    echo -e "${YELLOW}⚠${NC}  Warning: ctxman command still found"
     echo -e "${YELLOW}  You may need to restart your terminal${NC}"
 else
-    echo -e "${GREEN}✓${NC} context-manager command not found (expected)"
+    echo -e "${GREEN}✓${NC} ctxman command not found (expected)"
 fi
 
 # Success message
@@ -98,7 +98,7 @@ echo -e "${GREEN}╔════════════════════
 echo -e "${GREEN}║        Uninstallation Complete! 👋                     ║${NC}"
 echo -e "${GREEN}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "${BLUE}Thank you for using Context Manager!${NC}"
+echo -e "${BLUE}Thank you for using Ctxman!${NC}"
 echo ""
 
 if [[ $keep_config =~ ^[Yy]$ ]] || [ "$keep_config" == "" ]; then
@@ -106,6 +106,6 @@ if [[ $keep_config =~ ^[Yy]$ ]] || [ "$keep_config" == "" ]; then
     echo -e "  $CONFIG_DIR"
     echo ""
     echo -e "${BLUE}To reinstall with your settings:${NC}"
-    echo -e "  ${YELLOW}bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh)${NC}"
+    echo -e "  ${YELLOW}bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.sh)${NC}"
     echo ""
 fi

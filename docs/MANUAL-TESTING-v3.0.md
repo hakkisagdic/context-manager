@@ -1,6 +1,6 @@
 # Manual Testing Guide - v3.0.0
 
-Complete manual testing guide for Context Manager v3.0.0 Platform Foundation release.
+Complete manual testing guide for Ctxman v3.0.0 Platform Foundation release.
 
 **Version:** 3.0.0
 **Test Environment:** Express.js repository (test-repos/express)
@@ -26,11 +26,11 @@ Validate all v3.0.0 features:
 
 ```bash
 # 1. Ensure you're on v3.0.0
-context-manager --version
-# Expected: Context Manager v3.0.0
+ctxman --version
+# Expected: Ctxman v3.0.0
 
 # 2. Navigate to project root
-cd /Users/hakki.sagdic/Documents/GitHub/context-manager
+cd /Users/hakki.sagdic/Documents/GitHub/ctxman
 
 # 3. Verify Express submodule
 ls test-repos/express
@@ -56,7 +56,7 @@ ls test-repos/express
 #### Test 1.1: Basic Analysis
 ```bash
 cd test-repos/express
-context-manager --cli
+ctxman --cli
 
 Expected Output:
 ✅ Scans files
@@ -68,7 +68,7 @@ Expected Output:
 #### Test 1.2: Method-Level Analysis
 ```bash
 cd test-repos/express
-context-manager --cli -m --output json
+ctxman --cli -m --output json
 
 Expected Output:
 ✅ Extracts methods from JavaScript files
@@ -79,7 +79,7 @@ Expected Output:
 #### Test 1.3: TOON Format
 ```bash
 cd test-repos/express
-context-manager --cli --output toon
+ctxman --cli --output toon
 
 Expected Output:
 ✅ TOON format generated
@@ -99,7 +99,7 @@ cd test-repos/express
 export ANTHROPIC_API_KEY=sk-test-12345
 
 # Run with auto-detection
-context-manager --cli --auto-detect-llm
+ctxman --cli --auto-detect-llm
 
 Expected Output:
 ✅ Auto-detected LLM: Claude Sonnet 4.5
@@ -110,7 +110,7 @@ Expected Output:
 #### Test 2.2: Explicit Model Selection
 ```bash
 cd test-repos/express
-context-manager --cli --target-model gpt-4o
+ctxman --cli --target-model gpt-4o
 
 Expected Output:
 📊 Context Window Analysis:
@@ -122,7 +122,7 @@ Expected Output:
 
 #### Test 2.3: List LLMs
 ```bash
-context-manager --list-llms
+ctxman --list-llms
 
 Expected Output:
 ✅ Shows 9+ models grouped by vendor
@@ -141,7 +141,7 @@ cd test-repos/express
 echo "// test comment" >> lib/router/index.js
 
 # Analyze only changed files
-context-manager --cli --changed-only
+ctxman --cli --changed-only
 
 Expected Output:
 🔀 Git Integration - Analyzing Changed Files
@@ -155,7 +155,7 @@ Expected Output:
 cd test-repos/express
 
 # Analyze changes since v5.0.0
-context-manager --cli --changed-since v5.0.0
+ctxman --cli --changed-since v5.0.0
 
 Expected Output:
 📝 Found XX changed files
@@ -172,7 +172,7 @@ cd test-repos/express
 git branch
 
 # Analyze changes since main (if on a feature branch)
-context-manager --cli --changed-since main
+ctxman --cli --changed-since main
 
 Expected Output:
 ✅ Shows files changed in current branch vs main
@@ -187,7 +187,7 @@ Expected Output:
 cd test-repos/express
 
 # Terminal 1: Start watch mode
-context-manager watch
+ctxman watch
 
 Expected Output:
 👁️ Watch mode active
@@ -206,7 +206,7 @@ Expected Output:
 #### Test 4.2: Watch with Method-Level
 ```bash
 cd test-repos/express
-context-manager watch -m
+ctxman watch -m
 
 # Make a change
 echo "function testFunc() {}" >> lib/router/index.js
@@ -220,7 +220,7 @@ Expected Output:
 #### Test 4.3: Watch with Custom Debounce
 ```bash
 cd test-repos/express
-context-manager watch --debounce 2000
+ctxman watch --debounce 2000
 
 # Make rapid changes
 echo "// change 1" >> lib/router/index.js
@@ -248,11 +248,11 @@ Expected Output:
 #### Test 5.1: Start API Server
 ```bash
 # Terminal 1: Start server
-cd /Users/hakki.sagdic/Documents/GitHub/context-manager
-context-manager serve
+cd /Users/hakki.sagdic/Documents/GitHub/ctxman
+ctxman serve
 
 Expected Output:
-🌐 Context Manager API Server
+🌐 Ctxman API Server
    Listening on: http://localhost:3000
    API Version: v1
    Documentation: http://localhost:3000/api/v1/docs
@@ -339,7 +339,7 @@ Expected Output:
 #### Test 5.8: Custom Port
 ```bash
 # Stop previous server (Ctrl+C)
-context-manager serve --port 8080
+ctxman serve --port 8080
 
 Expected Output:
 ✅ Server starts on port 8080
@@ -347,7 +347,7 @@ Expected Output:
 
 #### Test 5.9: Authentication
 ```bash
-context-manager serve --port 3000 --auth-token my-secret
+ctxman serve --port 3000 --auth-token my-secret
 
 # Without token
 curl http://localhost:3000/api/v1/analyze
@@ -372,7 +372,7 @@ Expected Output:
 #### Test 6.1: First Run (Cold Cache)
 ```bash
 cd test-repos/express
-context-manager --cli
+ctxman --cli
 
 Expected Output:
 ✅ Analysis time: XXXms (baseline)
@@ -381,7 +381,7 @@ Expected Output:
 #### Test 6.2: Second Run (Warm Cache)
 ```bash
 # Run again immediately
-context-manager --cli
+ctxman --cli
 
 Expected Output:
 ✅ Analysis time: <50% of first run (cache working)
@@ -391,7 +391,7 @@ Expected Output:
 #### Test 6.3: Parallel Processing
 ```bash
 cd test-repos/express
-context-manager --cli --verbose
+ctxman --cli --verbose
 
 Expected Output:
 ✅ Files processed in parallel (visible in logs)
@@ -404,7 +404,7 @@ Expected Output:
 
 #### Test 7.1: Invalid LLM Model
 ```bash
-context-manager --cli --target-model invalid-model
+ctxman --cli --target-model invalid-model
 
 Expected Output:
 ⚠️ Unknown LLM model: invalid-model, using default profile
@@ -416,7 +416,7 @@ Expected Output:
 cd /tmp
 mkdir test-no-git
 cd test-no-git
-context-manager --changed-only
+ctxman --changed-only
 
 Expected Output:
 ❌ Error: Not a git repository
@@ -426,12 +426,12 @@ Expected Output:
 #### Test 7.3: Invalid API Port
 ```bash
 # Port already in use
-context-manager serve --port 3000 &
-context-manager serve --port 3000
+ctxman serve --port 3000 &
+ctxman serve --port 3000
 
 Expected Output:
 ❌ Port 3000 is already in use
-Try a different port: context-manager serve --port 3001
+Try a different port: ctxman serve --port 3001
 ```
 
 ---
@@ -523,7 +523,7 @@ lsof -i :3000
 kill -9 <PID>
 
 # Or use different port
-context-manager serve --port 3001
+ctxman serve --port 3001
 ```
 
 ### Submodule Not Loaded
@@ -551,20 +551,20 @@ cd test-repos/express
 
 # Test 1: Basic analysis
 echo "\n1. Basic Analysis..."
-context-manager --cli --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
+ctxman --cli --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
 
 # Test 2: LLM optimization
 echo "2. LLM Optimization..."
-context-manager --cli --target-model claude-sonnet-4.5 --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
+ctxman --cli --target-model claude-sonnet-4.5 --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
 
 # Test 3: Git integration
 echo "3. Git Integration..."
-context-manager --cli --changed-since v5.0.0 --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
+ctxman --cli --changed-since v5.0.0 --no-verbose > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
 
 # Test 4: API server (start in background)
 echo "4. API Server..."
 cd ../..
-context-manager serve --port 3333 &
+ctxman serve --port 3333 &
 SERVER_PID=$!
 sleep 2
 curl -s http://localhost:3333/api/v1/docs > /dev/null && echo "✅ PASS" || echo "❌ FAIL"
@@ -595,7 +595,7 @@ Press Ctrl+C to stop
 
 ### 2. API Server Running
 ```
-🌐 Context Manager API Server
+🌐 Ctxman API Server
    Listening on: http://localhost:3000
    API Version: v1
    Documentation: http://localhost:3000/api/v1/docs

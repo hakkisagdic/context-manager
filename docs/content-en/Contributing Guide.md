@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [index.js](file://index.js)
 - [bin/cli.js](file://bin/cli.js)
 - [test/test.js](file://test/test.js)
@@ -22,7 +22,7 @@
 8. [Conclusion](#conclusion)
 
 ## Introduction
-The context-manager project is an LLM context optimization tool with method-level filtering and token analysis capabilities. This guide provides comprehensive information for contributors to understand the development workflow, code structure, testing strategy, and contribution guidelines. The tool is designed to help developers analyze codebases and generate optimized context for AI assistants by calculating exact token counts using tiktoken (GPT-4 compatible).
+The ctxman project is an LLM context optimization tool with method-level filtering and token analysis capabilities. This guide provides comprehensive information for contributors to understand the development workflow, code structure, testing strategy, and contribution guidelines. The tool is designed to help developers analyze codebases and generate optimized context for AI assistants by calculating exact token counts using tiktoken (GPT-4 compatible).
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
@@ -30,7 +30,7 @@ The context-manager project is an LLM context optimization tool with method-leve
 ## Development Workflow
 
 ### Setting Up the Local Environment
-To set up the local development environment for context-manager, follow these steps:
+To set up the local development environment for ctxman, follow these steps:
 
 1. Clone the repository from GitHub
 2. Install dependencies using `npm install`
@@ -64,7 +64,7 @@ When submitting pull requests, ensure that:
 ## Code Structure and Architecture
 
 ### Modular, Class-Based Design
-The context-manager project follows a modular, class-based design pattern with clear separation of concerns. The architecture consists of several core components that work together to provide the tool's functionality.
+The ctxman project follows a modular, class-based design pattern with clear separation of concerns. The architecture consists of several core components that work together to provide the tool's functionality.
 
 ```mermaid
 classDiagram
@@ -106,10 +106,10 @@ MethodAnalyzer --> MethodFilterParser : "provides methods for filtering"
 ```
 
 **Diagram sources **
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L124-L229)
-- [context-manager.js](file://context-manager.js#L14-L73)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L14-L73)
+- [ctxman.js](file://ctxman.js#L75-L115)
 
 ### Core Components
 The main components of the system are:
@@ -122,7 +122,7 @@ The main components of the system are:
 These components are exposed through the index.js file, which serves as the module entry point and exports all core classes for programmatic usage.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L14-L864)
+- [ctxman.js](file://ctxman.js#L14-L864)
 - [index.js](file://index.js#L0-L7)
 
 ## Testing Strategy
@@ -236,7 +236,7 @@ The code review process includes:
 6. Security review for potential vulnerabilities
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L14-L864)
+- [ctxman.js](file://ctxman.js#L14-L864)
 - [package.json](file://package.json#L0-L55)
 
 ## Extending the Tool
@@ -260,8 +260,8 @@ To add new output formats:
 The tool currently supports multiple output formats including detailed JSON reports, LLM context files, and clipboard integration. New formats should follow the same principles of providing structured, machine-readable output that is useful for AI assistants.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L231-L800)
 - [bin/cli.js](file://bin/cli.js#L0-L66)
 
 ## Conclusion
-The context-manager project provides a robust foundation for analyzing codebases and generating optimized context for AI assistants. By following the guidelines outlined in this document, contributors can effectively participate in the development of the tool, ensuring high-quality contributions that align with the project's architecture and goals. The modular, class-based design makes it relatively straightforward to extend the tool with new features or output formats while maintaining code quality and test coverage.
+The ctxman project provides a robust foundation for analyzing codebases and generating optimized context for AI assistants. By following the guidelines outlined in this document, contributors can effectively participate in the development of the tool, ensuring high-quality contributions that align with the project's architecture and goals. The modular, class-based design makes it relatively straightforward to extend the tool with new features or output formats while maintaining code quality and test coverage.

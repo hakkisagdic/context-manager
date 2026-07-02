@@ -1,7 +1,7 @@
 {
-    "name": "@hakkisagdic/context-manager-desktop",
+    "name": "ctxman-desktop",
     "version": "3.3.0",
-    "description": "Desktop App for Context Manager - Visual interface for CLI",
+    "description": "Desktop App for Ctxman - Visual interface for CLI",
     "author": "Hakki Sagdic",
     "main": "main/index.cjs",
     "scripts": {
@@ -14,8 +14,8 @@
         "test:e2e": "playwright test"
     },
     "build": {
-        "appId": "com.hakkisagdic.context-manager",
-        "productName": "Context Manager",
+        "appId": "com.hakkisagdic.ctxman",
+        "productName": "Ctxman",
         "directories": {
             "output": "dist-electron",
             "buildResources": "build"

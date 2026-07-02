@@ -6,7 +6,7 @@ import { DataSourcePlugin } from '../lib/rag/DataSourcePlugin.js';
 import fs from 'fs/promises';
 import path from 'path';
 
-const TEST_DB_PATH = '.context-manager/test-rag-store';
+const TEST_DB_PATH = '.ctxman/test-rag-store';
 
 class MockSource extends DataSourcePlugin {
   constructor() {

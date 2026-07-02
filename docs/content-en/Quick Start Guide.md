@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [bin/cli.js](file://bin/cli.js)
 </cite>
 
@@ -21,20 +21,20 @@
 
 ## Introduction
 
-The context-manager CLI tool is designed to optimize LLM context by providing exact token counting, method-level filtering, and intelligent file selection. This quick start guide will help you get up and running with the tool, understand its core functionality, and effectively use its features for AI-assisted development workflows.
+The ctxman CLI tool is designed to optimize LLM context by providing exact token counting, method-level filtering, and intelligent file selection. This quick start guide will help you get up and running with the tool, understand its core functionality, and effectively use its features for AI-assisted development workflows.
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
 
 ## Basic Workflow
 
-The context-manager tool follows a simple three-step workflow: analysis, output interpretation, and export selection. The tool analyzes your codebase to calculate exact token counts, presents detailed information about file composition and token distribution, and provides multiple options for exporting the results in formats suitable for LLM consumption.
+The ctxman tool follows a simple three-step workflow: analysis, output interpretation, and export selection. The tool analyzes your codebase to calculate exact token counts, presents detailed information about file composition and token distribution, and provides multiple options for exporting the results in formats suitable for LLM consumption.
 
 The default behavior is interactive, guiding users through the process and prompting for export preferences when no specific export option is specified via command line flags. This ensures users can always choose the most appropriate output format for their current needs.
 
 ```mermaid
 flowchart TD
-Start([Run context-manager]) --> Analysis["Analyze codebase\nCalculate token counts"]
+Start([Run ctxman]) --> Analysis["Analyze codebase\nCalculate token counts"]
 Analysis --> Output["Display analysis results\nToken statistics, file types,\nlargest files, directories"]
 Output --> ExportDecision{"Export option\nspecified?"}
 ExportDecision --> |No| InteractiveExport["Prompt user for export choice"]
@@ -53,19 +53,19 @@ NoExport --> End
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 - [README.md](file://README.md#L0-L891)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 - [README.md](file://README.md#L0-L891)
 
 ## Running the Tool Interactively
 
-To run the context-manager tool interactively, simply execute the command without any flags:
+To run the ctxman tool interactively, simply execute the command without any flags:
 
 ```bash
-context-manager
+ctxman
 ```
 
 This will initiate the analysis process, scan your project directory while respecting .gitignore rules and any calculator-specific ignore/include patterns, calculate token counts for all relevant files, and display a comprehensive report. After the analysis completes, if no export option was specified, the tool will prompt you to select an export method.
@@ -74,11 +74,11 @@ The interactive mode is ideal for first-time users and those who want to explore
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 
 ## Understanding the Analysis Output
 
-When you run the context-manager tool, it produces a detailed analysis report that includes several key pieces of information. The output begins with metadata about the analysis process, including the project root directory, configuration mode (INCLUDE or EXCLUDE), and token calculation method (exact using tiktoken or estimated).
+When you run the ctxman tool, it produces a detailed analysis report that includes several key pieces of information. The output begins with metadata about the analysis process, including the project root directory, configuration mode (INCLUDE or EXCLUDE), and token calculation method (exact using tiktoken or estimated).
 
 The main report includes:
 - Total files analyzed and total token count
@@ -103,16 +103,16 @@ LargestDirectories --> Tip["Usage Tip\nSave detailed report option"]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L683-L703)
+- [ctxman.js](file://ctxman.js#L683-L703)
 - [README.md](file://README.md#L0-L891)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L683-L703)
+- [ctxman.js](file://ctxman.js#L683-L703)
 - [README.md](file://README.md#L0-L891)
 
 ## Export Options and Selection
 
-The context-manager tool provides multiple export options to accommodate different use cases. When no export option is specified via command line flags, the tool enters interactive export mode, prompting the user to select from four options:
+The ctxman tool provides multiple export options to accommodate different use cases. When no export option is specified via command line flags, the tool enters interactive export mode, prompting the user to select from four options:
 
 1. Save detailed JSON report (token-analysis-report.json)
 2. Generate LLM context file (llm-context.json)
@@ -146,25 +146,25 @@ Complete --> [*]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L575-L616)
+- [ctxman.js](file://ctxman.js#L575-L616)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L575-L616)
+- [ctxman.js](file://ctxman.js#L575-L616)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
 
 ## Common Usage Patterns
 
-The context-manager tool supports several common usage patterns that cater to different development workflows. The most basic pattern is running the tool interactively without any flags, which provides a complete analysis and prompts for export options:
+The ctxman tool supports several common usage patterns that cater to different development workflows. The most basic pattern is running the tool interactively without any flags, which provides a complete analysis and prompts for export options:
 
 ```bash
-context-manager
+ctxman
 ```
 
 For users who want to quickly generate LLM context and copy it to the clipboard, the `--context-clipboard` flag provides a streamlined workflow:
 
 ```bash
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 This command analyzes the codebase and copies the optimized context directly to the clipboard in JSON format, ready for pasting into an LLM interface.
@@ -172,20 +172,20 @@ This command analyzes the codebase and copies the optimized context directly to 
 Another common pattern is method-level analysis, which focuses on extracting and analyzing specific methods from JavaScript/TypeScript files rather than entire files:
 
 ```bash
-context-manager --method-level
+ctxman --method-level
 ```
 
 You can also combine multiple flags to create more complex workflows. For example, to perform method-level analysis and save both a detailed report and export the context to a file:
 
 ```bash
-context-manager --method-level --save-report --context-export
+ctxman --method-level --save-report --context-export
 ```
 
 The tool also supports verbose output (enabled by default) which shows all included files, or quiet mode with `--no-verbose` which suppresses the file listing.
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 
 ## Method-Level Analysis
 
@@ -194,7 +194,7 @@ Method-level analysis is a powerful feature that allows you to focus on specific
 To enable method-level analysis, use the `--method-level` flag:
 
 ```bash
-context-manager --method-level
+ctxman --method-level
 ```
 
 When method-level analysis is enabled, the tool extracts methods from JavaScript/TypeScript files using pattern matching for function declarations, method assignments, and arrow functions. The analysis includes information about each method's name, line number, and token count.
@@ -226,19 +226,19 @@ ContextGeneration --> ExportOptions["Export via specified method\nreport, file, 
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L14-L67)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L67)
+- [ctxman.js](file://ctxman.js#L118-L223)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L14-L67)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L67)
+- [ctxman.js](file://ctxman.js#L118-L223)
 
 ## Clipboard Integration
 
-The context-manager tool provides seamless clipboard integration, allowing you to copy the generated LLM context directly to your system clipboard with the `--context-clipboard` flag:
+The ctxman tool provides seamless clipboard integration, allowing you to copy the generated LLM context directly to your system clipboard with the `--context-clipboard` flag:
 
 ```bash
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 This feature works across platforms (macOS, Linux, and Windows) using the appropriate system commands (pbcopy, xclip/xsel, or clip). The tool copies the context in JSON format, identical to what would be saved in the llm-context.json file, ensuring consistency between clipboard and file exports.
@@ -250,7 +250,7 @@ If the clipboard operation fails (e.g., due to missing system utilities), the to
 ```mermaid
 sequenceDiagram
 participant User as "User"
-participant Tool as "context-manager"
+participant Tool as "ctxman"
 participant System as "Operating System"
 participant Clipboard as "System Clipboard"
 User->>Tool : Run with --context-clipboard
@@ -274,16 +274,16 @@ end
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L541-L567)
+- [ctxman.js](file://ctxman.js#L541-L567)
 - [README.md](file://README.md#L0-L891)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L541-L567)
+- [ctxman.js](file://ctxman.js#L541-L567)
 - [README.md](file://README.md#L0-L891)
 
 ## Configuration and Pattern Files
 
-The context-manager tool uses several configuration files to control which files and methods are included in the analysis. Understanding these files is essential for customizing the tool to your specific needs.
+The ctxman tool uses several configuration files to control which files and methods are included in the analysis. Understanding these files is essential for customizing the tool to your specific needs.
 
 The primary configuration files for file-level filtering are:
 - `.contextinclude`: Include only files matching the specified patterns (takes priority)
@@ -327,16 +327,16 @@ style Analysis fill:#9f9,stroke:#333
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [README.md](file://README.md#L0-L891)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [README.md](file://README.md#L0-L891)
 
 ## Troubleshooting Common Issues
 
-When getting started with the context-manager tool, you may encounter a few common issues. Understanding these and their solutions will help you use the tool more effectively.
+When getting started with the ctxman tool, you may encounter a few common issues. Understanding these and their solutions will help you use the tool more effectively.
 
 **Understanding verbose output**: The tool's verbose output (enabled by default) can be overwhelming for beginners. It shows all included files, token counts, and detailed statistics. To reduce output, use the `--no-verbose` flag, though this is not recommended as it reduces transparency about what files are being analyzed.
 
@@ -353,4 +353,4 @@ npm install tiktoken
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)

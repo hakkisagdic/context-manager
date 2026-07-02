@@ -1,6 +1,6 @@
-# Context Manager - Windows Uninstallation Script
+# Ctxman - Windows Uninstallation Script
 # Version: 2.3.6+
-# Description: Removes context-manager from Windows
+# Description: Removes ctxman from Windows
 
 param(
     [Parameter(Mandatory=$false)]
@@ -8,17 +8,17 @@ param(
 )
 
 # Configuration
-$PackageName = "@hakkisagdic/context-manager"
-$InstallDir = "$env:USERPROFILE\.context-manager"
-$ConfigDir = "$env:USERPROFILE\.context-manager"
+$PackageName = "ctxman"
+$InstallDir = "$env:USERPROFILE\.ctxman"
+$ConfigDir = "$env:USERPROFILE\.ctxman"
 
 Write-Host "╔════════════════════════════════════════════════════════╗" -ForegroundColor Blue
-Write-Host "║    Context Manager - Uninstallation Script v2.3.6     ║" -ForegroundColor Blue
+Write-Host "║    Ctxman - Uninstallation Script v2.3.6     ║" -ForegroundColor Blue
 Write-Host "╚════════════════════════════════════════════════════════╝" -ForegroundColor Blue
 Write-Host ""
 
 # Confirm uninstallation
-Write-Host "⚠  This will remove Context Manager from your system" -ForegroundColor Yellow
+Write-Host "⚠  This will remove Ctxman from your system" -ForegroundColor Yellow
 Write-Host ""
 $confirm = Read-Host "Are you sure you want to uninstall? [y/N]"
 
@@ -83,11 +83,11 @@ Write-Host ""
 Write-Host "➜ Verifying uninstallation..." -ForegroundColor Yellow
 
 try {
-    $null = Get-Command context-manager -ErrorAction Stop
-    Write-Host "⚠  Warning: context-manager command still found" -ForegroundColor Yellow
+    $null = Get-Command ctxman -ErrorAction Stop
+    Write-Host "⚠  Warning: ctxman command still found" -ForegroundColor Yellow
     Write-Host "  You may need to restart your terminal" -ForegroundColor Yellow
 } catch {
-    Write-Host "✓ context-manager command not found (expected)" -ForegroundColor Green
+    Write-Host "✓ ctxman command not found (expected)" -ForegroundColor Green
 }
 
 # Success message
@@ -96,7 +96,7 @@ Write-Host "╔═════════════════════�
 Write-Host "║        Uninstallation Complete! 👋                     ║" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
-Write-Host "Thank you for using Context Manager!" -ForegroundColor Blue
+Write-Host "Thank you for using Ctxman!" -ForegroundColor Blue
 Write-Host ""
 
 if ($KeepConfig) {
@@ -104,6 +104,6 @@ if ($KeepConfig) {
     Write-Host "  $ConfigDir"
     Write-Host ""
     Write-Host "To reinstall with your settings:" -ForegroundColor Blue
-    Write-Host "  irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.ps1 | iex" -ForegroundColor Yellow
+    Write-Host "  irm https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.ps1 | iex" -ForegroundColor Yellow
     Write-Host ""
 }

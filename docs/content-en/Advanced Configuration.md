@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 </cite>
 
 ## Table of Contents
@@ -18,14 +18,14 @@
 
 ## Introduction
 
-The context-manager tool provides sophisticated configuration options for controlling which files and methods are included in token analysis and LLM context generation. This document details advanced configuration techniques for specialized use cases, focusing on custom filter patterns, priority hierarchies, and performance optimization strategies.
+The ctxman tool provides sophisticated configuration options for controlling which files and methods are included in token analysis and LLM context generation. This document details advanced configuration techniques for specialized use cases, focusing on custom filter patterns, priority hierarchies, and performance optimization strategies.
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
 
 ## Configuration File Priority
 
-The context-manager tool implements a well-defined priority hierarchy for configuration files that determines how files are included or excluded from analysis. This hierarchy ensures predictable behavior when multiple configuration files are present.
+The ctxman tool implements a well-defined priority hierarchy for configuration files that determines how files are included or excluded from analysis. This hierarchy ensures predictable behavior when multiple configuration files are present.
 
 The priority order from highest to lowest is:
 
@@ -51,16 +51,16 @@ I --> J
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L124-L229)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L231-L800)
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L124-L229)
 
 ## Custom Filter Patterns
 
-The context-manager tool supports creating custom filter patterns for specialized use cases through both file-level and method-level filtering mechanisms.
+The ctxman tool supports creating custom filter patterns for specialized use cases through both file-level and method-level filtering mechanisms.
 
 ### File-Level Filtering
 
@@ -117,16 +117,16 @@ TokenCalculator --> MethodFilterParser : "uses"
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L231-L800)
 
 **Section sources**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L75-L115)
 
 ## Advanced Pattern Syntax
 
-The context-manager tool implements sophisticated pattern syntax for both file and method filtering, supporting complex negation rules, directory-specific patterns, and combined include/exclude logic.
+The ctxman tool implements sophisticated pattern syntax for both file and method filtering, supporting complex negation rules, directory-specific patterns, and combined include/exclude logic.
 
 ### Pattern Conversion and Matching
 
@@ -160,10 +160,10 @@ N --> O
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 
 ### Complex Negation Rules
 
@@ -181,7 +181,7 @@ src/**/*.js
 
 ## Performance Optimization
 
-The context-manager tool includes several performance optimization techniques to improve analysis speed and reduce resource usage.
+The ctxman tool includes several performance optimization techniques to improve analysis speed and reduce resource usage.
 
 ### Directory-Specific Analysis
 
@@ -240,22 +240,22 @@ P --> |No| Q[Complete]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L272-L278)
-- [context-manager.js](file://context-manager.js#L380-L400)
+- [ctxman.js](file://ctxman.js#L272-L278)
+- [ctxman.js](file://ctxman.js#L380-L400)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L272-L278)
+- [ctxman.js](file://ctxman.js#L272-L278)
 
 ## Integration and Scripting
 
-The context-manager tool provides multiple integration points for use in automated workflows and custom scripts.
+The ctxman tool provides multiple integration points for use in automated workflows and custom scripts.
 
 ### Programmatic Usage
 
 The tool can be used programmatically by importing the TokenAnalyzer class:
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 const analyzer = new TokenAnalyzer('./src', {
     methodLevel: true,
@@ -307,10 +307,10 @@ SUMMARY ||--o{ FILE : contains
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 ## Best Practices
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**context-manager** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 14+ programming languages, generating optimized context for AI assistants.
+**ctxman** is an AI Development Platform with plugin architecture, Git integration, REST API, and real-time analysis capabilities. It provides method-level filtering and exact token counting for 14+ programming languages, generating optimized context for AI assistants.
 
 **Core Capabilities (v3.0.0):**
 - **Plugin Architecture**: Modular system for languages and exporters
@@ -47,7 +47,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `CacheManager.js` - Disk/memory caching system (>80% hit rate)
 
 **Legacy Components** (backward compatible):
-- `context-manager.js` - Legacy TokenCalculator (still supported)
+- `ctxman.js` - Legacy TokenCalculator (still supported)
 - `lib/analyzers/` - Token calculator, method analyzer
 - `lib/formatters/` - TOON, GitIngest formatters
 - `lib/parsers/` - GitIgnore, method filter parsers
@@ -96,17 +96,17 @@ npm run test:comprehensive # Complete test suite
 npm run analyze                   # Interactive wizard (default)
 npm run analyze:cli               # CLI mode
 npm run analyze:methods           # Method-level analysis
-context-manager --save-report     # Detailed JSON report
-context-manager -m --context-clipboard  # Method-level to clipboard
+ctxman --save-report     # Detailed JSON report
+ctxman -m --context-clipboard  # Method-level to clipboard
 ```
 
 ### v3.0.0 Platform Commands
 ```bash
 npm run serve                     # Start API server (port 3000)
 npm run watch                     # Start watch mode
-context-manager --changed-only    # Analyze only changed files
-context-manager --changed-since main  # Analyze changes since branch
-context-manager --list-llms       # List supported LLM models
+ctxman --changed-only    # Analyze only changed files
+ctxman --changed-since main  # Analyze changes since branch
+ctxman --list-llms       # List supported LLM models
 ```
 
 ### Build & Publish
@@ -118,7 +118,7 @@ npm run prepublishOnly # Runs tests before publish
 ### Manual Testing
 ```bash
 cd test-repos/express             # Navigate to Express test repo
-context-manager --cli -m          # Test with Express.js
+ctxman --cli -m          # Test with Express.js
 ./scripts/quick-test-v3.sh        # Run quick test suite (9 tests)
 ```
 

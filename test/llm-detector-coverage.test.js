@@ -31,21 +31,21 @@ describe('LLM Detector Coverage', () => {
     });
 
     describe('Environment Detection Edge Cases', () => {
-        test('detectsExplicit CONTEXT_MANAGER_LLM override', () => {
-            process.env.CONTEXT_MANAGER_LLM = 'custom-model';
+        test('detectsExplicit CTXMAN_LLM override', () => {
+            process.env.CTXMAN_LLM = 'custom-model';
             const detected = LLMDetector.detectFromEnv();
             expect(detected).toBe('custom-model');
         });
 
         test('detects Anthropic API key', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             process.env.ANTHROPIC_API_KEY = 'sk-ant-test';
             const detected = LLMDetector.detectFromEnv();
             expect(detected).toBe('claude-sonnet-4.5');
         });
 
         test('detects OpenAI API key', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             process.env.OPENAI_API_KEY = 'sk-test';
             const detected = LLMDetector.detectFromEnv();
@@ -53,7 +53,7 @@ describe('LLM Detector Coverage', () => {
         });
 
         test('detects Google API key', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             process.env.GOOGLE_API_KEY = 'test-key';
@@ -62,7 +62,7 @@ describe('LLM Detector Coverage', () => {
         });
 
         test('detects Gemini API key', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             delete process.env.GOOGLE_API_KEY;
@@ -72,7 +72,7 @@ describe('LLM Detector Coverage', () => {
         });
 
         test('detects DeepSeek API key', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             delete process.env.GOOGLE_API_KEY;
@@ -83,7 +83,7 @@ describe('LLM Detector Coverage', () => {
         });
 
         test('returns null when no API keys present', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             delete process.env.GOOGLE_API_KEY;
@@ -254,7 +254,7 @@ describe('LLM Detector Coverage', () => {
 
     describe('Integration', () => {
         test('detect falls back through env and config', () => {
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             ConfigUtils.loadUserConfig.mockImplementation(() => {

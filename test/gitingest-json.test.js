@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const CLI_PATH = path.join(process.cwd(), 'context-manager.js');
+const CLI_PATH = path.join(process.cwd(), 'ctxman.js');
 const TEMP_DIR = path.join(process.cwd(), 'test/temp-gitingest-json');
 
 function runCommand(args) {

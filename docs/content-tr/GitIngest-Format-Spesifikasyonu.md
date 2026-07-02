@@ -3,7 +3,7 @@
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**   
 - [GitIngestFormatter](file://lib/formatters/gitingest-formatter.js)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [GITINGEST_VERSION.md](file://docs/GITINGEST_VERSION.md)
 - [README.md](file://README.md)
 - [test-gitingest.js](file://test/test-gitingest.js)
@@ -26,7 +26,7 @@
 
 GitIngest format spesifikasyonu, Large Language Model (LLM) tüketimi için optimize edilmiş kod tabanı temsili için standart bir metin tabanlı digest formatını tanımlar. Bu format, geliştiricilerin tüm proje context'lerini ChatGPT, Claude veya diğer LLM'ler gibi AI asistanları tarafından verimli bir şekilde işlenebilen tek, yapılandırılmış bir metin dosyasına birleştirmesini sağlar.
 
-context-manager aracındaki uygulama, proje metadata'sı, dizin yapısı görselleştirmesi ve prompt-dostu bir formatta tam dosya içeriklerini içeren kod tabanlarından GitIngest-style digest'ler oluşturan JavaScript tabanlı bir çözüm sağlar.
+ctxman aracındaki uygulama, proje metadata'sı, dizin yapısı görselleştirmesi ve prompt-dostu bir formatta tam dosya içeriklerini içeren kod tabanlarından GitIngest-style digest'ler oluşturan JavaScript tabanlı bir çözüm sağlar.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L150-L170)
@@ -95,7 +95,7 @@ D --> D4["dosya içeriği"]
 
 ## Versiyon Sistemi
 
-context-manager uygulaması, kendi uyumluluğunu ve özellik takibini sürdürürken referans GitIngest formatıyla uyumlu bir versiyon takip sistemi izler.
+ctxman uygulaması, kendi uyumluluğunu ve özellik takibini sürdürürken referans GitIngest formatıyla uyumlu bir versiyon takip sistemi izler.
 
 ### Mevcut Uygulama
 - **GitIngest Versiyon Referansı**: v0.3.1 (2025-07-31)
@@ -114,7 +114,7 @@ Versiyon sistemi, JavaScript'e özgü optimizasyonlar ve özellik eklemeleri iç
 
 ## Uygulama Detayları
 
-GitIngest formatı, analiz edilmiş kod tabanı verisinden digest dosyasının oluşturulmasını düzenleyen `GitIngestFormatter` sınıfı aracılığıyla uygulanır. Uygulama, bağımlılıksız olacak ve çekirdek context-manager analiz hattı ile uyumlu olacak şekilde tasarlanmıştır.
+GitIngest formatı, analiz edilmiş kod tabanı verisinden digest dosyasının oluşturulmasını düzenleyen `GitIngestFormatter` sınıfı aracılığıyla uygulanır. Uygulama, bağımlılıksız olacak ve çekirdek ctxman analiz hattı ile uyumlu olacak şekilde tasarlanmıştır.
 
 ### Çekirdek Bileşenler
 - **GitIngestFormatter Sınıfı**: Digest oluşturan ana formatter
@@ -162,7 +162,7 @@ GitIngestFormatter --> FileUtils : "uses isCode"
 
 **Diagram kaynakları**
 - [gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
-- [context-manager.js](file://context-manager.js#L4-L5)
+- [ctxman.js](file://ctxman.js#L4-L5)
 
 ## Method Seviyesi Filtreleme
 
@@ -216,33 +216,33 @@ GitIngest formatı, farklı kullanım senaryoları ve performans gereksinimleri 
 ### Doğrudan Oluşturma
 Doğrudan kod tabanı analizinden bir digest oluşturun:
 ```bash
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 ```
 
 ### JSON Tabanlı Oluşturma
 Mevcut JSON raporlarından digest oluşturun (daha hızlı, yeniden tarama yok):
 ```bash
 # Detaylı analiz raporundan
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 
 # LLM context dosyasından
-context-manager --gitingest-from-context llm-context.json
+ctxman --gitingest-from-context llm-context.json
 
 # Varsayılan dosya adlarını kullanarak
-context-manager --gitingest-from-report
-context-manager --gitingest-from-context
+ctxman --gitingest-from-report
+ctxman --gitingest-from-context
 ```
 
 ### Kombine İş Akışları
 Digest oluşturmayı diğer çıktılarla birleştirin:
 ```bash
 # Hem digest hem de detaylı rapor oluştur
-context-manager -g -s
+ctxman -g -s
 
 # Tekrarlanan digest oluşturma için iki adımlı iş akışı
-context-manager --save-report
-context-manager --gitingest-from-report
+ctxman --save-report
+ctxman --gitingest-from-report
 ```
 
 Çıktı `digest.txt` dosyası, LLM tüketimi veya arşivleme amaçları için hazır tam formatlanmış digest'i içerir.
@@ -301,7 +301,7 @@ GitIngest formatı ile çalışırken yaygın sorunlar ve çözümleri:
 
 **Bölüm kaynakları**
 - [test-gitingest-json.js](file://test/test-gitingest-json.js#L150-L180)
-- [context-manager.js](file://context-manager.js#L20-L50)
+- [ctxman.js](file://ctxman.js#L20-L50)
 
 ## Entegrasyon İş Akışları
 
@@ -335,7 +335,7 @@ aws s3 cp digest.txt s3://project-artifacts/${GIT_COMMIT}/digest.txt
 
 ### İnteraktif Geliştirme Döngüsü
 1. Kod değişiklikleri yapın
-2. `context-manager --gitingest` çalıştırın
+2. `ctxman --gitingest` çalıştırın
 3. Digest içeriğini kopyalayın
 4. LLM arayüzüne sorgu ile yapıştırın
 5. Önerileri uygulayın
@@ -345,4 +345,4 @@ Bu sıkı geri bildirim döngüsü, AI yardımıyla hızlı iterasyon ve sürekl
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L200-L220)
-- [context-manager.js](file://context-manager.js#L100-L150)
+- [ctxman.js](file://ctxman.js#L100-L150)

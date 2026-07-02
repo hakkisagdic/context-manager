@@ -8,7 +8,7 @@ describe('TOON Format Encoder', () => {
             const formatter = new ToonFormatter();
             const testData = {
                 project: {
-                    root: 'context-manager',
+                    root: 'ctxman',
                     totalFiles: 64,
                     totalTokens: 181480
                 }
@@ -18,7 +18,7 @@ describe('TOON Format Encoder', () => {
             expect(output).toBeDefined();
             expect(typeof output).toBe('string');
             expect(output).toContain('project');
-            expect(output).toContain('root: context-manager');
+            expect(output).toContain('root: ctxman');
         });
 
         test('encodes tabular data', () => {
@@ -41,7 +41,7 @@ describe('TOON Format Encoder', () => {
             const formatter = new ToonFormatter();
             const testData = {
                 project: {
-                    root: 'context-manager',
+                    root: 'ctxman',
                     totalFiles: 64
                 }
             };

@@ -1,4 +1,4 @@
-# Local RAG Design for Context Manager
+# Local RAG Design for Ctxman
 
 This document outlines the design for the local Retrieval-Augmented Generation (RAG) engine.
 
@@ -21,7 +21,7 @@ Abstracts the embedding generation.
 
 #### 2. VectorStore (`lib/rag/VectorStore.js`)
 Manages the LanceDB connection and document lifecycle.
--   **Storage**: Filesystem based (default: `.context-manager/rag-store`).
+-   **Storage**: Filesystem based (default: `.ctxman/rag-store`).
 -   **Schema**:
     -   `vector`: Float32 array (dimension depends on model, e.g., 384).
     -   `text`: Original text content.

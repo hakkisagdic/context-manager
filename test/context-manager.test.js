@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { main, generateDigestFromReport, generateDigestFromContext } from '../context-manager.js';
+import { main, generateDigestFromReport, generateDigestFromContext } from '../ctxman.js';
 import TokenCalculator from '../lib/analyzers/token-calculator.js';
 import GitIngestFormatter from '../lib/formatters/gitingest-formatter.js';
 import fs from 'fs';
@@ -10,7 +10,7 @@ vi.mock('../lib/analyzers/token-calculator.js');
 vi.mock('../lib/formatters/gitingest-formatter.js');
 vi.mock('fs');
 
-describe('Context Manager CLI', () => {
+describe('Ctxman CLI', () => {
     let consoleLogSpy;
     let consoleErrorSpy;
     let processExitSpy;

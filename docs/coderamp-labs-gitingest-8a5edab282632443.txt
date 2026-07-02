@@ -2332,7 +2332,7 @@ def _apply_gitignores(query: IngestionQuery) -> None:
 
 @asynccontextmanager
 async def _clone_repo_if_remote(query: IngestionQuery, *, token: str | None) -> AsyncGenerator[None]:
-    """Async context-manager that clones ``query.url`` if present.
+    """Async ctxman that clones ``query.url`` if present.
 
     If ``query.url`` is set, the repo is cloned, control is yielded, and the temp directory is removed on exit.
     If no URL is given, the function simply yields immediately.

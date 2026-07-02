@@ -1,6 +1,6 @@
 # TOON Format - Feature Parity Analysis
 
-**Context Manager Version:** 2.3.5
+**Ctxman Version:** 2.3.5
 **Official TOON Spec:** v1.3 (toon-format/toon)
 **Last Updated:** November 3, 2025
 
@@ -10,7 +10,7 @@
 
 ### ✅ Implemented Features
 
-| Feature | Spec v1.3 | Context Manager | Notes |
+| Feature | Spec v1.3 | Ctxman | Notes |
 |---------|-----------|-----------------|-------|
 | **Basic Encoding** | ✅ | ✅ | Objects, primitives, strings |
 | **Nested Objects** | ✅ | ✅ | Indentation-based structure |
@@ -27,7 +27,7 @@
 
 ### ⚠️ Partially Implemented
 
-| Feature | Spec v1.3 | Context Manager | Gap |
+| Feature | Spec v1.3 | Ctxman | Gap |
 |---------|-----------|-----------------|-----|
 | **Array Length Markers** | `items[3]` | `{field1,field2}:` only | Missing `[N]` prefix |
 | **Delimiter Options** | `,`, `\t`, `\|` | `,` only | Tab and pipe delimiters missing |
@@ -372,7 +372,7 @@ users[2]{id,name,role}:
   2,Bob,user
 ```
 
-**Context Manager Output:**
+**Ctxman Output:**
 ```toon
 {
   users: {id,name,role}:
@@ -398,7 +398,7 @@ items[3]:
   - text
 ```
 
-**Context Manager Output:**
+**Ctxman Output:**
 ```toon
 items: [1,{a: 1},"text"]
 ```

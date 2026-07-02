@@ -2,7 +2,7 @@
   <div class="app">
     <header class="header">
       <div class="header-left">
-        <h1>🚀 Context Manager</h1>
+        <h1>🚀 Ctxman</h1>
         <span class="version">v3.3.0</span>
       </div>
       <div class="header-right">
@@ -153,7 +153,7 @@
         {{ stats.totalTokens.toLocaleString() }} tokens
       </span>
       <span class="footer-item">
-        Context Manager Desktop v3.3.0
+        Ctxman Desktop v3.3.0
       </span>
     </footer>
   </div>

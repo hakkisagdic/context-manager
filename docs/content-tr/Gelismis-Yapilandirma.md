@@ -3,7 +3,7 @@
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 </cite>
 
 ## İçindekiler
@@ -18,14 +18,14 @@
 
 ## Giriş
 
-context-manager aracı, token analizi ve LLM context oluşturmaya hangi dosya ve methodların dahil edileceğini kontrol etmek için sofistike konfigürasyon seçenekleri sağlar. Bu doküman, özel kullanım senaryoları için gelişmiş konfigürasyon tekniklerini detaylandırır, özel filtre desenlerine, öncelik hiyerarşilerine ve performans optimizasyon stratejilerine odaklanır.
+ctxman aracı, token analizi ve LLM context oluşturmaya hangi dosya ve methodların dahil edileceğini kontrol etmek için sofistike konfigürasyon seçenekleri sağlar. Bu doküman, özel kullanım senaryoları için gelişmiş konfigürasyon tekniklerini detaylandırır, özel filtre desenlerine, öncelik hiyerarşilerine ve performans optimizasyon stratejilerine odaklanır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
 
 ## Konfigürasyon Dosyası Önceliği
 
-context-manager aracı, birden fazla konfigürasyon dosyası mevcut olduğunda dosyaların analize nasıl dahil edildiğini veya hariç tutulduğunu belirleyen iyi tanımlanmış bir öncelik hiyerarşisi uygular. Bu hiyerarşi, öngörülebilir davranış sağlar.
+ctxman aracı, birden fazla konfigürasyon dosyası mevcut olduğunda dosyaların analize nasıl dahil edildiğini veya hariç tutulduğunu belirleyen iyi tanımlanmış bir öncelik hiyerarşisi uygular. Bu hiyerarşi, öngörülebilir davranış sağlar.
 
 En yüksekten en düşüğe öncelik sırası:
 
@@ -51,16 +51,16 @@ I --> J
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L124-L229)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L231-L800)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L124-L229)
 
 ## Özel Filtre Desenleri
 
-context-manager aracı, hem dosya seviyesinde hem de method seviyesinde filtreleme mekanizmaları aracılığıyla özel kullanım senaryoları için özel filtre desenleri oluşturmayı destekler.
+ctxman aracı, hem dosya seviyesinde hem de method seviyesinde filtreleme mekanizmaları aracılığıyla özel kullanım senaryoları için özel filtre desenleri oluşturmayı destekler.
 
 ### Dosya Seviyesinde Filtreleme
 
@@ -117,16 +117,16 @@ TokenCalculator --> MethodFilterParser : "kullanır"
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L231-L800)
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L1-L891)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L75-L115)
 
 ## Gelişmiş Desen Sözdizimi
 
-context-manager aracı, hem dosya hem de method filtrlemesi için karmaşık negasyon kurallarını, dizine özel desenleri ve kombine include/exclude mantığını destekleyen sofistike desen sözdizimi uygular.
+ctxman aracı, hem dosya hem de method filtrlemesi için karmaşık negasyon kurallarını, dizine özel desenleri ve kombine include/exclude mantığını destekleyen sofistike desen sözdizimi uygular.
 
 ### Desen Dönüşümü ve Eşleştirme
 
@@ -160,10 +160,10 @@ N --> O
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 
 ### Karmaşık Negasyon Kuralları
 
@@ -181,7 +181,7 @@ src/**/*.js
 
 ## Performans Optimizasyonu
 
-context-manager aracı, analiz hızını artırmak ve kaynak kullanımını azaltmak için çeşitli performans optimizasyon teknikleri içerir.
+ctxman aracı, analiz hızını artırmak ve kaynak kullanımını azaltmak için çeşitli performans optimizasyon teknikleri içerir.
 
 ### Dizine Özel Analiz
 
@@ -240,22 +240,22 @@ P --> |Hayır| Q[Tamamlandı]
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L272-L278)
-- [context-manager.js](file://context-manager.js#L380-L400)
+- [ctxman.js](file://ctxman.js#L272-L278)
+- [ctxman.js](file://ctxman.js#L380-L400)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L272-L278)
+- [ctxman.js](file://ctxman.js#L272-L278)
 
 ## Entegrasyon ve Scripting
 
-context-manager aracı, otomatik iş akışlarında ve özel scriptlerde kullanım için birden fazla entegrasyon noktası sağlar.
+ctxman aracı, otomatik iş akışlarında ve özel scriptlerde kullanım için birden fazla entegrasyon noktası sağlar.
 
 ### Programatik Kullanım
 
 Araç, TokenAnalyzer sınıfı import edilerek programatik olarak kullanılabilir:
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 const analyzer = new TokenAnalyzer('./src', {
     methodLevel: true,
@@ -307,10 +307,10 @@ SUMMARY ||--o{ FILE : içerir
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L784-L799)
+- [ctxman.js](file://ctxman.js#L784-L799)
 
 ## En İyi Uygulamalar
 

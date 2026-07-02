@@ -30,7 +30,7 @@ async function main() {
 
     // Check for version flag
     if (args.includes('--version')) {
-        console.log(`Context Manager v${pkg.version}`);
+        console.log(`Ctxman v${pkg.version}`);
         return;
     }
 
@@ -244,15 +244,15 @@ function listLLMs() {
 
     console.log('\n' + '═'.repeat(70));
     console.log('\nUsage:');
-    console.log('  context-manager --target-model <MODEL_ID>');
-    console.log('  context-manager --auto-detect-llm');
+    console.log('  ctxman --target-model <MODEL_ID>');
+    console.log('  ctxman --auto-detect-llm');
     console.log('\nExample:');
-    console.log('  context-manager --target-model claude-sonnet-4.5');
-    console.log('  context-manager --auto-detect-llm --cli\n');
+    console.log('  ctxman --target-model claude-sonnet-4.5');
+    console.log('  ctxman --auto-detect-llm --cli\n');
 }
 
 function printStartupInfo(options) {
-    console.log('🚀 Context Manager v3.0.0');
+    console.log('🚀 Ctxman v3.0.0');
     console.log('='.repeat(50));
 
     // Only show active options if any are set
@@ -288,12 +288,12 @@ function printStartupInfo(options) {
 }
 
 function printHelp() {
-    console.log('Context Manager v3.0.0 - AI Development Platform with Plugin Architecture and Git Integration');
+    console.log('Ctxman v3.0.0 - AI Development Platform with Plugin Architecture and Git Integration');
     console.log();
-    console.log('Usage: context-manager [options]');
+    console.log('Usage: ctxman [options]');
     console.log();
     console.log('Default Mode:');
-    console.log('  context-manager          Launch interactive wizard (DEFAULT)');
+    console.log('  ctxman          Launch interactive wizard (DEFAULT)');
     console.log('  --cli                    Use CLI mode instead of wizard');
     console.log();
     console.log('Analysis Options:');
@@ -351,27 +351,27 @@ function printHelp() {
     console.log('  convert INPUT --from FORMAT --to FORMAT');
     console.log('                           Convert between formats');
     console.log('  Examples:');
-    console.log('    context-manager convert report.json --from json --to toon');
-    console.log('    context-manager convert data.toon --from toon --to yaml');
-    console.log('    context-manager convert context.yaml --from yaml --to json');
+    console.log('    ctxman convert report.json --from json --to toon');
+    console.log('    ctxman convert data.toon --from toon --to yaml');
+    console.log('    ctxman convert context.yaml --from yaml --to json');
     console.log();
     console.log('GitHub Integration (v2.3.6+):');
     console.log('  github URL [options]     Generate GitIngest from GitHub repository');
     console.log('  git URL [options]        Alias for github command');
     console.log('  Examples:');
-    console.log('    context-manager github facebook/react');
-    console.log('    context-manager github https://github.com/vercel/next.js --branch canary');
-    console.log('    context-manager git angular/angular -o docs/angular.txt');
+    console.log('    ctxman github facebook/react');
+    console.log('    ctxman github https://github.com/vercel/next.js --branch canary');
+    console.log('    ctxman git angular/angular -o docs/angular.txt');
     console.log();
     console.log('Examples:');
-    console.log('  context-manager                                  # Launch interactive wizard (DEFAULT)');
-    console.log('  context-manager --cli                            # Use CLI mode');
-    console.log('  context-manager --cli -o json --save-report      # CLI: JSON format + save report');
-    console.log('  context-manager --cli -o toon --context-clipboard   # CLI: TOON to clipboard');
-    console.log('  context-manager --cli --gitingest --chunk        # CLI: GitIngest with chunking');
-    console.log('  context-manager --cli -m -o yaml                 # CLI: Method-level + YAML format');
-    console.log('  context-manager --cli --chunk --chunk-strategy smart   # CLI: Smart chunking');
-    console.log('  context-manager convert data.json --from json --to toon  # Convert formats');
+    console.log('  ctxman                                  # Launch interactive wizard (DEFAULT)');
+    console.log('  ctxman --cli                            # Use CLI mode');
+    console.log('  ctxman --cli -o json --save-report      # CLI: JSON format + save report');
+    console.log('  ctxman --cli -o toon --context-clipboard   # CLI: TOON to clipboard');
+    console.log('  ctxman --cli --gitingest --chunk        # CLI: GitIngest with chunking');
+    console.log('  ctxman --cli -m -o yaml                 # CLI: Method-level + YAML format');
+    console.log('  ctxman --cli --chunk --chunk-strategy smart   # CLI: Smart chunking');
+    console.log('  ctxman convert data.json --from json --to toon  # Convert formats');
     console.log();
     console.log('Format Comparison (token efficiency):');
     console.log('  TOON:     40-50% reduction (most efficient)');
@@ -379,7 +379,7 @@ function printHelp() {
     console.log('  YAML:     Human-readable (5-10% larger than JSON)');
     console.log('  Markdown: Documentation-friendly (20-30% larger)');
     console.log();
-    console.log('For more information: https://github.com/hakkisagdic/context-manager');
+    console.log('For more information: https://github.com/hakkisagdic/ctxman');
 }
 
 function listFormats() {
@@ -399,8 +399,8 @@ function listFormats() {
     }
 
     console.log();
-    console.log('Usage: context-manager --output <format>');
-    console.log('Example: context-manager --output toon --context-clipboard');
+    console.log('Usage: ctxman --output <format>');
+    console.log('Example: ctxman --output toon --context-clipboard');
 }
 
 function getChangedSince(args) {
@@ -604,7 +604,7 @@ function runFormatConversion(args) {
 
     if (fromIndex === -1 || toIndex === -1) {
         console.error('❌ Format conversion requires --from and --to flags');
-        console.error('   Usage: context-manager convert input.json --from json --to toon');
+        console.error('   Usage: ctxman convert input.json --from json --to toon');
         process.exit(1);
     }
 

@@ -2,7 +2,7 @@
 
 <cite>
 **Bu Belgedeki Referans Dosyalar**
-- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [ctxman.js](file://ctxman.js) - *Son commit'te güncellendi*
 - [README.md](file://README.md) - *Son commit'te güncellendi*
 - [CLAUDE.md](file://CLAUDE.md)
 - [index.js](file://index.js)
@@ -22,10 +22,10 @@
 
 ## Giriş
 
-context-manager aracı, JavaScript ve TypeScript codebase'lerinin granüler incelemesini sağlayan method seviyesi analiz yetenekleri sunar. Bu özellik, geliştiricilerin kaynak dosyalardan bireysel methodları çıkarmasına, analiz etmesine ve filtrelemesine olanak tanıyarak LLM context oluşturma için optimize edilmiş temsiller oluşturur. Method seviyesi analiz, `methodLevel` seçeneği aracılığıyla kontrol edilir ve method içeriğini işlemek ve ayrıntılı istatistikler oluşturmak için TokenCalculator ile entegre olur.
+ctxman aracı, JavaScript ve TypeScript codebase'lerinin granüler incelemesini sağlayan method seviyesi analiz yetenekleri sunar. Bu özellik, geliştiricilerin kaynak dosyalardan bireysel methodları çıkarmasına, analiz etmesine ve filtrelemesine olanak tanıyarak LLM context oluşturma için optimize edilmiş temsiller oluşturur. Method seviyesi analiz, `methodLevel` seçeneği aracılığıyla kontrol edilir ve method içeriğini işlemek ve ayrıntılı istatistikler oluşturmak için TokenCalculator ile entegre olur.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L234-L238)
+- [ctxman.js](file://ctxman.js#L234-L238)
 - [bin/cli.js](file://bin/cli.js#L17-L18)
 
 ## Method Çıkarma Süreci
@@ -52,11 +52,11 @@ NextPattern --> End([Method Dizisini Döndür])
 Bir methodun tam içeriğini almak için `extractMethodContent` fonksiyonu, iç içe süslü parantezler dahil olmak üzere tam method gövdesiyle eşleşen dinamik olarak oluşturulmuş regex kalıplarını kullanır. Bu, aracın yalnızca method imzasını değil, token hesaplaması için tüm implementasyonu çıkarmasına olanak tanır.
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L15-L45)
-- [context-manager.js](file://context-manager.js#L61-L72)
+- [ctxman.js](file://ctxman.js#L15-L45)
+- [ctxman.js](file://ctxman.js#L61-L72)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L73)
+- [ctxman.js](file://ctxman.js#L14-L73)
 
 ## Method Analiz Entegrasyonu
 
@@ -98,11 +98,11 @@ Entegrasyon işlemi, method seviyesi analizin etkin olup olmadığını kontrol 
 Dahil edilen her method için sistem, method içeriğini çıkarır ve tüm dosyalar için kullanılan mekanizmanın aynısını kullanarak tokenleri hesaplar. Token hesaplaması, mevcut olduğunda GPT-4 uyumlu tam sayımlar için tiktoken kütüphanesini kullanır, tiktoken yüklü olmadığında dosya türü başına karakter sayısına dayalı tahmini hesaplamaya geçer.
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L323-L383)
-- [context-manager.js](file://context-manager.js#L234-L238)
+- [ctxman.js](file://ctxman.js#L323-L383)
+- [ctxman.js](file://ctxman.js#L234-L238)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L323-L383)
+- [ctxman.js](file://ctxman.js#L323-L383)
 
 ## Method Filtreleme Mekanizması
 
@@ -148,12 +148,12 @@ MethodFilterParser, `.methodinclude` ve `.methodignore` dosyalarından kalıplar
 Sistem, bu yapılandırma dosyalarını iki konumda arar: script dizini ve proje kökü, proje kökü öncelik alır. Bu, hem global hem de projeye özgü yapılandırmaya izin verir.
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
-- [context-manager.js](file://context-manager.js#L14-L73)
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L14-L73)
+- [ctxman.js](file://ctxman.js#L231-L800)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L75-L115)
 - [README.md](file://README.md#L481-L500)
 
 ## Method İstatistikleri ve Raporlama
@@ -189,12 +189,12 @@ Bu istatistikler, method analiz süreci sırasında güncellenir. `totalMethods`
 İstatistikler, method seviyesi analiz etkinleştirildiğinde nihai LLM context'ine dahil edilir ve ayrıntılı method bilgilerinin yanı sıra method analiz sonuçlarının bir özetini sağlar.
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L239-L239)
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L239-L239)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L239-L239)
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L239-L239)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 ## LLM Context Oluşturma
 
@@ -220,11 +220,11 @@ Context ayrıca, bulunan toplam methodlar, dahil edilen methodlar ve toplam meth
 Kompakt temsil, önemli yapısal bilgileri korurken context'in token sayısını önemli ölçüde azaltır ve context window boyutunun sınırlı olduğu LLM tüketimi için ideal hale getirir.
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L491-L519)
-- [context-manager.js](file://context-manager.js#L614-L643)
+- [ctxman.js](file://ctxman.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L614-L643)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 ## Yaygın Sorunlar ve En İyi Uygulamalar
 

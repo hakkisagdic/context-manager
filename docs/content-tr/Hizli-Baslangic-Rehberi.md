@@ -3,7 +3,7 @@
 <cite>
 **Bu Belgede Referans Verilen Dosyalar**
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [bin/cli.js](file://bin/cli.js)
 </cite>
 
@@ -21,20 +21,20 @@
 
 ## Giriş
 
-context-manager CLI aracı, kesin token sayımı, metod seviyesi filtreleme ve akıllı dosya seçimi sağlayarak LLM context'ini optimize etmek için tasarlanmıştır. Bu hızlı başlangıç rehberi, aracı çalışır hale getirmenize, temel işlevselliğini anlamanıza ve özelliklerini AI destekli geliştirme iş akışları için etkili bir şekilde kullanmanıza yardımcı olacaktır.
+ctxman CLI aracı, kesin token sayımı, metod seviyesi filtreleme ve akıllı dosya seçimi sağlayarak LLM context'ini optimize etmek için tasarlanmıştır. Bu hızlı başlangıç rehberi, aracı çalışır hale getirmenize, temel işlevselliğini anlamanıza ve özelliklerini AI destekli geliştirme iş akışları için etkili bir şekilde kullanmanıza yardımcı olacaktır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
 
 ## Temel İş Akışı
 
-context-manager aracı basit üç adımlı bir iş akışı izler: analiz, çıktı yorumlama ve export seçimi. Araç, kod tabanınızı analiz ederek kesin token sayılarını hesaplar, dosya kompozisyonu ve token dağılımı hakkında detaylı bilgiler sunar ve sonuçları LLM tüketimi için uygun formatlarda export etmek için birden fazla seçenek sağlar.
+ctxman aracı basit üç adımlı bir iş akışı izler: analiz, çıktı yorumlama ve export seçimi. Araç, kod tabanınızı analiz ederek kesin token sayılarını hesaplar, dosya kompozisyonu ve token dağılımı hakkında detaylı bilgiler sunar ve sonuçları LLM tüketimi için uygun formatlarda export etmek için birden fazla seçenek sağlar.
 
 Varsayılan davranış interaktiftir, kullanıcılara süreç boyunca rehberlik eder ve komut satırı bayrakları aracılığıyla belirli bir export seçeneği belirtilmediğinde export tercihleri için sorgular. Bu, kullanıcıların mevcut ihtiyaçları için her zaman en uygun çıktı formatını seçebilmelerini sağlar.
 
 ```mermaid
 flowchart TD
-Start([Run context-manager]) --> Analysis["Analyze codebase\nCalculate token counts"]
+Start([Run ctxman]) --> Analysis["Analyze codebase\nCalculate token counts"]
 Analysis --> Output["Display analysis results\nToken statistics, file types,\nlargest files, directories"]
 Output --> ExportDecision{"Export option\nspecified?"}
 ExportDecision --> |No| InteractiveExport["Prompt user for export choice"]
@@ -53,19 +53,19 @@ NoExport --> End
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 - [README.md](file://README.md#L0-L891)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 - [README.md](file://README.md#L0-L891)
 
 ## Aracı İnteraktif Olarak Çalıştırma
 
-context-manager aracını interaktif olarak çalıştırmak için komutu herhangi bir bayrak olmadan çalıştırın:
+ctxman aracını interaktif olarak çalıştırmak için komutu herhangi bir bayrak olmadan çalıştırın:
 
 ```bash
-context-manager
+ctxman
 ```
 
 Bu, analiz sürecini başlatır, .gitignore kurallarına ve calculator'a özgü ignore/include desenlerine uyarak proje dizininizi tarar, tüm ilgili dosyalar için token sayılarını hesaplar ve kapsamlı bir rapor görüntüler. Analiz tamamlandıktan sonra, bir export seçeneği belirtilmemişse, araç bir export yöntemi seçmenizi ister.
@@ -74,11 +74,11 @@ Bu, analiz sürecini başlatır, .gitignore kurallarına ve calculator'a özgü 
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 
 ## Analiz Çıktısını Anlama
 
-context-manager aracını çalıştırdığınızda, çeşitli önemli bilgi parçalarını içeren detaylı bir analiz raporu üretir. Çıktı, proje kök dizini, yapılandırma modu (INCLUDE veya EXCLUDE) ve token hesaplama yöntemi (tiktoken kullanarak kesin veya tahmini) dahil olmak üzere analiz süreci hakkında metadata ile başlar.
+ctxman aracını çalıştırdığınızda, çeşitli önemli bilgi parçalarını içeren detaylı bir analiz raporu üretir. Çıktı, proje kök dizini, yapılandırma modu (INCLUDE veya EXCLUDE) ve token hesaplama yöntemi (tiktoken kullanarak kesin veya tahmini) dahil olmak üzere analiz süreci hakkında metadata ile başlar.
 
 Ana rapor şunları içerir:
 - Analiz edilen toplam dosya sayısı ve toplam token sayısı
@@ -103,16 +103,16 @@ LargestDirectories --> Tip["Usage Tip\nSave detailed report option"]
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L683-L703)
+- [ctxman.js](file://ctxman.js#L683-L703)
 - [README.md](file://README.md#L0-L891)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L683-L703)
+- [ctxman.js](file://ctxman.js#L683-L703)
 - [README.md](file://README.md#L0-L891)
 
 ## Export Seçenekleri ve Seçimi
 
-context-manager aracı, farklı kullanım durumlarına uyum sağlamak için birden fazla export seçeneği sunar. Komut satırı bayrakları aracılığıyla bir export seçeneği belirtilmediğinde, araç interaktif export moduna girer ve kullanıcıdan dört seçenekten birini seçmesini ister:
+ctxman aracı, farklı kullanım durumlarına uyum sağlamak için birden fazla export seçeneği sunar. Komut satırı bayrakları aracılığıyla bir export seçeneği belirtilmediğinde, araç interaktif export moduna girer ve kullanıcıdan dört seçenekten birini seçmesini ister:
 
 1. Detaylı JSON raporu kaydet (token-analysis-report.json)
 2. LLM context dosyası oluştur (llm-context.json)
@@ -146,25 +146,25 @@ Complete --> [*]
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L575-L616)
+- [ctxman.js](file://ctxman.js#L575-L616)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L575-L616)
+- [ctxman.js](file://ctxman.js#L575-L616)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
 
 ## Yaygın Kullanım Desenleri
 
-context-manager aracı, farklı geliştirme iş akışlarına hitap eden çeşitli yaygın kullanım desenlerini destekler. En temel desen, aracı hiçbir bayrak olmadan interaktif olarak çalıştırmaktır; bu, tam bir analiz sağlar ve export seçenekleri için sorgular:
+ctxman aracı, farklı geliştirme iş akışlarına hitap eden çeşitli yaygın kullanım desenlerini destekler. En temel desen, aracı hiçbir bayrak olmadan interaktif olarak çalıştırmaktır; bu, tam bir analiz sağlar ve export seçenekleri için sorgular:
 
 ```bash
-context-manager
+ctxman
 ```
 
 Hızlıca LLM context'i oluşturmak ve panoya kopyalamak isteyen kullanıcılar için, `--context-clipboard` bayrağı basitleştirilmiş bir iş akışı sağlar:
 
 ```bash
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 Bu komut kod tabanını analiz eder ve optimize edilmiş context'i JSON formatında doğrudan panoya kopyalar, bir LLM arayüzüne yapıştırmaya hazır hale getirir.
@@ -172,20 +172,20 @@ Bu komut kod tabanını analiz eder ve optimize edilmiş context'i JSON formatı
 Bir diğer yaygın desen, tüm dosyalar yerine JavaScript/TypeScript dosyalarından belirli metodları çıkarma ve analiz etmeye odaklanan metod seviyesi analizdir:
 
 ```bash
-context-manager --method-level
+ctxman --method-level
 ```
 
 Daha karmaşık iş akışları oluşturmak için birden fazla bayrağı da birleştirebilirsiniz. Örneğin, metod seviyesi analiz yapmak ve hem detaylı bir rapor kaydetmek hem de context'i bir dosyaya export etmek için:
 
 ```bash
-context-manager --method-level --save-report --context-export
+ctxman --method-level --save-report --context-export
 ```
 
 Araç ayrıca, tüm dahil edilen dosyaları gösteren verbose çıktıyı (varsayılan olarak etkin) veya dosya listesini bastıran `--no-verbose` ile sessiz modu da destekler.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)
 
 ## Metod Seviyesi Analiz
 
@@ -194,7 +194,7 @@ Metod seviyesi analiz, tüm dosyaları analiz etmek yerine kod tabanınızdaki b
 Metod seviyesi analizini etkinleştirmek için `--method-level` bayrağını kullanın:
 
 ```bash
-context-manager --method-level
+ctxman --method-level
 ```
 
 Metod seviyesi analiz etkinleştirildiğinde, araç fonksiyon bildirimleri, metod atamaları ve arrow fonksiyonlar için desen eşleştirme kullanarak JavaScript/TypeScript dosyalarından metodları çıkarır. Analiz, her metodun adı, satır numarası ve token sayısı hakkında bilgi içerir.
@@ -226,19 +226,19 @@ ContextGeneration --> ExportOptions["Export via specified method\nreport, file, 
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L67)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L67)
+- [ctxman.js](file://ctxman.js#L118-L223)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L67)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L67)
+- [ctxman.js](file://ctxman.js#L118-L223)
 
 ## Pano Entegrasyonu
 
-context-manager aracı, `--context-clipboard` bayrağı ile oluşturulan LLM context'ini doğrudan sistem panonuza kopyalamanıza olanak tanıyan kusursuz pano entegrasyonu sağlar:
+ctxman aracı, `--context-clipboard` bayrağı ile oluşturulan LLM context'ini doğrudan sistem panonuza kopyalamanıza olanak tanıyan kusursuz pano entegrasyonu sağlar:
 
 ```bash
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 Bu özellik, uygun sistem komutlarını (pbcopy, xclip/xsel veya clip) kullanarak platformlar arası (macOS, Linux ve Windows) çalışır. Araç, llm-context.json dosyasına kaydedilecek olanla aynı olan JSON formatında context'i kopyalar ve pano ile dosya export'ları arasında tutarlılık sağlar.
@@ -250,7 +250,7 @@ Pano işlemi başarısız olursa (örneğin, eksik sistem yardımcı programlar�
 ```mermaid
 sequenceDiagram
 participant User as "User"
-participant Tool as "context-manager"
+participant Tool as "ctxman"
 participant System as "Operating System"
 participant Clipboard as "System Clipboard"
 User->>Tool : Run with --context-clipboard
@@ -274,16 +274,16 @@ end
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L541-L567)
+- [ctxman.js](file://ctxman.js#L541-L567)
 - [README.md](file://README.md#L0-L891)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L541-L567)
+- [ctxman.js](file://ctxman.js#L541-L567)
 - [README.md](file://README.md#L0-L891)
 
 ## Yapılandırma ve Desen Dosyaları
 
-context-manager aracı, hangi dosya ve metodların analize dahil edileceğini kontrol etmek için birkaç yapılandırma dosyası kullanır. Bu dosyaları anlamak, aracı özel ihtiyaçlarınıza göre özelleştirmek için gereklidir.
+ctxman aracı, hangi dosya ve metodların analize dahil edileceğini kontrol etmek için birkaç yapılandırma dosyası kullanır. Bu dosyaları anlamak, aracı özel ihtiyaçlarınıza göre özelleştirmek için gereklidir.
 
 Dosya seviyesi filtreleme için birincil yapılandırma dosyaları:
 - `.contextinclude`: Yalnızca belirtilen desenlere uyan dosyaları dahil et (önceliklidir)
@@ -327,16 +327,16 @@ style Analysis fill:#9f9,stroke:#333
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [README.md](file://README.md#L0-L891)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [README.md](file://README.md#L0-L891)
 
 ## Yaygın Sorunları Giderme
 
-context-manager aracına başlarken birkaç yaygın sorunla karşılaşabilirsiniz. Bunları ve çözümlerini anlamak, aracı daha etkili kullanmanıza yardımcı olacaktır.
+ctxman aracına başlarken birkaç yaygın sorunla karşılaşabilirsiniz. Bunları ve çözümlerini anlamak, aracı daha etkili kullanmanıza yardımcı olacaktır.
 
 **Verbose çıktıyı anlama**: Aracın verbose çıktısı (varsayılan olarak etkin) yeni başlayanlar için bunaltıcı olabilir. Tüm dahil edilen dosyaları, token sayılarını ve detaylı istatistikleri gösterir. Çıktıyı azaltmak için `--no-verbose` bayrağını kullanın, ancak hangi dosyaların analiz edildiği konusunda şeffaflığı azalttığı için bu önerilmez.
 
@@ -353,4 +353,4 @@ npm install tiktoken
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L793-L813)
+- [ctxman.js](file://ctxman.js#L793-L813)

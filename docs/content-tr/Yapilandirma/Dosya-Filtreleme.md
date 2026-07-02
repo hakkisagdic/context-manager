@@ -2,7 +2,7 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [README.md](file://README.md)
 </cite>
 
@@ -17,15 +17,15 @@
 
 ## Giriş
 
-context-manager aracı, LLM (Large Language Model) context oluşturma için kod analizini optimize etmek üzere tasarlanmış gelişmiş bir dosya filtreleme mekanizması uygular. Bu sistem, `.contextignore` ve `.contextinclude` yapilandirma dosyalarını kullanan çift modlu bir yaklaşım aracılığıyla hangi dosyaların analize dahil edildiği veya hariç tutulduğu üzerinde hassas kontrol sağlar. Filtreleme sistemi, mevcut `.gitignore` kurallarına saygı gösterirken, belirli kod bileşenlerinin odaklanmış analizi için ek kontrol katmanları sağlar. Bu dokümantasyon, kod analizi ve token hesaplamasında optimal sonuçlar elde etmek için dosya filtreleme sistemini yapılandırmanın implementasyonunu, kullanımını ve en iyi uygulamalarını detaylandırır.
+ctxman aracı, LLM (Large Language Model) context oluşturma için kod analizini optimize etmek üzere tasarlanmış gelişmiş bir dosya filtreleme mekanizması uygular. Bu sistem, `.contextignore` ve `.contextinclude` yapilandirma dosyalarını kullanan çift modlu bir yaklaşım aracılığıyla hangi dosyaların analize dahil edildiği veya hariç tutulduğu üzerinde hassas kontrol sağlar. Filtreleme sistemi, mevcut `.gitignore` kurallarına saygı gösterirken, belirli kod bileşenlerinin odaklanmış analizi için ek kontrol katmanları sağlar. Bu dokümantasyon, kod analizi ve token hesaplamasında optimal sonuçlar elde etmek için dosya filtreleme sistemini yapılandırmanın implementasyonunu, kullanımını ve en iyi uygulamalarını detaylandırır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 ## Çift Modlu Filtreleme Sistemi
 
-context-manager aracı, iki tamamlayıcı yapilandirma dosyası aracılığıyla çalışan çift modlu bir filtreleme sistemi kullanır: EXCLUDE modu için `.contextignore` ve INCLUDE modu için `.contextinclude`. Bu modlar, proje gereksinimlerine göre dosya seçimi için esnek yaklaşımlar sağlar.
+ctxman aracı, iki tamamlayıcı yapilandirma dosyası aracılığıyla çalışan çift modlu bir filtreleme sistemi kullanır: EXCLUDE modu için `.contextignore` ve INCLUDE modu için `.contextinclude`. Bu modlar, proje gereksinimlerine göre dosya seçimi için esnek yaklaşımlar sağlar.
 
 ### EXCLUDE Modu (.contextignore)
 
@@ -49,11 +49,11 @@ E --> H[Process All Files Except Those Matching<br>.contextignore Patterns]
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L134-L149)
 - [README.md](file://README.md#L544-L610)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L134-L149)
 - [README.md](file://README.md#L544-L610)
 
 ## Pattern Sözdizimi ve Örnekler
@@ -119,11 +119,11 @@ Output --> End([Pattern Ready for Matching])
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 - [README.md](file://README.md#L544-L610)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 - [README.md](file://README.md#L544-L610)
 
 ## Öncelik Kuralları ve Yapilandirma Önceliği
@@ -160,12 +160,12 @@ F --> |Not Matched or Negated| I[Include File]
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L181-L206)
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L181-L206)
+- [ctxman.js](file://ctxman.js#L134-L149)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L134-L149)
-- [context-manager.js](file://context-manager.js#L181-L206)
+- [ctxman.js](file://ctxman.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L181-L206)
 
 ## Implementasyon Detayları
 
@@ -217,10 +217,10 @@ TokenCalculator --> MethodFilterParser : "uses for method filtering"
 ```
 
 **Diagram kaynakları**
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 ## Yaygın Sorunlar ve Sorun Giderme
 

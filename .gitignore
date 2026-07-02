@@ -42,11 +42,11 @@ coverage/
 # Logs
 logs/
 *.log
-.context-manager/logs/
-.context-manager/*.log
+.ctxman/logs/
+.ctxman/*.log
 
-# Context Manager user configs
-.context-manager/custom-profiles.json
+# Ctxman user configs
+.ctxman/custom-profiles.json
 
 # v3.0.0 Cache directory
 .context-cache/

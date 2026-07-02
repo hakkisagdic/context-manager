@@ -1,12 +1,12 @@
-# Publishes @hakkisagdic/context-manager to npm when a Release is created.
+# Publishes ctxman to npm when a Release is created.
 #
 # Uses npm **Trusted Publishing (OIDC)** — no NPM_TOKEN secret. GitHub Actions
 # proves this workflow's identity to npm with a short-lived OIDC token and npm
 # attaches build provenance automatically.
 #
 # One-time setup on npmjs.com (the package already exists):
-#   Package @hakkisagdic/context-manager → Settings → Trusted Publisher →
-#   GitHub Actions:  user hakkisagdic · repository context-manager ·
+#   Package ctxman → Settings → Trusted Publisher →
+#   GitHub Actions:  user hakkisagdic · repository ctxman ·
 #   workflow filename npm-publish.yml
 name: Node.js Package
 

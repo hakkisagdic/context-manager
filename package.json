@@ -1,10 +1,11 @@
 {
-  "name": "@hakkisagdic/context-manager",
+  "name": "ctxman",
   "version": "3.0.0",
-  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 14+ languages. Features include TOON format (40-50% token reduction), real-time analysis, and comprehensive context generation.",
+  "description": "AI Development Platform with plugin architecture, Git integration, REST API, watch mode, LLM optimization, and support for 14+ languages. Features include TOON format (40-50% token reduction), real-time analysis, and comprehensive context generation. Formerly @hakkisagdic/context-manager.",
   "type": "module",
   "main": "index.js",
   "bin": {
+    "ctxman": "bin/cli.js",
     "context-manager": "bin/cli.js"
   },
   "exports": {
@@ -36,7 +37,7 @@
     "build:deb": "make build-deb",
     "prepublishOnly": "npm test",
     "mcp": "node bin/mcp-server.js",
-    "postinstall": "node -e \"console.log('\\n✅ Context Manager installed! Run: context-manager --help\\n')\""
+    "postinstall": "node -e \"console.log('\\n✅ Ctxman installed! Run: ctxman --help\\n')\""
   },
   "keywords": [
     "code",
@@ -91,10 +92,10 @@
   },
   "files": [
     "index.js",
-    "context-manager.js",
+    "ctxman.js",
     "lib/",
     "bin/",
-    ".context-manager/",
+    ".ctxman/",
     "examples/",
     "README.md",
     "LICENSE"

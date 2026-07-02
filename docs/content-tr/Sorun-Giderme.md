@@ -2,7 +2,7 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js) - *6f5fea32 commit'inde güncellendi*
+- [ctxman.js](file://ctxman.js) - *6f5fea32 commit'inde güncellendi*
 - [README.md](file://README.md) - *6f5fea32 commit'inde güncellendi*
 - [bin/cli.js](file://bin/cli.js)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *6f5fea32 commit'inde eklendi*
@@ -23,20 +23,20 @@
 
 ## Include/Exclude Mod Karışıklığı
 
-context-manager aracı, dosya dahil etme ve hariç tutma için öncelik tabanlı bir sistem kullanır. Bir `.contextinclude` dosyasının varlığı `.contextignore` üzerinde öncelik alır, bu da kullanıcılar dosyaların dahil edilmesini beklediğinde ancak hariç tutulduğunda karışıklığa yol açabilir.
+ctxman aracı, dosya dahil etme ve hariç tutma için öncelik tabanlı bir sistem kullanır. Bir `.contextinclude` dosyasının varlığı `.contextignore` üzerinde öncelik alır, bu da kullanıcılar dosyaların dahil edilmesini beklediğinde ancak hariç tutulduğunda karışıklığa yol açabilir.
 
 `.contextinclude` mevcut olduğunda, araç INCLUDE modunda çalışır, yani yalnızca bu dosyadaki desenlere uyan dosyalar analize dahil edilecektir. Bu, tüm `.contextignore` kurallarını geçersiz kılar. Kullanıcılar `.contextignore` konfigürasyonlarına göre dosyaların dahil edilmesini bekleyebilirler, ancak bir `.contextinclude` dosyası mevcutsa, bu beklentiler karşılanmayacaktır.
 
 Araç, yürütme sırasında hangi modun aktif olduğunu açıkça gösterir. INCLUDE modunda "📅 Found calculator config - using INCLUDE mode" görüntülerken, EXCLUDE modunda "📅 Found calculator config - using EXCLUDE mode" gösterir. Bu görsel ipucu, mevcut filtreleme modunu belirlemeye yardımcı olur.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L134-L157)
-- [context-manager.js](file://context-manager.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L134-L157)
+- [ctxman.js](file://ctxman.js#L181-L217)
 - [README.md](file://README.md#L121-L150)
 
 ## Desen Eşleştirme Sorunları
 
-context-manager aracındaki desen eşleştirme, kullanıcıların `.contextignore` ve `.methodinclude` dosyalarını doğru yapılandırmaları için anlamaları gereken özel sözdizimi kurallarını takip eder. Yaygın sorunlar arasında yanlış sözdizimi, eksik negasyon desenleri ve wildcard davranışının yanlış anlaşılması yer alır.
+ctxman aracındaki desen eşleştirme, kullanıcıların `.contextignore` ve `.methodinclude` dosyalarını doğru yapılandırmaları için anlamaları gereken özel sözdizimi kurallarını takip eder. Yaygın sorunlar arasında yanlış sözdizimi, eksik negasyon desenleri ve wildcard davranışının yanlış anlaşılması yer alır.
 
 Araç, eşleştirme için desenleri regex'lere dönüştürür, belirli dönüşümlerle:
 - `**`, `.*` olur (herhangi bir sayıda dizini eşleştirir)
@@ -46,13 +46,13 @@ Araç, eşleştirme için desenleri regex'lere dönüştürür, belirli dönüş
 Negasyon desenleri (`!` ile başlayan), INCLUDE ve EXCLUDE modlarında farklı şekilde çalışır. INCLUDE modunda, negasyon desenleri dahil edilen setten dosyaları hariç tutar, EXCLUDE modunda ise başka türlü hariç tutulacak dosyaları yeniden dahil ederler. Yaygın bir hata, negasyon desenlerini yanlış sıraya yerleştirmektir, çünkü araç desenleri sırayla işler.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L159-L179)
-- [context-manager.js](file://context-manager.js#L219-L257)
+- [ctxman.js](file://ctxman.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L219-L257)
 - [README.md](file://README.md#L544-L610)
 
 ## Token Sayımı Tutarsızlıkları
 
-context-manager aracı hem kesin hem de tahmini token sayıları sağlar, bu da kullanıcıların kafa karıştırıcı bulabileceği tutarsızlıklara yol açabilir. Araç önce kesin GPT-4 uyumlu token sayımı için tiktoken kütüphanesini kullanmayı dener. tiktoken mevcut değilse, bir tahmin algoritmasına geri döner.
+ctxman aracı hem kesin hem de tahmini token sayıları sağlar, bu da kullanıcıların kafa karıştırıcı bulabileceği tutarsızlıklara yol açabilir. Araç önce kesin GPT-4 uyumlu token sayımı için tiktoken kütüphanesini kullanmayı dener. tiktoken mevcut değilse, bir tahmin algoritmasına geri döner.
 
 Tahmin algoritması, farklı dosya türleri için önceden tanımlanmış karakter başına token oranları kullanır:
 - JavaScript/TypeScript: Token başına 3.2 karakter
@@ -64,8 +64,8 @@ Tahmin algoritması, farklı dosya türleri için önceden tanımlanmış karakt
 Bu tahminler genellikle kesin sayımlara kıyasla yaklaşık %95 doğrudur. Kullanıcılar, tahmini sayımlar ile diğer araçlardan bekledikleri arasında farklılıklar fark edebilirler. Araç çıktıda hangi sayım methodunun kullanıldığını açıkça gösterir: kesin sayımlar için "🎯 Token calculation: ✅ Exact (using tiktoken)" veya tahminler için "🎯 Token calculation: ⚠️ Estimated".
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L259-L292)
-- [context-manager.js](file://context-manager.js#L385-L400)
+- [ctxman.js](file://ctxman.js#L259-L292)
+- [ctxman.js](file://ctxman.js#L385-L400)
 - [README.md](file://README.md#L801-L879)
 
 ## Analizde Eksik Dosyalar
@@ -80,8 +80,8 @@ Bir dosya, bu mekanizmalardan herhangi biri tarafından hariç tutulmuşsa anali
 Ek olarak, araç yalnızca dosya uzantısı ve basename ile belirlenen metin dosyalarını analiz eder. Tanınan metin uzantıları listesinde olmayan uzantılara veya metin dosyaları listesinde olmayan basename'lere sahip dosyalar, açıkça göz ardı edilmemiş olsalar bile tamamen atlanacaktır.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L181-L217)
-- [context-manager.js](file://context-manager.js#L414-L453)
+- [ctxman.js](file://ctxman.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L414-L453)
 - [README.md](file://README.md#L294-L356)
 
 ## Beklenmeyen Dosya Dahil Edilmeleri
@@ -93,8 +93,8 @@ Başka bir neden, uygun negasyon olmadan `**/*.js` gibi geniş desenlerin kullan
 Aracın verbose çıktısı, dosyaların neden dahil edildiğini belirlemeye yardımcı olabilir. `--verbose` flag'i ile çalıştırıldığında, araç hangi modun aktif olduğunu gösterir ve dahil etme mantığını izlemeye yardımcı olabilir.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L134-L157)
-- [context-manager.js](file://context-manager.js#L181-L217)
+- [ctxman.js](file://ctxman.js#L134-L157)
+- [ctxman.js](file://ctxman.js#L181-L217)
 - [README.md](file://README.md#L544-L610)
 
 ## Büyük Kod Tabanlarında Performans Sorunları
@@ -106,13 +106,13 @@ Araç, performansı artırmak için `node_modules`, `.git`, `dist` ve `build` gi
 Method seviyesinde analiz (`--method-level` flag'i), aracın her dosyayı method tanımlarını çıkarmak için parse etmesi ve her method için ayrı ayrı token hesaplaması gerektiğinden işleme süresini önemli ölçüde artırır. Çok büyük kod tabanları için, bu fark edilir gecikmelere neden olabilir.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L455-L485)
-- [context-manager.js](file://context-manager.js#L521-L545)
+- [ctxman.js](file://ctxman.js#L455-L485)
+- [ctxman.js](file://ctxman.js#L521-L545)
 - [bin/cli.js](file://bin/cli.js#L20-L35)
 
 ## Tanı Adımları
 
-context-manager aracı ile ilgili sorunları tanılamak için, kullanıcılar şu adımları izlemelidir:
+ctxman aracı ile ilgili sorunları tanılamak için, kullanıcılar şu adımları izlemelidir:
 
 1. Hangi dosyaların işlendiği ve hangi kuralların uygulandığı hakkında detaylı çıktı görmek için aracı `--verbose` flag'i ile çalıştırın.
 
@@ -127,8 +127,8 @@ context-manager aracı ile ilgili sorunları tanılamak için, kullanıcılar ş
 Araç çıktısında tanıya yardımcı olan açık görsel göstergeler sağlar, örneğin `.gitignore` kuralları ile calculator kuralları nedeniyle göz ardı edilen dosyaların sayısı ve kesin veya tahmini token sayımının kullanılıp kullanılmadığı.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L609-L643)
-- [context-manager.js](file://context-manager.js#L715-L743)
+- [ctxman.js](file://ctxman.js#L609-L643)
+- [ctxman.js](file://ctxman.js#L715-L743)
 - [bin/cli.js](file://bin/cli.js#L41-L66)
 
 ## Yaygın Ortam Sorunları
@@ -140,8 +140,8 @@ Yaygın ortam sorunları arasında eksik bağımlılıklar ve izin hataları yer
 Diğer bir yaygın sorun, aracı yanlış dizinden çalıştırmaktır. Araç varsayılan olarak mevcut çalışma dizinini analiz eder, bu nedenle kullanıcılar komutu yürütürken doğru proje kök dizininde olduklarından emin olmalıdır.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L259-L292)
-- [context-manager.js](file://context-manager.js#L825-L840)
+- [ctxman.js](file://ctxman.js#L259-L292)
+- [ctxman.js](file://ctxman.js#L825-L840)
 - [README.md](file://README.md#L294-L356)
 
 ## GitIngest Digest Üretim Sorunları
@@ -159,7 +159,7 @@ GitIngestFormatter, `.methodinclude` veya `.methodignore` dosyaları mevcut oldu
 `--gitingest-from-report` veya `--gitingest-from-context` kullanarak mevcut JSON raporlarından digest oluştururken, belirtilen JSON dosyasının var olduğundan ve doğru yapıya sahip olduğundan emin olun. Araç, dosya bulunamazsa veya geçersiz formata sahipse bir hata mesajı görüntüler.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L294-L382)
+- [ctxman.js](file://ctxman.js#L294-L382)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L1-L269)
 - [README.md](file://README.md#L100-L150)
 

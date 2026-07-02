@@ -2,7 +2,7 @@
 
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
-- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [ctxman.js](file://ctxman.js) - *Son commit'te güncellendi*
 - [index.js](file://index.js) - *Son commit'te güncellendi*
 - [README.md](file://README.md)
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Core uygulama*
@@ -32,7 +32,7 @@
 
 ## Giriş
 
-context-manager aracı, kod tabanlarını analiz etmek ve LLM (Large Language Model) tüketimi için optimize edilmiş context oluşturmak üzere programatik bir arayüz sağlar. Birincil giriş noktası TokenAnalyzer sınıfıdır ve geliştiricilerin token analizi yeteneklerini doğrudan Node.js uygulamalarına entegre etmelerini sağlar. Bu API, proje dosyalarının otomatik analizine, method seviyesinde çıkarmaya ve AI destekli geliştirme iş akışları için context'e optimize edilmiş çıktıların oluşturulmasına izin verir.
+ctxman aracı, kod tabanlarını analiz etmek ve LLM (Large Language Model) tüketimi için optimize edilmiş context oluşturmak üzere programatik bir arayüz sağlar. Birincil giriş noktası TokenAnalyzer sınıfıdır ve geliştiricilerin token analizi yeteneklerini doğrudan Node.js uygulamalarına entegre etmelerini sağlar. Bu API, proje dosyalarının otomatik analizine, method seviyesinde çıkarmaya ve AI destekli geliştirme iş akışları için context'e optimize edilmiş çıktıların oluşturulmasına izin verir.
 
 Araç, geliştiricilerin kod tabanı karmaşıklığını anlamalarına, LLM context kullanımını optimize etmelerine ve geliştirme pipeline'larında analiz görevlerini otomatikleştirmelerine yardımcı olmak üzere tasarlanmıştır. Filtreleme ve çıktı formatları için esnek konfigürasyon seçenekleriyle hem dosya seviyesinde hem de method seviyesinde analizi destekler.
 
@@ -41,7 +41,7 @@ Araç, geliştiricilerin kod tabanı karmaşıklığını anlamalarına, LLM con
 
 ## Core Bileşenler
 
-context-manager aracı, kapsamlı analiz yetenekleri sağlamak için kompozisyon yoluyla birlikte çalışan birkaç core bileşen etrafında inşa edilmiştir. TokenAnalyzer sınıfı, analiz sürecinin farklı yönleri için özel bileşenler arasındaki etkileşimleri düzenleyen birincil arayüz olarak hizmet eder.
+ctxman aracı, kapsamlı analiz yetenekleri sağlamak için kompozisyon yoluyla birlikte çalışan birkaç core bileşen etrafında inşa edilmiştir. TokenAnalyzer sınıfı, analiz sürecinin farklı yönleri için özel bileşenler arasındaki etkileşimleri düzenleyen birincil arayüz olarak hizmet eder.
 
 Mimari, her bileşenin belirli bir sorumluluğa sahip olduğu modüler bir tasarımı takip eder:
 - GitIgnoreParser, .gitignore ve özel ignore kurallarına dayalı dosya hariç tutmayı yönetir
@@ -85,19 +85,19 @@ GitIngestFormatter --> MethodFilterParser : "method filtreleme için kullanır"
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L109)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L109)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L223)
+- [ctxman.js](file://ctxman.js#L14-L223)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## TokenAnalyzer Sınıfı
 
-TokenAnalyzer sınıfı, context-manager aracının programatik arayüzünün birincil giriş noktasıdır. Kod tabanlarını analiz etmek ve LLM tüketimi için optimize edilmiş context oluşturmak için basit ama güçlü bir API sağlar.
+TokenAnalyzer sınıfı, ctxman aracının programatik arayüzünün birincil giriş noktasıdır. Kod tabanlarını analiz etmek ve LLM tüketimi için optimize edilmiş context oluşturmak için basit ama güçlü bir API sağlar.
 
 ### Constructor Parametreleri
 
@@ -159,10 +159,10 @@ TokenAnalyzer->>Application : Sonuçları çıktıla
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L225-L790)
+- [ctxman.js](file://ctxman.js#L225-L790)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L225-L790)
+- [ctxman.js](file://ctxman.js#L225-L790)
 - [index.js](file://index.js#L1-L8)
 
 ## Konfigürasyon Seçenekleri
@@ -192,11 +192,11 @@ Hiçbir export seçeneği belirtilmediğinde, araç analiz tamamlandıktan sonra
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L100-L300)
-- [context-manager.js](file://context-manager.js#L225-L232)
+- [ctxman.js](file://ctxman.js#L225-L232)
 
 ## Veri Modelleri
 
-context-manager aracı, analiz sırasında dosya ve methodları temsil etmek için özel veri modelleri kullanır. Bu modeller dahili olarak kullanılır ve oluşturulan raporların ve context export'larının yapısını oluşturur.
+ctxman aracı, analiz sırasında dosya ve methodları temsil etmek için özel veri modelleri kullanır. Bu modeller dahili olarak kullanılır ve oluşturulan raporların ve context export'larının yapısını oluşturur.
 
 ### FileInfo Modeli
 
@@ -232,17 +232,17 @@ Bu modeller analiz sonuçlarını yapılandırmak için kullanılır ve oluştur
 Veri modelleri hafif olacak ve token analizi ve LLM context optimizasyonu için gereken temel bilgilere odaklanacak şekilde tasarlanmıştır.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L400-L420)
-- [context-manager.js](file://context-manager.js#L480-L500)
+- [ctxman.js](file://ctxman.js#L400-L420)
+- [ctxman.js](file://ctxman.js#L480-L500)
 
 ## Kullanım Örnekleri
 
-context-manager aracı, otomatik analiz için Node.js uygulamalarına entegre edilebilir. Aşağıdaki örnekler yaygın kullanım desenlerini gösterir.
+ctxman aracı, otomatik analiz için Node.js uygulamalarına entegre edilebilir. Aşağıdaki örnekler yaygın kullanım desenlerini gösterir.
 
 ### Temel Entegrasyon
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 // Temel dosya seviyesinde analiz
 const analyzer = new TokenAnalyzer('./src', {
@@ -298,7 +298,7 @@ Bu örnekler TokenAnalyzer'ın temel analizden LLM'e optimize edilmiş context o
 
 ## Hata Yönetimi
 
-context-manager aracı, çeşitli ortamlarda güçlü işlem sağlamak için kapsamlı hata yönetimi içerir. Analiz süreci, yürütme sırasında oluşabilecek dosya sistemi hatalarını ve diğer istisnaları zarif bir şekilde ele almak üzere tasarlanmıştır.
+ctxman aracı, çeşitli ortamlarda güçlü işlem sağlamak için kapsamlı hata yönetimi içerir. Analiz süreci, yürütme sırasında oluşabilecek dosya sistemi hatalarını ve diğer istisnaları zarif bir şekilde ele almak üzere tasarlanmıştır.
 
 Bir dosya okunamadığında veya analiz edilemediğinde, araç hata mesajıyla sonuçlarda bir hata girişi oluşturur, analizin diğer dosyalarla devam etmesine izin verir. Bu, tek bir sorunlu dosyanın tüm analiz sürecini durdurmasını önler.
 
@@ -309,12 +309,12 @@ Konfigürasyon sorunları için, araç hangi konfigürasyon dosyalarının kulla
 Hata yönetim stratejisi, ilk hatada durmak yerine analizi tamamlamayı önceliklendirir, kullanıcıların sürecin bazı bölümleri sorunlarla karşılaşsa bile mümkün olduğunca fazla bilgi almasını sağlar.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L400-L415)
-- [context-manager.js](file://context-manager.js#L700-L730)
+- [ctxman.js](file://ctxman.js#L400-L415)
+- [ctxman.js](file://ctxman.js#L700-L730)
 
 ## Performans Değerlendirmeleri
 
-context-manager API'sini programatik olarak kullanırken, birkaç performans değerlendirmesi dikkate alınmalıdır:
+ctxman API'sini programatik olarak kullanırken, birkaç performans değerlendirmesi dikkate alınmalıdır:
 
 ### Token Sayım Methodları
 
@@ -345,12 +345,12 @@ Method seviyesinde analizi etkinleştirmek, kodu bireysel methodları tanımlama
 Araç önbelleğe alma ve verimli dosya sistemi işlemleriyle performans için optimize edilmiştir, ancak çok büyük kod tabanları hala önemli işlem süresi gerektirebilir.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L300-L350)
+- [ctxman.js](file://ctxman.js#L300-L350)
 - [README.md](file://README.md#L500-L600)
 
 ## Migrasyon Rehberi
 
-context-manager aracının daha yeni versiyonlarına yükseltme veya migrasyon yaparken, aşağıdaki rehberi göz önünde bulundurun:
+ctxman aracının daha yeni versiyonlarına yükseltme veya migrasyon yaparken, aşağıdaki rehberi göz önünde bulundurun:
 
 ### Versiyon Uyumluluğu
 

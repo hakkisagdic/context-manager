@@ -1,6 +1,6 @@
 # Ink UI Test Screen
 
-Interactive test application for demonstrating all Ink UI components used in Context Manager.
+Interactive test application for demonstrating all Ink UI components used in Ctxman.
 
 ## 🚀 Quick Start
 
@@ -165,7 +165,7 @@ All tested components are located in:
 
 ## 🎯 Demo for Users
 
-This test screen is perfect for demonstrating Context Manager's UI capabilities:
+This test screen is perfect for demonstrating Ctxman's UI capabilities:
 
 ```bash
 # Show to users

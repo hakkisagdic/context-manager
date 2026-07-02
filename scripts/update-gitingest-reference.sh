@@ -53,7 +53,7 @@ echo -e "${GREEN}   Latest commit: $NEW_COMMIT ($NEW_DATE)${NC}"
 echo ""
 echo -e "${YELLOW}2. Generating new reference digest...${NC}"
 
-# Generate digest using context-manager itself (dogfooding!)
+# Generate digest using ctxman itself (dogfooding!)
 cd "$PROJECT_ROOT"
 NEW_REFERENCE="$TEMP_DIR/new-reference.txt"
 

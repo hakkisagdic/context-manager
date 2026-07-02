@@ -2,7 +2,7 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [ctxman.js](file://ctxman.js) - *Updated in recent commit*
 - [README.md](file://README.md) - *Updated in recent commit*
 - [CLAUDE.md](file://CLAUDE.md) - *Updated in recent commit*
 - [index.js](file://index.js)
@@ -31,10 +31,10 @@
 
 ## Introduction
 
-The context-manager tool provides method-level analysis capabilities that enable granular examination of JavaScript and TypeScript codebases. This feature allows developers to extract, analyze, and filter individual methods from source files, creating optimized representations for LLM context generation. The method-level analysis is controlled through the `methodLevel` option and integrates with the TokenCalculator to process method content and generate detailed statistics.
+The ctxman tool provides method-level analysis capabilities that enable granular examination of JavaScript and TypeScript codebases. This feature allows developers to extract, analyze, and filter individual methods from source files, creating optimized representations for LLM context generation. The method-level analysis is controlled through the `methodLevel` option and integrates with the TokenCalculator to process method content and generate detailed statistics.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L234-L238)
+- [ctxman.js](file://ctxman.js#L234-L238)
 - [bin/cli.js](file://bin/cli.js#L17-L18)
 
 ## Method Extraction Process
@@ -62,7 +62,7 @@ To retrieve the complete content of a method, the `extractMethodContent` functio
 
 **Diagram sources**
 - [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92)
-- [context-manager.js](file://context-manager.js#L61-L72)
+- [ctxman.js](file://ctxman.js#L61-L72)
 
 **Section sources**
 - [lib/analyzers/method-analyzer.js](file://lib/analyzers/method-analyzer.js#L7-L92)
@@ -108,7 +108,7 @@ For each included method, the system extracts the method content and calculates 
 
 **Diagram sources**
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
-- [context-manager.js](file://context-manager.js#L234-L238)
+- [ctxman.js](file://ctxman.js#L234-L238)
 
 **Section sources**
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L82-L107)
@@ -214,12 +214,12 @@ These statistics are updated during the method analysis process. The `totalMetho
 The statistics are incorporated into the final LLM context when method-level analysis is enabled, providing a summary of the method analysis results alongside the detailed method information.
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L239-L239)
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L239-L239)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L239-L239)
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L239-L239)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 ## LLM Context Generation
 
@@ -245,11 +245,11 @@ The context also includes `methodStats` with aggregate information about the tot
 The compact representation significantly reduces the token count of the context while preserving important structural information, making it ideal for LLM consumption where context window size is limited.
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L491-L519)
-- [context-manager.js](file://context-manager.js#L614-L643)
+- [ctxman.js](file://ctxman.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L614-L643)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L491-L519)
+- [ctxman.js](file://ctxman.js#L491-L519)
 
 ## Common Issues and Best Practices
 

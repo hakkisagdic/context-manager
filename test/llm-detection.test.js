@@ -59,12 +59,12 @@ describe('LLM Detection (v2.3.7)', () => {
             const oldAnthropicKey = process.env.ANTHROPIC_API_KEY;
             const oldOpenAIKey = process.env.OPENAI_API_KEY;
             const oldGoogleKey = process.env.GOOGLE_API_KEY;
-            const oldLLM = process.env.CONTEXT_MANAGER_LLM;
+            const oldLLM = process.env.CTXMAN_LLM;
 
             delete process.env.ANTHROPIC_API_KEY;
             delete process.env.OPENAI_API_KEY;
             delete process.env.GOOGLE_API_KEY;
-            delete process.env.CONTEXT_MANAGER_LLM;
+            delete process.env.CTXMAN_LLM;
 
             const detected = LLMDetector.detect();
             expect(detected).toBe('unknown');
@@ -73,7 +73,7 @@ describe('LLM Detection (v2.3.7)', () => {
             if (oldAnthropicKey) process.env.ANTHROPIC_API_KEY = oldAnthropicKey;
             if (oldOpenAIKey) process.env.OPENAI_API_KEY = oldOpenAIKey;
             if (oldGoogleKey) process.env.GOOGLE_API_KEY = oldGoogleKey;
-            if (oldLLM) process.env.CONTEXT_MANAGER_LLM = oldLLM;
+            if (oldLLM) process.env.CTXMAN_LLM = oldLLM;
         });
     });
 

@@ -66,7 +66,7 @@ async function testDashboard() {
             console.log('║          Dashboard Test: PASSED ✅                     ║');
             console.log('╚════════════════════════════════════════════════════════╝');
             console.log('\nTo use dashboard interactively:');
-            console.log('  context-manager --dashboard\n');
+            console.log('  ctxman --dashboard\n');
 
             process.exit(0);
         }, 2000);

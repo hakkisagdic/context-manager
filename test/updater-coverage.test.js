@@ -245,7 +245,7 @@ describe('Updater Coverage', () => {
             const result = await updater.rollback();
 
             expect(execSync).toHaveBeenCalledWith(
-                expect.stringContaining('npm install @hakkisagdic/context-manager@0.9.0'),
+                expect.stringContaining('npm install ctxman@0.9.0'),
                 expect.objectContaining({ cwd: '/install/dir' })
             );
             expect(result.success).toBe(true);

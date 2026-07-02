@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 
 const PROJECT_ROOT = process.cwd();
-const PROFILES_DIR = path.join(PROJECT_ROOT, '.context-manager/wizard-profiles');
+const PROFILES_DIR = path.join(PROJECT_ROOT, '.ctxman/wizard-profiles');
 const EXAMPLES_DIR = path.join(PROJECT_ROOT, 'examples/wizard-profiles');
 
 describe('Wizard Profiles System', () => {
-    test('.context-manager/wizard-profiles directory exists', () => {
+    test('.ctxman/wizard-profiles directory exists', () => {
         expect(fs.existsSync(PROFILES_DIR)).toBe(true);
     });
 
@@ -143,7 +143,7 @@ describe('Wizard Profiles System', () => {
         const packagePath = path.join(PROJECT_ROOT, 'package.json');
         const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
 
-        expect(pkg.files).toContain('.context-manager/');
+        expect(pkg.files).toContain('.ctxman/');
         expect(pkg.files).toContain('examples/');
     });
 
@@ -173,7 +173,7 @@ describe('Wizard Profiles System', () => {
             'Wizard Profiles System',
             'Named Configuration System',
             'profile.json',
-            '.context-manager/wizard-profiles/',
+            '.ctxman/wizard-profiles/',
             'examples/wizard-profiles/'
         ];
 

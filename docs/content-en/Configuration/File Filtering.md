@@ -2,7 +2,7 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [README.md](file://README.md)
 </cite>
 
@@ -17,15 +17,15 @@
 
 ## Introduction
 
-The context-manager tool implements a sophisticated file filtering mechanism designed to optimize code analysis for LLM (Large Language Model) context generation. This system enables precise control over which files are included or excluded from analysis through a dual-mode approach using `.contextignore` and `.contextinclude` configuration files. The filtering system respects existing `.gitignore` rules while providing additional layers of control for focused analysis of specific code components. This documentation details the implementation, usage, and best practices for configuring the file filtering system to achieve optimal results in code analysis and token calculation.
+The ctxman tool implements a sophisticated file filtering mechanism designed to optimize code analysis for LLM (Large Language Model) context generation. This system enables precise control over which files are included or excluded from analysis through a dual-mode approach using `.contextignore` and `.contextinclude` configuration files. The filtering system respects existing `.gitignore` rules while providing additional layers of control for focused analysis of specific code components. This documentation details the implementation, usage, and best practices for configuring the file filtering system to achieve optimal results in code analysis and token calculation.
 
 **Section sources**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 ## Dual-Mode Filtering System
 
-The context-manager tool employs a dual-mode filtering system that operates through two complementary configuration files: `.contextignore` for EXCLUDE mode and `.contextinclude` for INCLUDE mode. These modes provide flexible approaches to file selection based on project requirements.
+The ctxman tool employs a dual-mode filtering system that operates through two complementary configuration files: `.contextignore` for EXCLUDE mode and `.contextinclude` for INCLUDE mode. These modes provide flexible approaches to file selection based on project requirements.
 
 ### EXCLUDE Mode (.contextignore)
 
@@ -49,11 +49,11 @@ E --> H[Process All Files Except Those Matching<br>.contextignore Patterns]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L134-L149)
 - [README.md](file://README.md#L544-L610)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L134-L149)
 - [README.md](file://README.md#L544-L610)
 
 ## Pattern Syntax and Examples
@@ -119,11 +119,11 @@ Output --> End([Pattern Ready for Matching])
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 - [README.md](file://README.md#L544-L610)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L159-L179)
+- [ctxman.js](file://ctxman.js#L159-L179)
 - [README.md](file://README.md#L544-L610)
 
 ## Precedence Rules and Configuration Priority
@@ -160,12 +160,12 @@ F --> |Not Matched or Negated| I[Include File]
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L181-L206)
-- [context-manager.js](file://context-manager.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L181-L206)
+- [ctxman.js](file://ctxman.js#L134-L149)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L134-L149)
-- [context-manager.js](file://context-manager.js#L181-L206)
+- [ctxman.js](file://ctxman.js#L134-L149)
+- [ctxman.js](file://ctxman.js#L181-L206)
 
 ## Implementation Details
 
@@ -217,10 +217,10 @@ TokenCalculator --> MethodFilterParser : "uses for method filtering"
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L124-L270)
+- [ctxman.js](file://ctxman.js#L124-L270)
 
 ## Common Issues and Troubleshooting
 

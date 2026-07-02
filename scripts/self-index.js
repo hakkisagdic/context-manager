@@ -5,7 +5,7 @@ import { FileDataSource } from '../lib/rag/sources/FileDataSource.js';
 import path from 'path';
 
 async function main() {
-  console.log('🚀 Starting Self-Reflection (Indexing Context Manager)...');
+  console.log('🚀 Starting Self-Reflection (Indexing Ctxman)...');
 
   // 1. Setup RAG components
   // Use MockEmbeddingProvider for now since we don't have an API key for real embeddings in this script context yet
@@ -40,7 +40,7 @@ async function main() {
   }
 
   const store = VectorStoreFactory.create('lancedb', provider, { 
-    path: '.context-manager/self-knowledge' 
+    path: '.ctxman/self-knowledge' 
   });
   
   const indexer = new Indexer(store);
@@ -54,7 +54,7 @@ async function main() {
   await indexer.index('local-files', {
     targetDir: process.cwd(),
     include: ['.js', '.md', '.json'],
-    exclude: ['node_modules', '.git', 'dist', 'coverage', '.context-manager']
+    exclude: ['node_modules', '.git', 'dist', 'coverage', '.ctxman']
   });
 
   console.log('✅ Indexing complete!');

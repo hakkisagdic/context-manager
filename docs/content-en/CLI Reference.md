@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [bin/cli.js](file://bin/cli.js) - *Updated in commit 6f5fea32*
-- [context-manager.js](file://context-manager.js) - *Updated in commit 6f5fea32 and 0b9cbab0*
+- [ctxman.js](file://ctxman.js) - *Updated in commit 6f5fea32 and 0b9cbab0*
 - [README.md](file://README.md) - *Updated in both commits*
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js) - *Added in commit 6f5fea32*
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in commit 6f5fea32*
@@ -31,25 +31,25 @@
 10. [Troubleshooting Guide](#troubleshooting-guide)
 
 ## Introduction
-The context-manager CLI provides a comprehensive tool for analyzing codebases and optimizing context for LLM consumption. It offers method-level filtering, exact token counting, and multiple export formats to support AI-assisted development workflows. The tool respects both .gitignore and custom ignore/include rules, providing flexible configuration options for different analysis scenarios.
+The ctxman CLI provides a comprehensive tool for analyzing codebases and optimizing context for LLM consumption. It offers method-level filtering, exact token counting, and multiple export formats to support AI-assisted development workflows. The tool respects both .gitignore and custom ignore/include rules, providing flexible configuration options for different analysis scenarios.
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
 
 ## Command Syntax
-The basic syntax for the context-manager CLI is:
+The basic syntax for the ctxman CLI is:
 ```
-context-manager [options]
+ctxman [options]
 ```
 
 The command accepts various options that control the analysis behavior, output format, and export destinations. When no options are specified, the tool runs in interactive mode, prompting the user to select export options after completing the analysis.
 
 **Section sources**
 - [bin/cli.js](file://bin/cli.js#L4-L25)
-- [context-manager.js](file://context-manager.js#L815-L830)
+- [ctxman.js](file://ctxman.js#L815-L830)
 
 ## Available Options
-The context-manager CLI supports the following options:
+The ctxman CLI supports the following options:
 
 ### --save-report (-s)
 Saves a detailed JSON report of the analysis to token-analysis-report.json in the project root.
@@ -124,10 +124,10 @@ Displays the help message with available options and usage examples.
 **Section sources**
 - [README.md](file://README.md#L0-L891)
 - [bin/cli.js](file://bin/cli.js#L4-L25)
-- [context-manager.js](file://context-manager.js#L150-L170)
+- [ctxman.js](file://ctxman.js#L150-L170)
 
 ## Interactive Export Selection
-When the context-manager is run without specifying any export options (--save-report, --context-export, or --context-clipboard), it automatically activates the interactive export selection feature. After completing the analysis, the tool presents a menu with four export options:
+When the ctxman is run without specifying any export options (--save-report, --context-export, or --context-clipboard), it automatically activates the interactive export selection feature. After completing the analysis, the tool presents a menu with four export options:
 
 1. Save detailed JSON report (token-analysis-report.json)
 2. Generate LLM context file (llm-context.json)
@@ -138,39 +138,39 @@ The user is prompted to enter a number (1-4) to select their preferred export op
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L618-L637)
+- [ctxman.js](file://ctxman.js#L618-L637)
 
 ## Usage Examples
 The following examples demonstrate common command combinations:
 
 ### Method-level analysis with clipboard export
 ```bash
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 ```
 This command performs method-level analysis and copies the resulting context to the clipboard, ideal for quickly sharing focused code context with AI assistants.
 
 ### Save report with verbose output
 ```bash
-context-manager --save-report --verbose
+ctxman --save-report --verbose
 ```
 This combination saves a detailed JSON report while showing all included files during analysis, useful for comprehensive codebase reviews.
 
 ### Combined analysis with multiple outputs
 ```bash
-context-manager --method-level --save-report --context-export --verbose
+ctxman --method-level --save-report --context-export --verbose
 ```
 This command performs method-level analysis with verbose output while generating both a detailed report and an LLM context file, suitable for CI/CD pipelines and thorough codebase documentation.
 
 ### GitIngest digest generation
 ```bash
-context-manager --gitingest
+ctxman --gitingest
 ```
 Generates a single digest.txt file containing the entire codebase in a prompt-friendly format for LLM consumption.
 
 ### Two-step digest generation
 ```bash
-context-manager --save-report
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --save-report
+ctxman --gitingest-from-report token-analysis-report.json
 ```
 First analyzes the codebase and saves a report, then quickly generates a digest from the existing report without re-scanning.
 
@@ -178,7 +178,7 @@ First analyzes the codebase and saves a report, then quickly generates a digest 
 - [README.md](file://README.md#L0-L891)
 
 ## GitIngest Format Export
-The context-manager now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption.
+The ctxman now supports generating GitIngest-style digest files - a single, prompt-friendly text file perfect for LLM consumption.
 
 ### What is GitIngest Format?
 GitIngest format consolidates your entire codebase into a single text file with:
@@ -192,19 +192,19 @@ This format is inspired by [GitIngest](https://github.com/coderamp-labs/gitinges
 ### Usage
 ```bash
 # Standard workflow - analyze and generate digest in one step
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 
 # Combine with other exports
-context-manager -g -s  # digest.txt + token-analysis-report.json
+ctxman -g -s  # digest.txt + token-analysis-report.json
 
 # Two-step workflow - generate digest from existing JSON (fast, no re-scan)
-context-manager -s                                    # Step 1: Create report
-context-manager --gitingest-from-report               # Step 2: Generate digest
+ctxman -s                                    # Step 1: Create report
+ctxman --gitingest-from-report               # Step 2: Generate digest
 
 # Or from LLM context
-context-manager --context-export                      # Step 1: Create context
-context-manager --gitingest-from-context              # Step 2: Generate digest
+ctxman --context-export                      # Step 1: Create context
+ctxman --gitingest-from-context              # Step 2: Generate digest
 ```
 
 ### Output Format
@@ -221,7 +221,7 @@ The generated `digest.txt` file includes:
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## Exit Codes and Error Handling
-The context-manager CLI implements robust error handling mechanisms:
+The ctxman CLI implements robust error handling mechanisms:
 
 - **Success (exit code 0)**: Analysis completed successfully with all requested operations performed.
 - **Invalid option (exit code 1)**: The command was called with unrecognized or malformed options.
@@ -231,7 +231,7 @@ The context-manager CLI implements robust error handling mechanisms:
 The tool gracefully handles missing configuration files and provides informative error messages. When tiktoken is not available for exact token counting, it falls back to smart estimation with a warning.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L750-L772)
+- [ctxman.js](file://ctxman.js#L750-L772)
 - [test/test-suite.js](file://test/test-suite.js#L0-L280)
 
 ## Performance Considerations
@@ -247,14 +247,14 @@ The tool is optimized for performance with efficient directory scanning and toke
 
 **Section sources**
 - [README.md](file://README.md#L0-L891)
-- [context-manager.js](file://context-manager.js#L225-L790)
+- [ctxman.js](file://ctxman.js#L225-L790)
 
 ## Shell Script Integration
-The context-manager CLI can be integrated into shell scripts for automated workflows:
+The ctxman CLI can be integrated into shell scripts for automated workflows:
 
 ```bash
 # Check if codebase exceeds token budget
-TOKENS=$(context-manager --context-export --no-verbose | jq '.project.totalTokens')
+TOKENS=$(ctxman --context-export --no-verbose | jq '.project.totalTokens')
 if [ $TOKENS -gt 100000 ]; then
   echo "Codebase too large for LLM context!"
   exit 1
@@ -263,7 +263,7 @@ fi
 
 ```bash
 # Daily analysis with timestamped reports
-context-manager --save-report > reports/analysis-$(date +%Y%m%d).json
+ctxman --save-report > reports/analysis-$(date +%Y%m%d).json
 ```
 
 The tool's predictable output format and exit codes make it suitable for use in CI/CD pipelines, pre-commit hooks, and automated documentation generation workflows.
@@ -275,7 +275,7 @@ The tool's predictable output format and exit codes make it suitable for use in 
 ### Command not found
 Ensure the package is installed globally:
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 ### Invalid options

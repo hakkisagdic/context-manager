@@ -1,12 +1,12 @@
-# Context Manager Desktop App - User Guide
+# Ctxman Desktop App - User Guide
 
 ## Overview
-Context Manager Desktop is a powerful AI development tool that helps you analyze codebases, generate context for LLMs, and manage development workflows.
+Ctxman Desktop is a powerful AI development tool that helps you analyze codebases, generate context for LLMs, and manage development workflows.
 
 ## Installation
 1. Download the latest release for your platform (macOS, Windows, Linux).
 2. Install the application:
-   - **macOS**: Drag `Context Manager.app` to Applications.
+   - **macOS**: Drag `Ctxman.app` to Applications.
    - **Windows**: Run the installer `.exe`.
    - **Linux**: Install the `.deb` or run the `.AppImage`.
 

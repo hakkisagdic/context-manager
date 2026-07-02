@@ -1,10 +1,10 @@
 #!/bin/bash
-# Post-installation script for context-manager DEB package
+# Post-installation script for ctxman DEB package
 
 set -e
 
 # Create config directory
-CONFIG_DIR="$HOME/.context-manager"
+CONFIG_DIR="$HOME/.ctxman"
 LOG_DIR="$CONFIG_DIR/logs"
 
 mkdir -p "$CONFIG_DIR"
@@ -29,13 +29,13 @@ fi
 chmod -R 755 "$CONFIG_DIR"
 
 echo ""
-echo "✅ Context Manager installed successfully!"
+echo "✅ Ctxman installed successfully!"
 echo ""
 echo "🚀 Quick Start:"
-echo "  context-manager --help"
-echo "  context-manager --wizard"
+echo "  ctxman --help"
+echo "  ctxman --wizard"
 echo ""
-echo "📚 Documentation: https://github.com/hakkisagdic/context-manager"
+echo "📚 Documentation: https://github.com/hakkisagdic/ctxman"
 echo ""
 
 exit 0

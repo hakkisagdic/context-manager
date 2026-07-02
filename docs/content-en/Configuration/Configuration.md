@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [README.md](file://README.md) - *Updated with method filtering examples*
-- [context-manager.js](file://context-manager.js) - *Main orchestrator with method-level analysis support*
+- [ctxman.js](file://ctxman.js) - *Main orchestrator with method-level analysis support*
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *Added in commit 6f5fea3204f18ec9d0802a00b400af1bb823e411*
 - [lib/utils/config-utils.js](file://lib/utils/config-utils.js) - *Modified to support method filter initialization*
 </cite>
@@ -26,7 +26,7 @@
 
 ## File Filtering System
 
-The context-manager tool implements a dual-mode file filtering system that allows precise control over which files are included in token analysis. This system operates through two complementary configuration files: `.contextignore` for EXCLUDE mode and `.contextinclude` for INCLUDE mode.
+The ctxman tool implements a dual-mode file filtering system that allows precise control over which files are included in token analysis. This system operates through two complementary configuration files: `.contextignore` for EXCLUDE mode and `.contextinclude` for INCLUDE mode.
 
 The filtering system follows a strict priority hierarchy where `.contextinclude` takes precedence over `.contextignore`. When both files exist, the tool operates in INCLUDE mode, completely ignoring the `.contextignore` file. This priority ensures that users can create focused analysis sets with precise file selection while maintaining the ability to fall back to exclusion-based filtering.
 
@@ -39,11 +39,11 @@ The complete configuration file priority order is: 1) `.gitignore` (always respe
 **Section sources**
 - [README.md](file://README.md#L121-L150)
 - [README.md](file://README.md#L294-L356)
-- [context-manager.js](file://context-manager.js#L128-L151)
+- [ctxman.js](file://ctxman.js#L128-L151)
 
 ## Method Filtering System
 
-The context-manager tool provides sophisticated method-level filtering capabilities through `.methodinclude` and `.methodignore` configuration files. These files work in conjunction with the `--method-level` command-line option to enable granular control over which methods are analyzed and included in the output.
+The ctxman tool provides sophisticated method-level filtering capabilities through `.methodinclude` and `.methodignore` configuration files. These files work in conjunction with the `--method-level` command-line option to enable granular control over which methods are analyzed and included in the output.
 
 Method filtering operates on a similar principle to file filtering but with additional pattern matching capabilities specific to code structure. When method-level analysis is enabled, the tool parses JavaScript files to identify methods using regular expression patterns that match function declarations, method assignments, and arrow functions. The identified methods are then filtered based on the rules defined in the method configuration files.
 
@@ -55,13 +55,13 @@ The filtering logic is implemented in the `MethodFilterParser` class, which load
 
 **Section sources**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L69-L96)
+- [ctxman.js](file://ctxman.js#L69-L96)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 - [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L29-L50)
 
 ## Pattern Syntax Guide
 
-The context-manager tool supports a comprehensive pattern syntax for both file and method filtering, enabling flexible and precise configuration. The pattern system includes wildcards, negation, and specific targeting mechanisms that allow users to create sophisticated filtering rules.
+The ctxman tool supports a comprehensive pattern syntax for both file and method filtering, enabling flexible and precise configuration. The pattern system includes wildcards, negation, and specific targeting mechanisms that allow users to create sophisticated filtering rules.
 
 For file patterns, the tool supports the following syntax elements: `**` for recursive matching across directories, `*` for single-level wildcard matching, and `!` for negation. The `**` wildcard matches zero or more directories, allowing patterns like `**/*.md` to match markdown files in any directory. The `*` wildcard matches any sequence of characters within a single directory level, such as `*.js` to match all JavaScript files in the current directory. Directory patterns should end with a trailing slash (e.g., `docs/`) to specifically target directories.
 
@@ -74,12 +74,12 @@ It's important to note that inline comments within pattern lines are not support
 **Section sources**
 - [README.md](file://README.md#L544-L610)
 - [README.md](file://README.md#L418)
-- [context-manager.js](file://context-manager.js#L153-L173)
+- [ctxman.js](file://ctxman.js#L153-L173)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L25-L35)
 
 ## Configuration Examples
 
-The context-manager tool provides practical configuration examples that demonstrate how to focus on core application logic or exclude test files effectively. These examples illustrate both EXCLUDE and INCLUDE mode configurations for different use cases.
+The ctxman tool provides practical configuration examples that demonstrate how to focus on core application logic or exclude test files effectively. These examples illustrate both EXCLUDE and INCLUDE mode configurations for different use cases.
 
 For EXCLUDE mode, users can modify the `.contextignore` file to expand or restrict the analysis scope. To include documentation files that are normally excluded, users can comment out or remove the `**/*.md` line from the `.contextignore` file. To exclude specific large files or directories, additional patterns can be added, such as `your-large-file.js` or `specific-directory/**`. The default `.contextignore` configuration focuses on core application logic by excluding documentation, configuration files, infrastructure code, workflows, and testing utilities.
 
@@ -141,7 +141,7 @@ utils.debugLog
 
 ## Common Configuration Issues
 
-Users of the context-manager tool may encounter several common configuration issues related to pattern syntax, file inclusion/exclusion behavior, and interaction between different filter files. Understanding these issues and their solutions is essential for effective configuration.
+Users of the ctxman tool may encounter several common configuration issues related to pattern syntax, file inclusion/exclusion behavior, and interaction between different filter files. Understanding these issues and their solutions is essential for effective configuration.
 
 One frequent issue involves pattern syntax errors, particularly with wildcard usage. Users sometimes confuse `*` (single-level wildcard) with `**` (recursive wildcard), leading to unexpected results. For example, using `docs/*.md` will only match markdown files in the immediate docs directory, while `docs/**/*.md` matches markdown files in docs and all its subdirectories. Another common syntax issue is the placement of negation patterns; negation patterns must come after the patterns they modify to be effective.
 
@@ -154,11 +154,11 @@ Other common issues include using directory patterns without proper syntax (patt
 **Section sources**
 - [README.md](file://README.md#L418)
 - [README.md](file://README.md#L378-L408)
-- [context-manager.js](file://context-manager.js#L175-L211)
+- [ctxman.js](file://ctxman.js#L175-L211)
 
 ## Best Practices
 
-To create effective filter configurations for different use cases, users should follow several best practices that leverage the full capabilities of the context-manager tool's filtering system.
+To create effective filter configurations for different use cases, users should follow several best practices that leverage the full capabilities of the ctxman tool's filtering system.
 
 For general development workflows, use INCLUDE mode with `.contextinclude` for maximum precision. Start with broad inclusion patterns and use negation to exclude specific files or directories. For example, include all JavaScript files in the source directory with `src/**/*.js` and then exclude test files with `!src/**/*.test.js` and legacy code with `!src/legacy/**`. This approach ensures comprehensive coverage while maintaining control over what is excluded.
 
@@ -175,5 +175,5 @@ Finally, consider the performance implications of different filtering approaches
 **Section sources**
 - [README.md](file://README.md#L30-L103)
 - [README.md](file://README.md#L253-L293)
-- [context-manager.js](file://context-manager.js#L408-L447)
+- [ctxman.js](file://ctxman.js#L408-L447)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)

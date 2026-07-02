@@ -2,7 +2,7 @@
 
 <cite>
 **Referenced Files in This Document**   
-- [context-manager.js](file://context-manager.js) - *Updated in recent commit*
+- [ctxman.js](file://ctxman.js) - *Updated in recent commit*
 - [index.js](file://index.js) - *Updated in recent commit*
 - [README.md](file://README.md)
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Core implementation*
@@ -32,7 +32,7 @@
 
 ## Introduction
 
-The context-manager tool provides a programmatic interface for analyzing codebases and generating optimized context for LLM (Large Language Model) consumption. The primary entry point is the TokenAnalyzer class, which enables developers to integrate token analysis capabilities directly into Node.js applications. This API allows for automated analysis of project files, method-level extraction, and generation of context-optimized outputs for AI-assisted development workflows.
+The ctxman tool provides a programmatic interface for analyzing codebases and generating optimized context for LLM (Large Language Model) consumption. The primary entry point is the TokenAnalyzer class, which enables developers to integrate token analysis capabilities directly into Node.js applications. This API allows for automated analysis of project files, method-level extraction, and generation of context-optimized outputs for AI-assisted development workflows.
 
 The tool is designed to help developers understand their codebase complexity, optimize LLM context usage, and automate analysis tasks within development pipelines. It supports both file-level and method-level analysis, with flexible configuration options for filtering and output formats.
 
@@ -41,7 +41,7 @@ The tool is designed to help developers understand their codebase complexity, op
 
 ## Core Components
 
-The context-manager tool is built around several core components that work together through composition to provide comprehensive analysis capabilities. The TokenAnalyzer class serves as the primary interface, orchestrating interactions between specialized components for different aspects of the analysis process.
+The ctxman tool is built around several core components that work together through composition to provide comprehensive analysis capabilities. The TokenAnalyzer class serves as the primary interface, orchestrating interactions between specialized components for different aspects of the analysis process.
 
 The architecture follows a modular design where each component has a specific responsibility:
 - GitIgnoreParser handles file exclusion based on .gitignore and custom ignore rules
@@ -85,19 +85,19 @@ GitIngestFormatter --> MethodFilterParser : "uses for method filtering"
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L14-L109)
-- [context-manager.js](file://context-manager.js#L118-L223)
+- [ctxman.js](file://ctxman.js#L14-L109)
+- [ctxman.js](file://ctxman.js#L118-L223)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L14-L223)
+- [ctxman.js](file://ctxman.js#L14-L223)
 - [lib/formatters/gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 
 ## TokenAnalyzer Class
 
-The TokenAnalyzer class is the primary entry point for the context-manager tool's programmatic interface. It provides a simple yet powerful API for analyzing codebases and generating optimized context for LLM consumption.
+The TokenAnalyzer class is the primary entry point for the ctxman tool's programmatic interface. It provides a simple yet powerful API for analyzing codebases and generating optimized context for LLM consumption.
 
 ### Constructor Parameters
 
@@ -159,11 +159,11 @@ TokenAnalyzer->>Application : Output results
 ```
 
 **Diagram sources**
-- [context-manager.js](file://context-manager.js#L225-L790)
+- [ctxman.js](file://ctxman.js#L225-L790)
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L225-L790)
+- [ctxman.js](file://ctxman.js#L225-L790)
 - [index.js](file://index.js#L1-L8)
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
@@ -196,12 +196,12 @@ When no export options are specified, the tool will prompt the user to select an
 
 **Section sources**
 - [README.md](file://README.md#L100-L300)
-- [context-manager.js](file://context-manager.js#L225-L232)
+- [ctxman.js](file://ctxman.js#L225-L232)
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js#L13-L522)
 
 ## Data Models
 
-The context-manager tool uses specific data models to represent files and methods during analysis. These models are used internally and form the structure of the generated reports and context exports.
+The ctxman tool uses specific data models to represent files and methods during analysis. These models are used internally and form the structure of the generated reports and context exports.
 
 ### FileInfo Model
 
@@ -237,17 +237,17 @@ These models are used to structure the analysis results and are serialized in th
 The data models are designed to be lightweight and focused on the essential information needed for token analysis and LLM context optimization.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L400-L420)
-- [context-manager.js](file://context-manager.js#L480-L500)
+- [ctxman.js](file://ctxman.js#L400-L420)
+- [ctxman.js](file://ctxman.js#L480-L500)
 
 ## Usage Examples
 
-The context-manager tool can be integrated into Node.js applications for automated analysis. The following examples demonstrate common usage patterns.
+The ctxman tool can be integrated into Node.js applications for automated analysis. The following examples demonstrate common usage patterns.
 
 ### Basic Integration
 
 ```javascript
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { TokenAnalyzer } = require('ctxman');
 
 // Basic file-level analysis
 const analyzer = new TokenAnalyzer('./src', {
@@ -300,8 +300,8 @@ digestAnalyzer.run();
 
 ```javascript
 // Use GitIngestFormatter directly for custom digest generation
-const { GitIngestFormatter } = require('@hakkisagdic/context-manager');
-const { TokenAnalyzer } = require('@hakkisagdic/context-manager');
+const { GitIngestFormatter } = require('ctxman');
+const { TokenAnalyzer } = require('ctxman');
 
 // First run analysis to get results
 const analyzer = new TokenAnalyzer('./src', { methodLevel: true });
@@ -322,7 +322,7 @@ formatter.saveToFile('custom-digest.txt');
 
 ```javascript
 // Use MethodFilterParser directly for method filtering
-const { MethodFilterParser } = require('@hakkisagdic/context-manager');
+const { MethodFilterParser } = require('ctxman');
 
 // Create filter parser with custom paths
 const methodFilter = new MethodFilterParser(
@@ -338,12 +338,12 @@ const shouldInclude = methodFilter.shouldIncludeMethod('getUser', 'UserService')
 
 ```javascript
 // Generate GitIngest digest from existing token-analysis-report.json
-const { generateDigestFromReport } = require('@hakkisagdic/context-manager');
+const { generateDigestFromReport } = require('ctxman');
 
 generateDigestFromReport('token-analysis-report.json');
 
 // Generate GitIngest digest from existing llm-context.json
-const { generateDigestFromContext } = require('@hakkisagdic/context-manager');
+const { generateDigestFromContext } = require('ctxman');
 
 generateDigestFromContext('llm-context.json');
 ```
@@ -358,7 +358,7 @@ These examples show how the TokenAnalyzer can be configured for different use ca
 
 ## Error Handling
 
-The context-manager tool includes comprehensive error handling to ensure robust operation in various environments. The analysis process is designed to gracefully handle file system errors and other exceptions that may occur during execution.
+The ctxman tool includes comprehensive error handling to ensure robust operation in various environments. The analysis process is designed to gracefully handle file system errors and other exceptions that may occur during execution.
 
 When a file cannot be read or analyzed, the tool creates an error entry in the results with the error message, allowing the analysis to continue with other files. This prevents a single problematic file from stopping the entire analysis process.
 
@@ -369,12 +369,12 @@ For configuration issues, the tool provides clear feedback about which configura
 The error handling strategy prioritizes completing the analysis over stopping at the first error, ensuring that users receive as much information as possible even when some parts of the process encounter issues.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L400-L415)
-- [context-manager.js](file://context-manager.js#L700-L730)
+- [ctxman.js](file://ctxman.js#L400-L415)
+- [ctxman.js](file://ctxman.js#L700-L730)
 
 ## Performance Considerations
 
-When using the context-manager API programmatically, several performance considerations should be taken into account:
+When using the ctxman API programmatically, several performance considerations should be taken into account:
 
 ### Token Counting Methods
 
@@ -405,12 +405,12 @@ While the `run()` method doesn't return a Promise, it performs several asynchron
 The tool is optimized for performance with caching and efficient file system operations, but very large codebases may still require significant processing time.
 
 **Section sources**
-- [context-manager.js](file://context-manager.js#L300-L350)
+- [ctxman.js](file://ctxman.js#L300-L350)
 - [README.md](file://README.md#L500-L600)
 
 ## Migration Guidance
 
-When upgrading or migrating to newer versions of the context-manager tool, consider the following guidance:
+When upgrading or migrating to newer versions of the ctxman tool, consider the following guidance:
 
 ### Version Compatibility
 

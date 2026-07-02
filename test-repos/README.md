@@ -1,6 +1,6 @@
 # Test Repositories
 
-This directory contains real-world repositories used for manual testing and validation of Context Manager features.
+This directory contains real-world repositories used for manual testing and validation of Ctxman features.
 
 ## Purpose
 
@@ -40,22 +40,22 @@ This directory contains real-world repositories used for manual testing and vali
 cd test-repos/express
 
 # Basic analysis
-context-manager --cli
+ctxman --cli
 
 # Method-level analysis
-context-manager --cli -m --output toon
+ctxman --cli -m --output toon
 
 # Git integration tests
-context-manager --changed-since v4.18.0
-context-manager --changed-only
-context-manager --with-authors
+ctxman --changed-since v4.18.0
+ctxman --changed-only
+ctxman --with-authors
 
 # Watch mode test
-context-manager watch
+ctxman watch
 
 # API server test (from project root)
 cd ../../
-context-manager serve --port 3000
+ctxman serve --port 3000
 # Then: curl http://localhost:3000/api/v1/analyze?path=./test-repos/express
 ```
 
@@ -100,7 +100,7 @@ echo "test-repos/<NAME>" >> .gitignore
 Good test repositories should have:
 
 ✅ **Size**: 50-500 files (manageable for manual testing)
-✅ **Language**: Supported by Context Manager (preferably JS/TS/Python/Rust)
+✅ **Language**: Supported by Ctxman (preferably JS/TS/Python/Rust)
 ✅ **Git History**: Active development, multiple contributors
 ✅ **Structure**: Well-organized, modular codebase
 ✅ **Popularity**: Well-known projects (demonstrates production use)
@@ -134,9 +134,9 @@ Good test repositories should have:
 ### Quick Test (Current Repo)
 ```bash
 # From project root
-context-manager --cli
+ctxman --cli
 
-# Expected: Analyze context-manager itself
+# Expected: Analyze ctxman itself
 ```
 
 ### Express Test
@@ -145,7 +145,7 @@ context-manager --cli
 cd test-repos/express
 
 # Run analysis
-context-manager --cli -m
+ctxman --cli -m
 
 # Expected output:
 # 📊 ~150-200 files
@@ -158,7 +158,7 @@ context-manager --cli -m
 cd test-repos/express
 
 # Analyze recent changes
-context-manager --changed-since v5.0.0
+ctxman --changed-since v5.0.0
 
 # Expected: Files changed since v5.0.0
 ```
@@ -168,7 +168,7 @@ context-manager --changed-since v5.0.0
 cd test-repos/express
 
 # Start watch
-context-manager watch
+ctxman watch
 
 # In another terminal:
 echo "// test change" >> lib/router/index.js
@@ -179,7 +179,7 @@ echo "// test change" >> lib/router/index.js
 ### API Server Test
 ```bash
 # Start server (from project root)
-context-manager serve --port 3000
+ctxman serve --port 3000
 
 # Call API
 curl "http://localhost:3000/api/v1/analyze?path=./test-repos/express&methods=true"
@@ -191,7 +191,7 @@ curl "http://localhost:3000/api/v1/analyze?path=./test-repos/express&methods=tru
 
 ## Test Checklist
 
-Use this checklist when testing new Context Manager versions:
+Use this checklist when testing new Ctxman versions:
 
 ### Basic Features
 - [ ] File scanning works
@@ -259,4 +259,4 @@ git commit -m "chore: Remove test repo <NAME>"
 
 **Created:** 2025-11-05
 **Version:** v3.0.0
-**Author:** Context Manager Team
+**Author:** Ctxman Team

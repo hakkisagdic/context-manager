@@ -48,7 +48,7 @@ describe('App.vue Integration', () => {
     });
 
     it('renders initial state correctly', () => {
-        expect(wrapper.find('.header h1').text()).toContain('Context Manager');
+        expect(wrapper.find('.header h1').text()).toContain('Ctxman');
         expect(wrapper.find('.btn-select-project').exists()).toBe(true);
     });
 

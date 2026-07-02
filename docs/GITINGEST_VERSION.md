@@ -1,6 +1,6 @@
 # GitIngest Integration Version Tracking
 
-This document tracks the version of GitIngest format that context-manager implements.
+This document tracks the version of GitIngest format that ctxman implements.
 
 ## Current Implementation
 
@@ -34,7 +34,7 @@ FILE: [relative-path]
 ## Implementation Details
 
 ### Key Files
-- **GitIngestFormatter class**: `context-manager.js` (lines 16-174)
+- **GitIngestFormatter class**: `ctxman.js` (lines 16-174)
 - **CLI flag**: `--gitingest` or `-g`
 - **Output file**: `digest.txt` (in project root)
 
@@ -52,7 +52,7 @@ FILE: [relative-path]
 2. **No Branch/Commit Info**: We don't track git metadata
 3. **Simpler Header**: Only shows directory name and file count
 4. **JavaScript Implementation**: Pure JS, no Python dependency
-5. **Integration**: Works with existing context-manager filters
+5. **Integration**: Works with existing ctxman filters
 
 ## Version History
 

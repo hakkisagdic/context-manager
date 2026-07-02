@@ -1,6 +1,6 @@
-# Context Manager - Windows Installation Script
+# Ctxman - Windows Installation Script
 # Version: 2.3.6+
-# Description: Installs context-manager globally on Windows
+# Description: Installs ctxman globally on Windows
 
 param(
     [Parameter(Mandatory=$false)]
@@ -9,13 +9,13 @@ param(
 )
 
 # Configuration
-$PackageName = "@hakkisagdic/context-manager"
-$InstallDir = "$env:USERPROFILE\.context-manager"
-$ConfigDir = "$env:USERPROFILE\.context-manager"
+$PackageName = "ctxman"
+$InstallDir = "$env:USERPROFILE\.ctxman"
+$ConfigDir = "$env:USERPROFILE\.ctxman"
 $LogDir = "$ConfigDir\logs"
 
 Write-Host "╔════════════════════════════════════════════════════════╗" -ForegroundColor Blue
-Write-Host "║     Context Manager - Installation Script v2.3.6      ║" -ForegroundColor Blue
+Write-Host "║     Ctxman - Installation Script v2.3.6      ║" -ForegroundColor Blue
 Write-Host "╚════════════════════════════════════════════════════════╝" -ForegroundColor Blue
 Write-Host ""
 
@@ -128,8 +128,8 @@ Write-Host ""
 Write-Host "➜ Verifying installation..." -ForegroundColor Yellow
 
 try {
-    $version = context-manager --version 2>&1
-    Write-Host "✓ context-manager is ready!" -ForegroundColor Green
+    $version = ctxman --version 2>&1
+    Write-Host "✓ ctxman is ready!" -ForegroundColor Green
     Write-Host "  Version: $version" -ForegroundColor Green
 } catch {
     Write-Host "✗ Installation verification failed" -ForegroundColor Red
@@ -144,8 +144,8 @@ Write-Host "╚═════════════════════�
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Blue
 Write-Host "  1. Restart your terminal (if local install)" -ForegroundColor Yellow
-Write-Host "  2. Run: context-manager --help" -ForegroundColor Yellow
-Write-Host "  3. Try wizard: context-manager --wizard" -ForegroundColor Yellow
+Write-Host "  2. Run: ctxman --help" -ForegroundColor Yellow
+Write-Host "  3. Try wizard: ctxman --wizard" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Configuration:" -ForegroundColor Blue
 Write-Host "  Directory: $ConfigDir" -ForegroundColor Yellow

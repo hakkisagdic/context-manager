@@ -38,7 +38,7 @@ export class McpClient {
 
             // Create client
             this.client = new Client({
-                name: 'context-manager-desktop',
+                name: 'ctxman-desktop',
                 version: '3.3.0'
             }, {
                 capabilities: {

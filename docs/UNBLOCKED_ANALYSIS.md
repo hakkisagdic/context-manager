@@ -8,7 +8,7 @@ Unblocked is an AI-powered development assistant that connects source code with 
 We have analyzed the Unblocked documentation and identified the following key feature sets.
 
 ### 1. Core Platform & Knowledge Graph
-| Feature | Unblocked | Context Manager (Us) | Status |
+| Feature | Unblocked | Ctxman (Us) | Status |
 | :--- | :--- | :--- | :--- |
 | **Code Indexing** | ✅ Git-based | ✅ Advanced (Exact tokens) | **Done** |
 | **External Data Sources** | ✅ Slack, Jira, Linear, Notion, Drive, Confluence | ❌ None | **Critical Priority** |
@@ -17,21 +17,21 @@ We have analyzed the Unblocked documentation and identified the following key fe
 | **Identity Linking** | ✅ Map users across platforms (Slack <-> GitHub) | ❌ None | **Medium Priority** |
 
 ### 2. Specialized Agents
-| Feature | Unblocked | Context Manager (Us) | Status |
+| Feature | Unblocked | Ctxman (Us) | Status |
 | :--- | :--- | :--- | :--- |
 | **PR Failure Agent** | ✅ Analyzes CI logs, suggests fixes | ❌ None | **High Priority** |
 | **Code Review Agent** | ✅ Automated PR reviews | ❌ None | **High Priority** |
 | **Expert Finder** | ✅ "Who knows about this?" | ❌ Basic Git Blame only | **Medium Priority** |
 
 ### 3. Enterprise & Security
-| Feature | Unblocked | Context Manager (Us) | Status |
+| Feature | Unblocked | Ctxman (Us) | Status |
 | :--- | :--- | :--- | :--- |
 | **SSO / RBAC** | ✅ SAML, Okta, Google | ❌ None | **Low Priority (MVP)** |
 | **Incognito Mode** | ✅ Private questions | ❌ N/A (Local only) | **N/A** |
 | **Audit Logs** | ✅ Usage tracking | ⚠️ Basic Telemetry | **Low Priority** |
 
 ### 4. Interfaces
-| Feature | Unblocked | Context Manager (Us) | Status |
+| Feature | Unblocked | Ctxman (Us) | Status |
 | :--- | :--- | :--- | :--- |
 | **Web Dashboard** | ✅ Management & Chat | ❌ CLI only | **Medium Priority** |
 | **IDE Extensions** | ✅ VSCode, JetBrains | ❌ None | **High Priority** |

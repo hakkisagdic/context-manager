@@ -1,5 +1,5 @@
 /**
- * Context Manager - Public API
+ * Ctxman - Public API
  * Exports all modules for programmatic usage
  */
 
@@ -28,7 +28,7 @@ import Updater from './lib/utils/updater.js'; // v2.3.6+
 import GitUtils from './lib/utils/git-utils.js'; // v2.3.6+
 
 // Orchestrator functions
-import { generateDigestFromReport, generateDigestFromContext } from './context-manager.js';
+import { generateDigestFromReport, generateDigestFromContext } from './ctxman.js';
 
 export {
     // Analyzers

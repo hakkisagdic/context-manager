@@ -10,7 +10,7 @@ test.describe('Application Launch', () => {
 
     test.beforeAll(async () => {
         // Launch Electron app
-        const appPath = path.join(__dirname, '../dist-electron/mac-arm64/Context Manager.app/Contents/MacOS/Context Manager');
+        const appPath = path.join(__dirname, '../dist-electron/mac-arm64/Ctxman.app/Contents/MacOS/Ctxman');
         electronApp = await electron.launch({
             executablePath: appPath,
             env: { ...process.env, NODE_ENV: 'test' }
@@ -26,7 +26,7 @@ test.describe('Application Launch', () => {
     test('shows correct window title', async () => {
         const window = await electronApp.firstWindow();
         const title = await window.title();
-        expect(title).toBe('Context Manager');
+        expect(title).toBe('Ctxman');
     });
 
     test('renders header', async () => {
@@ -34,6 +34,6 @@ test.describe('Application Launch', () => {
         // Wait for header to appear
         await window.waitForSelector('h1');
         const headerText = await window.textContent('h1');
-        expect(headerText).toContain('Context Manager');
+        expect(headerText).toContain('Ctxman');
     });
 });

@@ -1,12 +1,12 @@
 # Changelog
 
-All notable changes to the Context Manager will be documented in this file.
+All notable changes to the Ctxman will be documented in this file.
 
 ## [3.0.0] - 2025-11-05
 
 ### 🚀 MAJOR: Platform Foundation - Plugin Architecture & Git Integration
 
-This major release transforms Context Manager from a CLI tool into a comprehensive AI development platform with modular architecture, plugin system, complete Git integration, REST API, and watch mode for real-time analysis.
+This major release transforms Ctxman from a CLI tool into a comprehensive AI development platform with modular architecture, plugin system, complete Git integration, REST API, and watch mode for real-time analysis.
 
 #### Breaking Changes
 
@@ -43,7 +43,7 @@ This major release transforms Context Manager from a CLI tool into a comprehensi
 **👁️ Watch Mode:**
 - `FileWatcher.js` - Real-time file watching with debounce
 - `IncrementalAnalyzer.js` - Smart re-analysis
-- CLI: `context-manager watch`
+- CLI: `ctxman watch`
 
 **⚡ Performance:**
 - `CacheManager.js` - Disk/memory caching (>80% hit rate target)
@@ -53,18 +53,18 @@ This major release transforms Context Manager from a CLI tool into a comprehensi
 **🌐 REST API:**
 - `APIServer.js` - HTTP server (port 3000)
 - 6 endpoints: analyze, methods, stats, diff, context, docs
-- CLI: `context-manager serve`
+- CLI: `ctxman serve`
 
 #### CLI Enhancements
 ```bash
 # Git Integration
-context-manager --changed-only
-context-manager --changed-since main
-context-manager --with-authors
+ctxman --changed-only
+ctxman --changed-since main
+ctxman --with-authors
 
 # Platform
-context-manager serve --port 3000
-context-manager watch --debounce 1000
+ctxman serve --port 3000
+ctxman watch --debounce 1000
 ```
 
 #### Performance
@@ -114,14 +114,14 @@ This release introduces a powerful wizard profiles system that enables multiple 
 - 🎨 **Custom profiles**: Users can create their own profiles easily
 
 **Wizard Integration:**
-- 🧙 **Dynamic profile discovery** - Automatically detects profiles from `.context-manager/wizard-profiles/`
+- 🧙 **Dynamic profile discovery** - Automatically detects profiles from `.ctxman/wizard-profiles/`
 - 📊 **Profile metadata display** - Shows token budgets, descriptions, and best practices
 - ⚙️ **Custom option** - Uses existing root config files for one-off analyses
 - ✅ **Visual feedback** - Shows copied and active configuration files
 
 **Directory Structure:**
 ```
-.context-manager/
+.ctxman/
   └── wizard-profiles/         # Active profiles (editable)
       ├── code-review/
       │   ├── profile.json
@@ -144,7 +144,7 @@ examples/
 **Profile Switching Workflow:**
 ```bash
 # Run wizard
-context-manager --wizard
+ctxman --wizard
 
 # Select "Code Review" profile
 # System creates:
@@ -167,30 +167,30 @@ context-manager --wizard
 **Manual Profile Management:**
 ```bash
 # Restore default profiles
-cp -r examples/wizard-profiles/* .context-manager/wizard-profiles/
+cp -r examples/wizard-profiles/* .ctxman/wizard-profiles/
 
 # Create custom profile
-cp -r .context-manager/wizard-profiles/code-review .context-manager/wizard-profiles/my-profile
+cp -r .ctxman/wizard-profiles/code-review .ctxman/wizard-profiles/my-profile
 # Edit profile.json and filter files
 ```
 
 #### Technical Implementation
 
 **New Directories:**
-- `.context-manager/wizard-profiles/` - Active wizard profiles (6 profiles × 5 files = 30 files)
+- `.ctxman/wizard-profiles/` - Active wizard profiles (6 profiles × 5 files = 30 files)
 - `examples/wizard-profiles/` - Reference backup profiles
 
 **New Files:**
-- `examples/custom-llm-profiles.example.json` - Moved from .context-manager/
+- `examples/custom-llm-profiles.example.json` - Moved from .ctxman/
 - `examples/README.md` - Comprehensive profile management guide
 
 **Enhanced Files:**
 - `lib/ui/wizard.js` - Profile discovery, metadata parsing, named config copying
-- `package.json` - Version bump to 2.3.8, includes .context-manager/ and examples/
+- `package.json` - Version bump to 2.3.8, includes .ctxman/ and examples/
 - `.gitignore` - Ignores named configs (.contextinclude-*, .methodinclude-*)
 
 **New Functions:**
-- `discoverProfiles()` - Scans .context-manager/wizard-profiles/ for profiles
+- `discoverProfiles()` - Scans .ctxman/wizard-profiles/ for profiles
 - `copyProfileFiles(profilePath, profileId, projectRoot)` - Creates named configs
 - Profile metadata loading from profile.json
 
@@ -238,7 +238,7 @@ No migration needed. Existing workflows continue to work:
 
 ### 🤖 LLM Model Auto-Detection & Optimization
 
-This release introduces automatic LLM model detection and context window optimization - a game-changing feature that automatically configures Context Manager based on your target LLM.
+This release introduces automatic LLM model detection and context window optimization - a game-changing feature that automatically configures Ctxman based on your target LLM.
 
 #### Added
 
@@ -250,8 +250,8 @@ This release introduces automatic LLM model detection and context window optimiz
   - Google: Gemini 1.5 Pro, Gemini 2.0 Flash
   - DeepSeek: DeepSeek Coder, DeepSeek Chat
 - 📊 **Context Fit Analysis** - Shows if your repository fits in target LLM's context window
-- 🔧 **Custom model support** via `.context-manager/custom-profiles.json`
-- 📋 **JSON-based profile system** stored in `.context-manager/llm-profiles.json`
+- 🔧 **Custom model support** via `.ctxman/custom-profiles.json`
+- 📋 **JSON-based profile system** stored in `.ctxman/llm-profiles.json`
 
 **CLI Enhancements:**
 - `--target-model MODEL` - Optimize for specific LLM model
@@ -277,8 +277,8 @@ This release introduces automatic LLM model detection and context window optimiz
 #### Technical Implementation
 
 **New Files:**
-- `.context-manager/llm-profiles.json` - Built-in LLM model profiles
-- `.context-manager/custom-profiles.example.json` - Template for custom models
+- `.ctxman/llm-profiles.json` - Built-in LLM model profiles
+- `.ctxman/custom-profiles.example.json` - Template for custom models
 - `lib/utils/llm-detector.js` - LLM detection and optimization logic
 - `test/test-llm-detection.js` - Comprehensive test suite (12 tests)
 
@@ -302,9 +302,9 @@ This release introduces automatic LLM model detection and context window optimiz
 export ANTHROPIC_API_KEY=sk-...
 
 # Run analysis - automatically detects Claude
-context-manager
+ctxman
 
-# Context Manager automatically:
+# Ctxman automatically:
 # - Detects Claude Sonnet 4.5
 # - Recommends TOON format (40-50% savings)
 # - Shows context fit analysis
@@ -314,14 +314,14 @@ context-manager
 **Explicit Model Selection:**
 ```bash
 # Optimize for specific model
-context-manager --target-model claude-sonnet-4.5
-context-manager --target-model gpt-4o --cli
-context-manager --target-model gemini-2.0-flash
+ctxman --target-model claude-sonnet-4.5
+ctxman --target-model gpt-4o --cli
+ctxman --target-model gemini-2.0-flash
 ```
 
 **Custom Models:**
 ```json
-// .context-manager/custom-profiles.json
+// .ctxman/custom-profiles.json
 {
   "profiles": {
     "my-custom-gpt": {
@@ -350,8 +350,8 @@ context-manager --target-model gemini-2.0-flash
 - Auto-detection is opt-in (requires API key in environment)
 
 **For Developers:**
-- LLM profiles stored in `.context-manager/llm-profiles.json`
-- Custom profiles: `.context-manager/custom-profiles.json`
+- LLM profiles stored in `.ctxman/llm-profiles.json`
+- Custom profiles: `.ctxman/custom-profiles.json`
 - Programmatic API: `LLMDetector.detect()`, `LLMDetector.getProfile()`
 
 ---
@@ -370,7 +370,7 @@ This patch release brings direct GitHub repository support and completes the mod
   - Automatic shallow cloning for faster processing
   - Branch selection support (defaults to default branch)
   - Auto-cleanup of temporary directories
-  - New `cm-gitingest.js` CLI tool: `context-manager github <URL> [options]`
+  - New `cm-gitingest.js` CLI tool: `ctxman github <URL> [options]`
 - 📦 **New npm script**: `github` - Quick GitHub repository analysis
 
 #### Enhanced
@@ -476,7 +476,7 @@ Comprehensive improvements across TOON optimization, format conversion, chunking
 
 **v2.3.2 - Format Conversion:**
 - New `FormatConverter` class in `lib/utils/format-converter.js`
-- CLI: `context-manager convert input.json --from json --to toon`
+- CLI: `ctxman convert input.json --from json --to toon`
 - Supports: JSON ↔ TOON, JSON ↔ YAML, JSON ↔ CSV, JSON ↔ XML, CSV → JSON
 - Batch conversion, auto file extension detection
 - Conversion statistics (size, savings, percentage)
@@ -653,22 +653,22 @@ No breaking changes! All existing commands work as before.
 
 **New default behavior:**
 - Default output format is now TOON (was JSON)
-- To use JSON format: `context-manager --output json`
+- To use JSON format: `ctxman --output json`
 
 **To take advantage of new features:**
 ```bash
 # Use TOON format (new default)
-context-manager
+ctxman
 
 # Try interactive wizard
-context-manager --wizard
+ctxman --wizard
 
 # Enable chunking for large repos
-context-manager --gitingest --chunk
+ctxman --gitingest --chunk
 
 # Use different formats
-context-manager --output yaml
-context-manager --output csv
+ctxman --output yaml
+ctxman --output csv
 ```
 
 #### 🎯 Success Metrics (Achieved)
@@ -720,7 +720,7 @@ lib/
 ```
 
 **Main Files:**
-- `context-manager.js` - Orchestrator (236 lines, **82.4% reduction**)
+- `ctxman.js` - Orchestrator (236 lines, **82.4% reduction**)
 - `index.js` - Enhanced public API (48 lines)
 
 #### Code Quality Improvements
@@ -768,7 +768,7 @@ const {
     // Functions (NEW!)
     generateDigestFromReport,
     generateDigestFromContext
-} = require('@hakkisagdic/context-manager');
+} = require('ctxman');
 ```
 
 **Utility Functions:**
@@ -953,7 +953,7 @@ ConfigUtils.getConfigPaths(root)         // Get all config paths
 - 🐛 **Class method detection** - Added shorthand pattern to properly detect class methods
 - 🐛 **Special characters support** - Method names with `$` and `_` now properly detected using `[\w$_]+` pattern
 - 🐛 **Getter/setter duplication** - Prevented duplicate extraction with processedLines Map tracking
-- 🐛 **Configuration paths** - Fixed .contextinclude with correct project paths (index.js, context-manager.js, bin/cli.js)
+- 🐛 **Configuration paths** - Fixed .contextinclude with correct project paths (index.js, ctxman.js, bin/cli.js)
 - 🐛 **Test suite paths** - Corrected all test file paths from `token-analysis/` to root directory
 
 #### Added
@@ -1009,36 +1009,36 @@ None - Fully backward compatible
 ## [1.0.3] - 2024-10-09
 
 ### Changed
-- 📝 **File naming consistency** - Renamed `token-calculator.js` to `context-manager.js` for better alignment with package identity
-- 🔧 **Help text update** - Updated direct usage examples to show `node context-manager.js`
-- 📋 **Package files** - Added `context-manager.js` to NPM package files list
+- 📝 **File naming consistency** - Renamed `token-calculator.js` to `ctxman.js` for better alignment with package identity
+- 🔧 **Help text update** - Updated direct usage examples to show `node ctxman.js`
+- 📋 **Package files** - Added `ctxman.js` to NPM package files list
 - 🎯 **Documentation** - Updated file references in README and Turkish documentation
 
 ## [1.0.2] - 2024-10-09
 
 ### Fixed
-- 📝 **Documentation consistency** - Updated all command examples to use `context-manager` instead of old script paths
-- 🎯 **Title correction** - Changed from "Token Analysis Tools" to "Context Manager" 
+- 📝 **Documentation consistency** - Updated all command examples to use `ctxman` instead of old script paths
+- 🎯 **Title correction** - Changed from "Token Analysis Tools" to "Ctxman" 
 - 🔧 **Help text alignment** - CLI help now matches documentation examples
 - 🌍 **Turkish README** - Updated Turkish documentation with consistent command examples
-- ✨ **Branding consistency** - All documentation now properly reflects the Context Manager identity
+- ✨ **Branding consistency** - All documentation now properly reflects the Ctxman identity
 
 ## [1.0.1] - 2024-10-09
 
 ### Fixed
 - 📝 **Documentation cleanup** - Removed references to deleted `analyze-tokens.js` wrapper script
-- 🔧 **Package branding** - Updated from "Code Analyzer" to "Context Manager" 
+- 🔧 **Package branding** - Updated from "Code Analyzer" to "Ctxman" 
 - 📋 **NPM page accuracy** - Fixed documentation to reflect actual package structure
 
 ### Changed
-- 🎯 **Package name** - Rebranded to `@hakkisagdic/context-manager` for better LLM focus
-- 📦 **CLI command** - Updated to `context-manager` for consistency
+- 🎯 **Package name** - Rebranded to `ctxman` for better LLM focus
+- 📦 **CLI command** - Updated to `ctxman` for consistency
 - 📖 **Documentation** - Updated all references to use new package name
 
 ## [1.0.0] - 2024-10-09
 
 ### Added
-- 🎉 **Initial release** of Context Manager
+- 🎉 **Initial release** of Ctxman
 - 📊 **File-level analysis** with gitignore support
 - 🔧 **Method-level analysis** for JavaScript/TypeScript files
 - 📋 **Dual filtering system** (include/exclude patterns)
@@ -1116,7 +1116,7 @@ None - Fully backward compatible
 
 ### Package Structure
 ```
-@hakkisagdic/context-manager/
+ctxman/
 ├── index.js              # Main entry point
 ├── bin/cli.js            # CLI interface
 ├── token-calculator.js   # Core functionality

@@ -12,7 +12,7 @@ async function main() {
   const query = args.join(' ');
 
   if (!query) {
-    console.error('Usage: context-manager ask "Your query here"');
+    console.error('Usage: ctxman ask "Your query here"');
     process.exit(1);
   }
 
@@ -27,8 +27,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Use LanceDB in .context-manager/self-knowledge
-  const storePath = path.join(process.cwd(), '.context-manager', 'self-knowledge');
+  // Use LanceDB in .ctxman/self-knowledge
+  const storePath = path.join(process.cwd(), '.ctxman', 'self-knowledge');
   const store = VectorStoreFactory.create('lancedb', provider, { path: storePath });
 
   // 2. Check if indexed
@@ -84,7 +84,7 @@ async function indexProject(store) {
   await indexer.index('local-files', {
     targetDir: process.cwd(),
     include: ['.js', '.md', '.ts', '.json'], // Configurable?
-    exclude: ['node_modules', '.git', 'dist', 'coverage', '.context-manager']
+    exclude: ['node_modules', '.git', 'dist', 'coverage', '.ctxman']
   });
   console.log('✅ Indexing complete.');
 }

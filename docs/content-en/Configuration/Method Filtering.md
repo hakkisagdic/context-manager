@@ -30,7 +30,7 @@
 
 ## Introduction
 
-The context-manager tool provides a sophisticated method-level filtering system that enables granular control over which methods are included in LLM context generation. This system operates through two configuration files: `.methodinclude` and `.methodignore`, which work in conjunction with the `MethodFilterParser` class to determine which methods should be analyzed and included in the final context output. The filtering system is designed to help developers optimize token usage by focusing on core business logic while excluding utility, test, and debugging methods that add noise to LLM context.
+The ctxman tool provides a sophisticated method-level filtering system that enables granular control over which methods are included in LLM context generation. This system operates through two configuration files: `.methodinclude` and `.methodignore`, which work in conjunction with the `MethodFilterParser` class to determine which methods should be analyzed and included in the final context output. The filtering system is designed to help developers optimize token usage by focusing on core business logic while excluding utility, test, and debugging methods that add noise to LLM context.
 
 **Section sources**
 - [README.md](file://README.md#L544-L610)

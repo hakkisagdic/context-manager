@@ -5,7 +5,7 @@
 - [README.md](file://README.md)
 - [package.json](file://package.json)
 - [bin/cli.js](file://bin/cli.js)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 </cite>
 
 ## Table of Contents
@@ -19,7 +19,7 @@
 
 ## Prerequisites
 
-Before installing the context-manager tool, ensure your system meets the following requirements:
+Before installing the ctxman tool, ensure your system meets the following requirements:
 
 - **Node.js**: Version 14.0.0 or higher (specified in package.json under "engines")
 - **npm**: Node Package Manager, typically installed with Node.js
@@ -31,30 +31,30 @@ These prerequisites are essential for both global and local installations of the
 
 ## Installation Methods
 
-The context-manager tool can be installed using npm through two primary methods: globally or locally. Each method serves different use cases depending on your development workflow.
+The ctxman tool can be installed using npm through two primary methods: globally or locally. Each method serves different use cases depending on your development workflow.
 
 ### Global Installation
 
-Global installation makes the `context-manager` command available system-wide, allowing you to use it from any directory in your terminal:
+Global installation makes the `ctxman` command available system-wide, allowing you to use it from any directory in your terminal:
 
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
-This approach is recommended if you plan to use the tool across multiple projects or want to access it as a standalone CLI tool from anywhere in your system. After global installation, you can run `context-manager` commands directly without prefixing them with `npx`.
+This approach is recommended if you plan to use the tool across multiple projects or want to access it as a standalone CLI tool from anywhere in your system. After global installation, you can run `ctxman` commands directly without prefixing them with `npx`.
 
 ### Local Installation
 
 Local installation adds the package as a dependency to your current project:
 
 ```bash
-npm install @hakkisagdic/context-manager
+npm install ctxman
 ```
 
-This method is ideal when you want to include context-manager as part of a specific project's toolchain or when working in a team environment where consistent tool versions are important. With local installation, you can execute the tool using `npx`:
+This method is ideal when you want to include ctxman as part of a specific project's toolchain or when working in a team environment where consistent tool versions are important. With local installation, you can execute the tool using `npx`:
 
 ```bash
-npx context-manager --help
+npx ctxman --help
 ```
 
 Local installation ensures that all team members use the same version of the tool as defined in the project's package-lock.json, promoting consistency across development environments.
@@ -64,7 +64,7 @@ Local installation ensures that all team members use the same version of the too
 
 ## Token Counting Configuration
 
-The context-manager tool provides two methods for token counting, with an optional dependency that enhances accuracy.
+The ctxman tool provides two methods for token counting, with an optional dependency that enhances accuracy.
 
 ### Exact Token Counting with tiktoken
 
@@ -90,11 +90,11 @@ The tool first attempts to load tiktoken, and if unsuccessful, uses the estimati
 
 **Section sources**
 - [README.md](file://README.md#L219-L223)
-- [context-manager.js](file://context-manager.js#L287-L317)
+- [ctxman.js](file://ctxman.js#L287-L317)
 
 ## Configuration Files
 
-The context-manager tool uses several configuration files to control file and method inclusion/exclusion, with a defined priority hierarchy.
+The ctxman tool uses several configuration files to control file and method inclusion/exclusion, with a defined priority hierarchy.
 
 ### File-Level Configuration
 
@@ -145,7 +145,7 @@ When both .contextinclude and .contextignore exist, the include file takes prece
 
 **Section sources**
 - [README.md](file://README.md#L145-L184)
-- [context-manager.js](file://context-manager.js#L108-L218)
+- [ctxman.js](file://ctxman.js#L108-L218)
 
 ## Verification and Usage
 
@@ -156,7 +156,7 @@ After installation, verify the tool is working correctly and explore its basic u
 Test the installation by accessing the help menu:
 
 ```bash
-context-manager --help
+ctxman --help
 ```
 
 This should display the CLI options and usage information, confirming the tool is properly installed and accessible. The help output includes available options like `--save-report`, `--context-export`, and `--method-level`, along with examples of common usage patterns.
@@ -166,25 +166,25 @@ This should display the CLI options and usage information, confirming the tool i
 #### Interactive Analysis
 Running the tool without arguments initiates interactive mode with export options:
 ```bash
-context-manager
+ctxman
 ```
 
 #### Direct Export Options
 ```bash
 # Save detailed JSON report
-context-manager --save-report
+ctxman --save-report
 
 # Generate LLM context file
-context-manager --context-export
+ctxman --context-export
 
 # Copy context to clipboard
-context-manager --context-clipboard
+ctxman --context-clipboard
 ```
 
 #### Method-Level Analysis
 ```bash
 # Analyze specific methods only
-context-manager --method-level --context-clipboard
+ctxman --method-level --context-clipboard
 ```
 
 The tool provides immediate feedback during execution, showing whether it's using exact token counting (with tiktoken) or estimation, the analysis mode (INCLUDE/EXCLUDE), and summary statistics upon completion.
@@ -195,15 +195,15 @@ The tool provides immediate feedback during execution, showing whether it's usin
 
 ## Integration with Development Workflows
 
-The context-manager tool can be integrated into various development workflows to optimize LLM context usage and monitor codebase complexity.
+The ctxman tool can be integrated into various development workflows to optimize LLM context usage and monitor codebase complexity.
 
 ### Package.json Scripts
 Add custom scripts to your project's package.json:
 ```json
 "scripts": {
-  "analyze": "context-manager",
-  "analyze:methods": "context-manager --method-level",
-  "llm-context": "context-manager --context-clipboard"
+  "analyze": "ctxman",
+  "analyze:methods": "ctxman --method-level",
+  "llm-context": "ctxman --context-clipboard"
 }
 ```
 
@@ -217,7 +217,7 @@ npm run llm-context
 Incorporate the tool into continuous integration pipelines to monitor codebase growth:
 ```bash
 # In CI script
-context-manager --save-report
+ctxman --save-report
 TOKENS=$(jq '.summary.totalTokens' token-analysis-report.json)
 if [ $TOKENS -gt 100000 ]; then
   echo "Codebase exceeds LLM context limits"
@@ -241,19 +241,19 @@ These outputs can be automatically fed into AI-assisted development workflows, e
 
 ## Troubleshooting
 
-Address common issues that may arise during installation and usage of the context-manager tool.
+Address common issues that may arise during installation and usage of the ctxman tool.
 
 ### Permission Errors (Global Installation)
 When installing globally, you might encounter permission errors:
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 # Error: EACCES: permission denied
 ```
 
 **Solutions:**
 - Use a Node.js version manager like nvm that installs Node.js in your home directory
 - Change npm's default directory to avoid permission issues
-- Use sudo (not recommended for security reasons): `sudo npm install -g @hakkisagdic/context-manager`
+- Use sudo (not recommended for security reasons): `sudo npm install -g ctxman`
 
 ### Missing Dependencies
 If tiktoken fails to install, the tool automatically falls back to estimation mode. To resolve installation issues:
@@ -287,4 +287,4 @@ The tool automatically tries alternative clipboard commands if the primary one f
 
 **Section sources**
 - [README.md](file://README.md#L257-L284)
-- [context-manager.js](file://context-manager.js#L565-L585)
+- [ctxman.js](file://ctxman.js#L565-L585)

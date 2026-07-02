@@ -1,6 +1,6 @@
-# Context Manager - Examples & Reference Configurations
+# Ctxman - Examples & Reference Configurations
 
-This directory contains reference configurations and examples for Context Manager. Use these as templates or restore them if you modify the active wizard profiles.
+This directory contains reference configurations and examples for Ctxman. Use these as templates or restore them if you modify the active wizard profiles.
 
 ## 📁 Directory Structure
 
@@ -30,7 +30,7 @@ Wizard profiles are pre-configured analysis templates that optimize context gene
 ### Active vs Reference Profiles
 
 **Active Profiles:**
-- Location: `.context-manager/wizard-profiles/`
+- Location: `.ctxman/wizard-profiles/`
 - Used by the wizard during interactive setup
 - Can be modified or deleted by users
 
@@ -83,10 +83,10 @@ If you've modified or deleted a wizard profile and want to restore the default:
 
 ```bash
 # Restore a single profile
-cp -r examples/wizard-profiles/code-review .context-manager/wizard-profiles/
+cp -r examples/wizard-profiles/code-review .ctxman/wizard-profiles/
 
 # Restore all profiles
-cp -r examples/wizard-profiles/* .context-manager/wizard-profiles/
+cp -r examples/wizard-profiles/* .ctxman/wizard-profiles/
 ```
 
 ## ➕ Creating Custom Profiles
@@ -95,10 +95,10 @@ cp -r examples/wizard-profiles/* .context-manager/wizard-profiles/
 
 ```bash
 # Copy an existing profile as template
-cp -r examples/wizard-profiles/code-review .context-manager/wizard-profiles/my-custom-profile
+cp -r examples/wizard-profiles/code-review .ctxman/wizard-profiles/my-custom-profile
 
 # Edit the files
-cd .context-manager/wizard-profiles/my-custom-profile
+cd .ctxman/wizard-profiles/my-custom-profile
 nano profile.json          # Update metadata
 nano .contextinclude       # Customize file filters
 nano .methodinclude        # Customize method filters
@@ -108,14 +108,14 @@ nano .methodinclude        # Customize method filters
 
 ```bash
 # Create profile directory
-mkdir -p .context-manager/wizard-profiles/my-profile
+mkdir -p .ctxman/wizard-profiles/my-profile
 
 # Create required files
-touch .context-manager/wizard-profiles/my-profile/profile.json
-touch .context-manager/wizard-profiles/my-profile/.contextinclude
-touch .context-manager/wizard-profiles/my-profile/.contextignore
-touch .context-manager/wizard-profiles/my-profile/.methodinclude
-touch .context-manager/wizard-profiles/my-profile/.methodignore
+touch .ctxman/wizard-profiles/my-profile/profile.json
+touch .ctxman/wizard-profiles/my-profile/.contextinclude
+touch .ctxman/wizard-profiles/my-profile/.contextignore
+touch .ctxman/wizard-profiles/my-profile/.methodinclude
+touch .ctxman/wizard-profiles/my-profile/.methodignore
 ```
 
 **profile.json structure:**
@@ -153,10 +153,10 @@ The `custom-llm-profiles.example.json` file shows how to add custom LLM models t
 
 ```bash
 # Copy example to active location
-cp examples/custom-llm-profiles.example.json .context-manager/custom-profiles.json
+cp examples/custom-llm-profiles.example.json .ctxman/custom-profiles.json
 
 # Edit with your custom models
-nano .context-manager/custom-profiles.json
+nano .ctxman/custom-profiles.json
 ```
 
 **Example custom LLM profile:**
@@ -265,23 +265,23 @@ When you select a profile in the wizard:
 
 **Profile not appearing in wizard?**
 - Ensure `profile.json` exists and is valid JSON
-- Check that profile directory is in `.context-manager/wizard-profiles/`
+- Check that profile directory is in `.ctxman/wizard-profiles/`
 - Profile ID must match directory name
 
 **Filters not working?**
 - Check `.gitignore` first (it always takes precedence)
 - Verify pattern syntax (use `**` for recursive matching)
-- Test patterns with `context-manager --analyze`
+- Test patterns with `ctxman --analyze`
 
 **Need to reset everything?**
 ```bash
 # Remove all active profiles and configs
-rm -rf .context-manager/wizard-profiles
+rm -rf .ctxman/wizard-profiles
 rm .context*
 rm .method*
 
 # Restore defaults
-cp -r examples/wizard-profiles .context-manager/
+cp -r examples/wizard-profiles .ctxman/
 ```
 
 ## 💡 Tips

@@ -1,4 +1,4 @@
-# Context Manager v2.3.5 - Feature Examples & Usage Guide
+# Ctxman v2.3.5 - Feature Examples & Usage Guide
 
 **Last Updated:** November 3, 2025
 **Version:** 2.3.5 (Phase 1 Complete)
@@ -21,11 +21,11 @@
 ### Basic Object Encoding
 
 ```javascript
-const { ToonFormatter } = require('@hakkisagdic/context-manager');
+const { ToonFormatter } = require('ctxman');
 const formatter = new ToonFormatter();
 
 const project = {
-  name: 'context-manager',
+  name: 'ctxman',
   version: '2.3.5',
   totalFiles: 64,
   totalTokens: 181480
@@ -38,7 +38,7 @@ console.log(toon);
 **Output:**
 ```toon
 {
-  name: context-manager
+  name: ctxman
   version: 2.3.5
   totalFiles: 64
   totalTokens: 181480
@@ -89,7 +89,7 @@ const minified = formatter.minify(toonString);
 
 ```javascript
 const data = {
-  project: 'context-manager',
+  project: 'ctxman',
   files: 64,
   tokens: 181480
 };
@@ -121,7 +121,7 @@ JSON tokens: 26
 
 ```bash
 # CLI
-context-manager convert input.json --from json --to toon --output result.toon
+ctxman convert input.json --from json --to toon --output result.toon
 ```
 
 ```javascript
@@ -139,7 +139,7 @@ console.log('Savings:', result.metadata.savingsPercentage + '%');
 ### JSON to YAML
 
 ```bash
-context-manager convert data.json --from json --to yaml --output config.yaml
+ctxman convert data.json --from json --to yaml --output config.yaml
 ```
 
 ### Batch Conversion
@@ -165,7 +165,7 @@ files.forEach(file => {
 
 ```bash
 # CLI with chunking
-context-manager --gitingest --chunk --chunk-strategy smart --chunk-size 100000
+ctxman --gitingest --chunk --chunk-strategy smart --chunk-size 100000
 ```
 
 ```javascript
@@ -192,7 +192,7 @@ console.log(`Generated ${chunks.length} chunks`);
 
 #### 1. Smart Chunking (Directory-Aware)
 ```bash
-context-manager --gitingest --chunk --chunk-strategy smart
+ctxman --gitingest --chunk --chunk-strategy smart
 ```
 - Groups related files by directory structure
 - Preserves logical code relationships
@@ -200,7 +200,7 @@ context-manager --gitingest --chunk --chunk-strategy smart
 
 #### 2. Size-Based Chunking
 ```bash
-context-manager --gitingest --chunk --chunk-strategy size --chunk-size 50000
+ctxman --gitingest --chunk --chunk-strategy size --chunk-size 50000
 ```
 - Fixed token size chunks
 - Splits at file boundaries when possible
@@ -208,7 +208,7 @@ context-manager --gitingest --chunk --chunk-strategy size --chunk-size 50000
 
 #### 3. File-Based Chunking
 ```bash
-context-manager --gitingest --chunk --chunk-strategy file
+ctxman --gitingest --chunk --chunk-strategy file
 ```
 - One file per chunk
 - Includes directory context
@@ -216,7 +216,7 @@ context-manager --gitingest --chunk --chunk-strategy file
 
 #### 4. Directory-Based Chunking
 ```bash
-context-manager --gitingest --chunk --chunk-strategy directory
+ctxman --gitingest --chunk --chunk-strategy directory
 ```
 - One directory per chunk
 - Complete module/package isolation
@@ -246,7 +246,7 @@ const formatter = new GitIngestFormatter(root, stats, results, {
 ### Starting the Wizard
 
 ```bash
-context-manager --wizard
+ctxman --wizard
 ```
 
 ### Wizard Flow
@@ -380,7 +380,7 @@ Files included: 45
 ### Starting the Dashboard
 
 ```bash
-context-manager --dashboard
+ctxman --dashboard
 ```
 
 ### Dashboard Interface
@@ -435,7 +435,7 @@ context-manager --dashboard
 
 ```bash
 # Enable watch mode (auto-refresh on file changes)
-context-manager --dashboard --watch
+ctxman --dashboard --watch
 ```
 
 Dashboard updates automatically when files change:
@@ -454,81 +454,81 @@ Dashboard updates automatically when files change:
 
 ```bash
 # Default analysis (TOON format)
-context-manager
+ctxman
 
 # With specific format
-context-manager --output json
-context-manager --output yaml
-context-manager --output toon
+ctxman --output json
+ctxman --output yaml
+ctxman --output toon
 
 # Method-level analysis
-context-manager --method-level
+ctxman --method-level
 
 # Verbose output
-context-manager --verbose
+ctxman --verbose
 ```
 
 ### Export Options
 
 ```bash
 # Save JSON report
-context-manager --save-report
+ctxman --save-report
 
 # Generate LLM context
-context-manager --context-export
+ctxman --context-export
 
 # Copy to clipboard
-context-manager --context-clipboard
+ctxman --context-clipboard
 
 # GitIngest digest
-context-manager --gitingest
+ctxman --gitingest
 ```
 
 ### Chunking
 
 ```bash
 # Basic chunking
-context-manager --gitingest --chunk
+ctxman --gitingest --chunk
 
 # With strategy
-context-manager --chunk --chunk-strategy smart
-context-manager --chunk --chunk-strategy size --chunk-size 50000
-context-manager --chunk --chunk-strategy file
-context-manager --chunk --chunk-strategy directory
+ctxman --chunk --chunk-strategy smart
+ctxman --chunk --chunk-strategy size --chunk-size 50000
+ctxman --chunk --chunk-strategy file
+ctxman --chunk --chunk-strategy directory
 ```
 
 ### Format Conversion
 
 ```bash
 # Convert files
-context-manager convert input.json --from json --to toon
-context-manager convert data.yaml --from yaml --to json
-context-manager convert report.json --from json --to csv
+ctxman convert input.json --from json --to toon
+ctxman convert data.yaml --from yaml --to json
+ctxman convert report.json --from json --to csv
 
 # With output file
-context-manager convert input.json --from json --to toon --output result.toon
+ctxman convert input.json --from json --to toon --output result.toon
 ```
 
 ### Interactive Modes
 
 ```bash
 # Wizard (guided configuration)
-context-manager --wizard
+ctxman --wizard
 
 # Dashboard (live stats)
-context-manager --dashboard
+ctxman --dashboard
 
 # Dashboard with watch mode
-context-manager --dashboard --watch
+ctxman --dashboard --watch
 
 # Simple mode (no UI)
-context-manager --simple
+ctxman --simple
 ```
 
 ### List Available Formats
 
 ```bash
-context-manager --list-formats
+ctxman --list-formats
 ```
 
 ---
@@ -538,43 +538,43 @@ context-manager --list-formats
 ### 1. Bug Fix Context
 ```bash
 # Use wizard for guided setup
-context-manager --wizard
+ctxman --wizard
 # Select: Bug Fix → Claude Opus → Changed + Related → TOON
 
 # Or use CLI directly
-context-manager --changed-only --output toon --context-clipboard
+ctxman --changed-only --output toon --context-clipboard
 ```
 
 ### 2. Code Review
 ```bash
 # Full project context
-context-manager --output gitingest --chunk --chunk-strategy smart
+ctxman --output gitingest --chunk --chunk-strategy smart
 
 # Or use dashboard to explore
-context-manager --dashboard
+ctxman --dashboard
 ```
 
 ### 3. Documentation Generation
 ```bash
 # Markdown format for docs
-context-manager --output markdown --context-export
+ctxman --output markdown --context-export
 
 # With method-level details
-context-manager --method-level --output markdown
+ctxman --method-level --output markdown
 ```
 
 ### 4. Multi-Format Export
 ```bash
 # Export to multiple formats
-context-manager --output toon > context.toon
-context-manager --output json > context.json
-context-manager --output yaml > context.yaml
+ctxman --output toon > context.toon
+ctxman --output json > context.json
+ctxman --output yaml > context.yaml
 ```
 
 ### 5. Large Project Analysis
 ```bash
 # Use chunking for repos > 100k tokens
-context-manager --gitingest --chunk --chunk-size 100000 --chunk-strategy smart
+ctxman --gitingest --chunk --chunk-size 100000 --chunk-strategy smart
 ```
 
 ---
@@ -608,4 +608,4 @@ context-manager --gitingest --chunk --chunk-size 100000 --chunk-strategy smart
 
 ---
 
-**Need Help?** Open an issue at https://github.com/hakkisagdic/context-manager/issues
+**Need Help?** Open an issue at https://github.com/hakkisagdic/ctxman/issues

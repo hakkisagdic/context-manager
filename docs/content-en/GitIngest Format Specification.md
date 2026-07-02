@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**   
 - [GitIngestFormatter](file://lib/formatters/gitingest-formatter.js)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [GITINGEST_VERSION.md](file://docs/GITINGEST_VERSION.md)
 - [README.md](file://README.md)
 - [test-gitingest.js](file://test/test-gitingest.js)
@@ -26,7 +26,7 @@
 
 The GitIngest format specification defines a standardized text-based digest format for codebase representation optimized for Large Language Model (LLM) consumption. This format enables developers to consolidate entire project contexts into a single, structured text file that can be efficiently processed by AI assistants like ChatGPT, Claude, or other LLMs.
 
-The implementation in the context-manager tool provides a JavaScript-based solution that generates GitIngest-style digests from codebases, incorporating project metadata, directory structure visualization, and complete file contents in a prompt-friendly format.
+The implementation in the ctxman tool provides a JavaScript-based solution that generates GitIngest-style digests from codebases, incorporating project metadata, directory structure visualization, and complete file contents in a prompt-friendly format.
 
 **Section sources**
 - [README.md](file://README.md#L150-L170)
@@ -95,7 +95,7 @@ D --> D4["file content"]
 
 ## Versioning System
 
-The context-manager implementation follows a version tracking system that aligns with the reference GitIngest format while maintaining its own versioning for compatibility and feature tracking.
+The ctxman implementation follows a version tracking system that aligns with the reference GitIngest format while maintaining its own versioning for compatibility and feature tracking.
 
 ### Current Implementation
 - **GitIngest Version Reference**: v0.3.1 (2025-07-31)
@@ -114,7 +114,7 @@ The versioning system ensures compatibility with the evolving GitIngest specific
 
 ## Implementation Details
 
-The GitIngest format is implemented through the `GitIngestFormatter` class, which orchestrates the generation of the digest file from analyzed codebase data. The implementation is designed to be dependency-free and compatible with the core context-manager analysis pipeline.
+The GitIngest format is implemented through the `GitIngestFormatter` class, which orchestrates the generation of the digest file from analyzed codebase data. The implementation is designed to be dependency-free and compatible with the core ctxman analysis pipeline.
 
 ### Core Components
 - **GitIngestFormatter Class**: Main formatter that generates the digest
@@ -162,7 +162,7 @@ GitIngestFormatter --> FileUtils : "uses isCode"
 
 **Diagram sources**
 - [gitingest-formatter.js](file://lib/formatters/gitingest-formatter.js#L13-L264)
-- [context-manager.js](file://context-manager.js#L4-L5)
+- [ctxman.js](file://ctxman.js#L4-L5)
 
 ## Method-Level Filtering
 
@@ -216,33 +216,33 @@ The GitIngest format can be generated through multiple workflows, providing flex
 ### Direct Generation
 Generate a digest directly from codebase analysis:
 ```bash
-context-manager --gitingest
-context-manager -g
+ctxman --gitingest
+ctxman -g
 ```
 
 ### JSON-Based Generation
 Generate digest from existing JSON reports (faster, no re-scan):
 ```bash
 # From detailed analysis report
-context-manager --gitingest-from-report token-analysis-report.json
+ctxman --gitingest-from-report token-analysis-report.json
 
 # From LLM context file
-context-manager --gitingest-from-context llm-context.json
+ctxman --gitingest-from-context llm-context.json
 
 # Using default filenames
-context-manager --gitingest-from-report
-context-manager --gitingest-from-context
+ctxman --gitingest-from-report
+ctxman --gitingest-from-context
 ```
 
 ### Combined Workflows
 Combine digest generation with other outputs:
 ```bash
 # Generate both digest and detailed report
-context-manager -g -s
+ctxman -g -s
 
 # Two-step workflow for repeated digest generation
-context-manager --save-report
-context-manager --gitingest-from-report
+ctxman --save-report
+ctxman --gitingest-from-report
 ```
 
 The output `digest.txt` file contains the complete formatted digest, ready for LLM consumption or archival purposes.
@@ -301,7 +301,7 @@ Common issues and their solutions when working with the GitIngest format:
 
 **Section sources**
 - [test-gitingest-json.js](file://test/test-gitingest-json.js#L150-L180)
-- [context-manager.js](file://context-manager.js#L20-L50)
+- [ctxman.js](file://ctxman.js#L20-L50)
 
 ## Integration Workflows
 
@@ -335,7 +335,7 @@ aws s3 cp digest.txt s3://project-artifacts/${GIT_COMMIT}/digest.txt
 
 ### Interactive Development Loop
 1. Make code changes
-2. Run `context-manager --gitingest` 
+2. Run `ctxman --gitingest` 
 3. Copy digest content
 4. Paste into LLM interface with query
 5. Implement suggestions
@@ -345,4 +345,4 @@ This tight feedback loop enables rapid iteration and continuous improvement with
 
 **Section sources**
 - [README.md](file://README.md#L200-L220)
-- [context-manager.js](file://context-manager.js#L100-L150)
+- [ctxman.js](file://ctxman.js#L100-L150)

@@ -96,7 +96,7 @@ async function main() {
 
 function printHelp() {
     console.log('GitHub GitIngest Generator - Generate digest from GitHub repositories\n');
-    console.log('Usage: context-manager github <url> [options]\n');
+    console.log('Usage: ctxman github <url> [options]\n');
     console.log('Arguments:');
     console.log('  url                      GitHub repository URL or owner/repo\n');
     console.log('Options:');
@@ -115,17 +115,17 @@ function printHelp() {
     console.log('  owner/repo\n');
     console.log('Examples:');
     console.log('  # Basic usage');
-    console.log('  context-manager github https://github.com/facebook/react\n');
+    console.log('  ctxman github https://github.com/facebook/react\n');
     console.log('  # Short format');
-    console.log('  context-manager github facebook/react\n');
+    console.log('  ctxman github facebook/react\n');
     console.log('  # Specific branch');
-    console.log('  context-manager github vercel/next.js --branch canary\n');
+    console.log('  ctxman github vercel/next.js --branch canary\n');
     console.log('  # Custom output location');
-    console.log('  context-manager github angular/angular -o docs/angular-digest.txt\n');
+    console.log('  ctxman github angular/angular -o docs/angular-digest.txt\n');
     console.log('  # With chunking');
-    console.log('  context-manager github microsoft/vscode --chunk-size 100000\n');
+    console.log('  ctxman github microsoft/vscode --chunk-size 100000\n');
     console.log('  # Keep clone for inspection');
-    console.log('  context-manager github nodejs/node --keep-clone --verbose\n');
+    console.log('  ctxman github nodejs/node --keep-clone --verbose\n');
     console.log('Output:');
     console.log('  Generated digest file in docs/ directory');
     console.log('  Automatic cleanup of temporary clone (unless --keep-clone)\n');

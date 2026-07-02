@@ -3,7 +3,7 @@
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
 - [README.md](file://README.md) - *Method filtreleme örnekleri ile güncellendi*
-- [context-manager.js](file://context-manager.js) - *Method seviyesi analiz desteği ile ana orkestratör*
+- [ctxman.js](file://ctxman.js) - *Method seviyesi analiz desteği ile ana orkestratör*
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js) - *6f5fea3204f18ec9d0802a00b400af1bb823e411 commit'inde eklendi*
 - [lib/utils/config-utils.js](file://lib/utils/config-utils.js) - *Method filtre başlatmasını desteklemek için değiştirildi*
 </cite>
@@ -26,7 +26,7 @@
 
 ## Dosya Filtreleme Sistemi
 
-context-manager aracı, token analizine hangi dosyaların dahil edileceği üzerinde hassas kontrol sağlayan çift modlu bir dosya filtreleme sistemi uygular. Bu sistem iki tamamlayıcı yapilandirma dosyası üzerinden çalışır: EXCLUDE modu için `.contextignore` ve INCLUDE modu için `.contextinclude`.
+ctxman aracı, token analizine hangi dosyaların dahil edileceği üzerinde hassas kontrol sağlayan çift modlu bir dosya filtreleme sistemi uygular. Bu sistem iki tamamlayıcı yapilandirma dosyası üzerinden çalışır: EXCLUDE modu için `.contextignore` ve INCLUDE modu için `.contextinclude`.
 
 Filtreleme sistemi, `.contextinclude`'un `.contextignore` üzerinde önceliğe sahip olduğu katı bir öncelik hiyerarşisini takip eder. Her iki dosya da mevcut olduğunda, araç INCLUDE modunda çalışır ve `.contextignore` dosyasını tamamen göz ardı eder. Bu öncelik, kullanıcıların hassas dosya seçimi ile odaklanmış analiz setleri oluşturabilmesini sağlarken, hariç tutma tabanlı filtrelemeye geri dönebilme yeteneğini korur.
 
@@ -39,11 +39,11 @@ Tam yapilandirma dosyası öncelik sırası şöyledir: 1) `.gitignore` (her zam
 **Bölüm kaynakları**
 - [README.md](file://README.md#L121-L150)
 - [README.md](file://README.md#L294-L356)
-- [context-manager.js](file://context-manager.js#L128-L151)
+- [ctxman.js](file://ctxman.js#L128-L151)
 
 ## Method Filtreleme Sistemi
 
-context-manager aracı, `.methodinclude` ve `.methodignore` yapilandirma dosyaları aracılığıyla gelişmiş method seviyesinde filtreleme yetenekleri sağlar. Bu dosyalar, hangi methodların analiz edileceği ve çıktıya dahil edileceği üzerinde ayrıntılı kontrol sağlamak için `--method-level` komut satırı seçeneği ile birlikte çalışır.
+ctxman aracı, `.methodinclude` ve `.methodignore` yapilandirma dosyaları aracılığıyla gelişmiş method seviyesinde filtreleme yetenekleri sağlar. Bu dosyalar, hangi methodların analiz edileceği ve çıktıya dahil edileceği üzerinde ayrıntılı kontrol sağlamak için `--method-level` komut satırı seçeneği ile birlikte çalışır.
 
 Method filtreleme, dosya filtrelemeye benzer bir prensiple çalışır, ancak kod yapısına özgü ek pattern eşleştirme yetenekleri ile. Method seviyesinde analiz etkinleştirildiğinde, araç JavaScript dosyalarını ayrıştırarak function declaration'ları, method assignment'ları ve arrow function'ları eşleştiren regular expression pattern'leri kullanarak methodları tanımlar. Tanımlanan methodlar daha sonra method yapilandirma dosyalarında tanımlanan kurallara göre filtrelenir.
 
@@ -55,13 +55,13 @@ Filtreleme mantığı, yapilandirma dosyalarını yükleyen, pattern'leri regula
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
-- [context-manager.js](file://context-manager.js#L69-L96)
+- [ctxman.js](file://ctxman.js#L69-L96)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)
 - [lib/utils/config-utils.js](file://lib/utils/config-utils.js#L29-L50)
 
 ## Pattern Syntax Rehberi
 
-context-manager aracı, hem dosya hem de method filtreleme için kapsamlı bir pattern sözdizimi destekler ve esnek ve hassas yapilandirma sağlar. Pattern sistemi, kullanıcıların gelişmiş filtreleme kuralları oluşturmasına olanak tanıyan wildcard'lar, negasyon ve özel hedefleme mekanizmalarını içerir.
+ctxman aracı, hem dosya hem de method filtreleme için kapsamlı bir pattern sözdizimi destekler ve esnek ve hassas yapilandirma sağlar. Pattern sistemi, kullanıcıların gelişmiş filtreleme kuralları oluşturmasına olanak tanıyan wildcard'lar, negasyon ve özel hedefleme mekanizmalarını içerir.
 
 Dosya pattern'leri için, araç şu sözdizimi öğelerini destekler: dizinler arası recursive eşleştirme için `**`, tek seviye wildcard eşleştirme için `*` ve negasyon için `!`. `**` wildcard'ı, sıfır veya daha fazla dizini eşleştirir ve `**/*.md` gibi pattern'lerin herhangi bir dizindeki markdown dosyalarını eşleştirmesine olanak tanır. `*` wildcard'ı, tek bir dizin seviyesindeki herhangi bir karakter dizisini eşleştirir, örneğin mevcut dizindeki tüm JavaScript dosyalarını eşleştirmek için `*.js`. Dizin pattern'leri, dizinleri özellikle hedeflemek için sondaki slash ile bitmelidir (örn. `docs/`).
 
@@ -74,12 +74,12 @@ Pattern satırları içinde satır içi yorumların desteklenmediğini unutmamak
 **Bölüm kaynakları**
 - [README.md](file://README.md#L544-L610)
 - [README.md](file://README.md#L418)
-- [context-manager.js](file://context-manager.js#L153-L173)
+- [ctxman.js](file://ctxman.js#L153-L173)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L25-L35)
 
 ## Yapilandirma Örnekleri
 
-context-manager aracı, core uygulama mantığına nasıl odaklanılacağını veya test dosyalarının etkili bir şekilde nasıl hariç tutulacağını gösteren pratik yapilandirma örnekleri sağlar. Bu örnekler, farklı kullanım durumları için hem EXCLUDE hem de INCLUDE modu yapılandırmalarını gösterir.
+ctxman aracı, core uygulama mantığına nasıl odaklanılacağını veya test dosyalarının etkili bir şekilde nasıl hariç tutulacağını gösteren pratik yapilandirma örnekleri sağlar. Bu örnekler, farklı kullanım durumları için hem EXCLUDE hem de INCLUDE modu yapılandırmalarını gösterir.
 
 EXCLUDE modu için, kullanıcılar analiz kapsamını genişletmek veya kısıtlamak için `.contextignore` dosyasını değiştirebilir. Normalde hariç tutulan dokümantasyon dosyalarını dahil etmek için, kullanıcılar `.contextignore` dosyasından `**/*.md` satırını yorumlayabilir veya kaldırabilir. Belirli büyük dosyaları veya dizinleri hariç tutmak için, `your-large-file.js` veya `specific-directory/**` gibi ek pattern'ler eklenebilir. Varsayılan `.contextignore` yapılandırması, dokümantasyon, yapilandirma dosyaları, altyapı kodu, workflow'lar ve testing utilities'i hariç tutarak core uygulama mantığına odaklanır.
 
@@ -141,7 +141,7 @@ utils.debugLog
 
 ## Yaygın Yapilandirma Sorunları
 
-context-manager aracı kullanıcıları, pattern sözdizimi, dosya dahil etme/hariç tutma davranışı ve farklı filtre dosyaları arasındaki etkileşimle ilgili birkaç yaygın yapilandirma sorunuyla karşılaşabilir. Bu sorunları ve çözümlerini anlamak etkili yapilandirma için gereklidir.
+ctxman aracı kullanıcıları, pattern sözdizimi, dosya dahil etme/hariç tutma davranışı ve farklı filtre dosyaları arasındaki etkileşimle ilgili birkaç yaygın yapilandirma sorunuyla karşılaşabilir. Bu sorunları ve çözümlerini anlamak etkili yapilandirma için gereklidir.
 
 Sık karşılaşılan bir sorun, özellikle wildcard kullanımı ile ilgili pattern sözdizimi hatalarıdır. Kullanıcılar bazen `*` (tek seviye wildcard) ile `**` (recursive wildcard) arasında karışıklık yaşar ve beklenmeyen sonuçlara yol açar. Örneğin, `docs/*.md` kullanımı yalnızca docs dizinindeki markdown dosyalarını eşleştirirken, `docs/**/*.md` docs ve tüm alt dizinlerindeki markdown dosyalarını eşleştirir. Başka bir yaygın sözdizimi sorunu, negasyon pattern'lerinin yerleşimidir; negasyon pattern'leri etkili olabilmeleri için değiştirdikleri pattern'lerden sonra gelmelidir.
 
@@ -154,11 +154,11 @@ Diğer yaygın sorunlar arasında dizin pattern'lerini uygun sözdizimi olmadan 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L418)
 - [README.md](file://README.md#L378-L408)
-- [context-manager.js](file://context-manager.js#L175-L211)
+- [ctxman.js](file://ctxman.js#L175-L211)
 
 ## En İyi Uygulamalar
 
-Farklı kullanım durumları için etkili filtre yapılandırmaları oluşturmak amacıyla, kullanıcılar context-manager aracının filtreleme sisteminin tüm yeteneklerinden yararlanan birkaç en iyi uygulamayı takip etmelidir.
+Farklı kullanım durumları için etkili filtre yapılandırmaları oluşturmak amacıyla, kullanıcılar ctxman aracının filtreleme sisteminin tüm yeteneklerinden yararlanan birkaç en iyi uygulamayı takip etmelidir.
 
 Genel geliştirme iş akışları için, maksimum hassasiyet için `.contextinclude` ile INCLUDE modunu kullanın. Geniş dahil etme pattern'leri ile başlayın ve belirli dosyaları veya dizinleri hariç tutmak için negasyon kullanın. Örneğin, kaynak dizinindeki tüm JavaScript dosyalarını `src/**/*.js` ile dahil edin ve ardından test dosyalarını `!src/**/*.test.js` ve legacy kodu `!src/legacy/**` ile hariç tutun. Bu yaklaşım, neyin hariç tutulduğu üzerinde kontrolü korurken kapsamlı kapsam sağlar.
 
@@ -175,5 +175,5 @@ Son olarak, farklı filtreleme yaklaşımlarının performans etkilerini göz ö
 **Bölüm kaynakları**
 - [README.md](file://README.md#L30-L103)
 - [README.md](file://README.md#L253-L293)
-- [context-manager.js](file://context-manager.js#L408-L447)
+- [ctxman.js](file://ctxman.js#L408-L447)
 - [lib/parsers/method-filter-parser.js](file://lib/parsers/method-filter-parser.js#L7-L47)

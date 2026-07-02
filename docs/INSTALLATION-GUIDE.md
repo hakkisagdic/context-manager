@@ -1,4 +1,4 @@
-# Context Manager - Installation Guide
+# Ctxman - Installation Guide
 
 **Version:** 2.3.6+
 **Last Updated:** November 3, 2025
@@ -23,22 +23,22 @@
 
 ```bash
 # Global installation
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 
 # Verify
-context-manager --help
+ctxman --help
 ```
 
 ### One-Line Installers
 
 #### macOS / Linux
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.sh)
 ```
 
 #### Windows (PowerShell)
 ```powershell
-irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.ps1 | iex
 ```
 
 ---
@@ -50,23 +50,23 @@ irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/i
 #### Option 1: Homebrew (Recommended)
 ```bash
 # Add tap (once)
-brew tap hakkisagdic/context-manager
+brew tap hakkisagdic/ctxman
 
 # Install
-brew install context-manager
+brew install ctxman
 
 # Update
-brew upgrade context-manager
+brew upgrade ctxman
 ```
 
 #### Option 2: NPM
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 #### Option 3: Installation Script
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.sh | bash
 ```
 
 ### Linux
@@ -74,10 +74,10 @@ curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/sc
 #### Option 1: Debian/Ubuntu (APT)
 ```bash
 # Download DEB package
-wget https://github.com/hakkisagdic/context-manager/releases/download/v2.3.5/context-manager_2.3.5_all.deb
+wget https://github.com/hakkisagdic/ctxman/releases/download/v2.3.5/ctxman_2.3.5_all.deb
 
 # Install
-sudo dpkg -i context-manager_2.3.5_all.deb
+sudo dpkg -i ctxman_2.3.5_all.deb
 
 # Install dependencies if needed
 sudo apt-get install -f
@@ -87,37 +87,37 @@ sudo apt-get install -f
 ```bash
 # Coming soon - RPM package
 # For now, use NPM:
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 #### Option 3: NPM (Universal)
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 #### Option 4: Installation Script
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.sh | bash
 ```
 
 ### Windows
 
 #### Option 1: NPM (Recommended)
 ```powershell
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 #### Option 2: PowerShell Script
 ```powershell
 # Run as Administrator
 Set-ExecutionPolicy Bypass -Scope Process -Force
-irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/install.ps1 | iex
 ```
 
 #### Option 3: Manual Download
-1. Download from: https://github.com/hakkisagdic/context-manager/releases
-2. Extract to: `C:\Program Files\context-manager`
-3. Add to PATH: `C:\Program Files\context-manager\bin`
+1. Download from: https://github.com/hakkisagdic/ctxman/releases
+2. Extract to: `C:\Program Files\ctxman`
+3. Add to PATH: `C:\Program Files\ctxman\bin`
 
 ---
 
@@ -127,45 +127,45 @@ irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/i
 
 ```bash
 # Global (recommended)
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 
 # Local (project-specific)
-npm install @hakkisagdic/context-manager
+npm install ctxman
 
 # Specific version
-npm install -g @hakkisagdic/context-manager@2.3.5
+npm install -g ctxman@2.3.5
 
 # Insider/pre-release
-npm install -g @hakkisagdic/context-manager@next
+npm install -g ctxman@next
 ```
 
 ### Yarn
 
 ```bash
 # Global
-yarn global add @hakkisagdic/context-manager
+yarn global add ctxman
 
 # Local
-yarn add @hakkisagdic/context-manager
+yarn add ctxman
 ```
 
 ### PNPM
 
 ```bash
 # Global
-pnpm add -g @hakkisagdic/context-manager
+pnpm add -g ctxman
 
 # Local
-pnpm add @hakkisagdic/context-manager
+pnpm add ctxman
 ```
 
 ### Homebrew (macOS)
 
 ```bash
-brew tap hakkisagdic/context-manager
-brew install context-manager
-brew upgrade context-manager  # Update
-brew uninstall context-manager  # Remove
+brew tap hakkisagdic/ctxman
+brew install ctxman
+brew upgrade ctxman  # Update
+brew uninstall ctxman  # Remove
 ```
 
 ---
@@ -176,16 +176,16 @@ brew uninstall context-manager  # Remove
 
 ```bash
 # Check if installed
-which context-manager
+which ctxman
 
 # Check version
-context-manager --version
+ctxman --version
 
 # Run help
-context-manager --help
+ctxman --help
 
 # Quick test
-context-manager --simple
+ctxman --simple
 ```
 
 ### Verify Dependencies
@@ -198,31 +198,31 @@ node --version
 npm --version
 
 # List installed packages
-npm list -g @hakkisagdic/context-manager
+npm list -g ctxman
 ```
 
 ### Test Core Features
 
 ```bash
 # Test TOON format
-context-manager --output toon --simple
+ctxman --output toon --simple
 
 # Test format listing
-context-manager --list-formats
+ctxman --list-formats
 
 # Test method-level analysis
-context-manager --method-level --simple
+ctxman --method-level --simple
 
 # Test format conversion
 echo '{"test": "value"}' > test.json
-context-manager convert test.json --from json --to toon
+ctxman convert test.json --from json --to toon
 ```
 
 ---
 
 ## 🎨 Optional Dependencies
 
-Context Manager has **optional interactive features** that require additional dependencies.
+Ctxman has **optional interactive features** that require additional dependencies.
 
 ### Interactive Wizard & Dashboard
 
@@ -233,7 +233,7 @@ These features use React + Ink for beautiful terminal UI:
 npm install -g ink react ink-select-input ink-text-input ink-spinner
 
 # Or with the package
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 **Features Enabled:**
@@ -269,40 +269,40 @@ npm install -g tiktoken
 
 ```bash
 # Option 1: Uninstall script
-bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/uninstall.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/uninstall.sh)
 
 # Option 2: NPM
-npm uninstall -g @hakkisagdic/context-manager
+npm uninstall -g ctxman
 
 # Option 3: Homebrew
-brew uninstall context-manager
+brew uninstall ctxman
 ```
 
 ### Windows
 
 ```powershell
 # Option 1: PowerShell script
-irm https://raw.githubusercontent.com/hakkisagdic/context-manager/main/scripts/uninstall.ps1 | iex
+irm https://raw.githubusercontent.com/hakkisagdic/ctxman/main/scripts/uninstall.ps1 | iex
 
 # Option 2: NPM
-npm uninstall -g @hakkisagdic/context-manager
+npm uninstall -g ctxman
 ```
 
 ### Remove Configuration
 
 ```bash
 # macOS / Linux
-rm -rf ~/.context-manager
+rm -rf ~/.ctxman
 
 # Windows
-Remove-Item -Path $env:USERPROFILE\.context-manager -Recurse
+Remove-Item -Path $env:USERPROFILE\.ctxman -Recurse
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### "command not found: context-manager"
+### "command not found: ctxman"
 
 **Solution:**
 ```bash
@@ -319,10 +319,10 @@ source ~/.bashrc  # or ~/.zshrc
 **Linux/macOS:**
 ```bash
 # Use sudo for global install
-sudo npm install -g @hakkisagdic/context-manager
+sudo npm install -g ctxman
 
 # Or install locally without sudo
-npm install @hakkisagdic/context-manager
+npm install ctxman
 ```
 
 **Windows:**
@@ -349,7 +349,7 @@ node --version
 npm cache clean --force
 
 # Try again
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 
 ### Wizard/Dashboard Not Working
@@ -359,7 +359,7 @@ npm install -g @hakkisagdic/context-manager
 npm install -g ink react ink-select-input ink-text-input ink-spinner
 
 # Or use simple mode
-context-manager --simple
+ctxman --simple
 ```
 
 ---
@@ -370,29 +370,29 @@ context-manager --simple
 
 ```bash
 # Check for updates
-context-manager update check
+ctxman update check
 
 # Install update
-context-manager update install
+ctxman update install
 
 # Rollback if needed
-context-manager update rollback
+ctxman update rollback
 ```
 
 ### NPM
 
 ```bash
 # Update to latest
-npm update -g @hakkisagdic/context-manager
+npm update -g ctxman
 
 # Update to specific version
-npm install -g @hakkisagdic/context-manager@2.3.6
+npm install -g ctxman@2.3.6
 ```
 
 ### Homebrew
 
 ```bash
-brew upgrade context-manager
+brew upgrade ctxman
 ```
 
 ---
@@ -401,16 +401,16 @@ brew upgrade context-manager
 
 ### Global Installation
 ```bash
-npm install -g @hakkisagdic/context-manager
+npm install -g ctxman
 ```
 ✅ Available system-wide
 ✅ Use from any directory
-✅ Simple `context-manager` command
+✅ Simple `ctxman` command
 ❌ Requires admin/sudo (sometimes)
 
 ### Local Installation
 ```bash
-npm install @hakkisagdic/context-manager
+npm install ctxman
 ```
 ✅ No admin rights needed
 ✅ Project-specific version
@@ -419,8 +419,8 @@ npm install @hakkisagdic/context-manager
 
 ### Source Installation (Developers)
 ```bash
-git clone https://github.com/hakkisagdic/context-manager.git
-cd context-manager
+git clone https://github.com/hakkisagdic/ctxman.git
+cd ctxman
 npm install
 npm link  # Make globally available
 ```
@@ -434,19 +434,19 @@ npm link  # Make globally available
 
 After installation:
 
-1. **Read Quick Start**: `context-manager --help`
-2. **Try Wizard**: `context-manager --wizard`
+1. **Read Quick Start**: `ctxman --help`
+2. **Try Wizard**: `ctxman --wizard`
 3. **Read Docs**: See [FEATURE-EXAMPLES.md](./FEATURE-EXAMPLES.md)
-4. **Configure**: Edit `~/.context-manager/config.json`
-5. **Update**: `context-manager update check`
+4. **Configure**: Edit `~/.ctxman/config.json`
+5. **Update**: `ctxman update check`
 
 ---
 
 ## 🆘 Getting Help
 
-- **GitHub Issues**: https://github.com/hakkisagdic/context-manager/issues
-- **Documentation**: https://github.com/hakkisagdic/context-manager#readme
-- **Quick Help**: `context-manager --help`
+- **GitHub Issues**: https://github.com/hakkisagdic/ctxman/issues
+- **Documentation**: https://github.com/hakkisagdic/ctxman#readme
+- **Quick Help**: `ctxman --help`
 
 ---
 

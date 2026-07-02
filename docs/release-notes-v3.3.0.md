@@ -3,12 +3,12 @@
 ## 🚀 New Features
 
 ### 🖥️ Desktop Application
-- **New Electron-based UI**: A modern, dark-themed desktop interface for Context Manager.
+- **New Electron-based UI**: A modern, dark-themed desktop interface for Ctxman.
 - **Visual Project Management**: Browse files, view stats, and manage projects visually.
 - **Real-time Updates**: File watcher automatically detects changes.
 
 ### 🔌 MCP Integration
-- **Built-in MCP Client**: Connects to the Context Manager MCP server.
+- **Built-in MCP Client**: Connects to the Ctxman MCP server.
 - **Resource Browser**: View and access MCP resources.
 - **Prompt Library**: Execute parameterized prompts directly from the UI.
 

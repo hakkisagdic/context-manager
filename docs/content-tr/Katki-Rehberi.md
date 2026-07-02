@@ -3,7 +3,7 @@
 <cite>
 **Bu Dokümanda Referans Verilen Dosyalar**
 - [README.md](file://README.md)
-- [context-manager.js](file://context-manager.js)
+- [ctxman.js](file://ctxman.js)
 - [index.js](file://index.js)
 - [bin/cli.js](file://bin/cli.js)
 - [test/test.js](file://test/test.js)
@@ -22,7 +22,7 @@
 8. [Sonuç](#sonuç)
 
 ## Giriş
-context-manager projesi, method seviyesinde filtreleme ve token analiz yeteneklerine sahip bir LLM context optimizasyon aracıdır. Bu rehber, katkıda bulunanlara geliştirme iş akışını, kod yapısını, test stratejisini ve katkı rehberlerini anlamaları için kapsamlı bilgi sağlar. Araç, geliştiricilerin kod tabanlarını analiz etmelerine ve tiktoken (GPT-4 uyumlu) kullanarak kesin token sayıları hesaplayarak AI asistanları için optimize edilmiş context oluşturmalarına yardımcı olmak üzere tasarlanmıştır.
+ctxman projesi, method seviyesinde filtreleme ve token analiz yeteneklerine sahip bir LLM context optimizasyon aracıdır. Bu rehber, katkıda bulunanlara geliştirme iş akışını, kod yapısını, test stratejisini ve katkı rehberlerini anlamaları için kapsamlı bilgi sağlar. Araç, geliştiricilerin kod tabanlarını analiz etmelerine ve tiktoken (GPT-4 uyumlu) kullanarak kesin token sayıları hesaplayarak AI asistanları için optimize edilmiş context oluşturmalarına yardımcı olmak üzere tasarlanmıştır.
 
 **Bölüm kaynakları**
 - [README.md](file://README.md#L0-L891)
@@ -30,7 +30,7 @@ context-manager projesi, method seviyesinde filtreleme ve token analiz yetenekle
 ## Geliştirme İş Akışı
 
 ### Yerel Ortamı Kurma
-context-manager için yerel geliştirme ortamını kurmak için şu adımları izleyin:
+ctxman için yerel geliştirme ortamını kurmak için şu adımları izleyin:
 
 1. Repoyu GitHub'dan klonlayın
 2. `npm install` kullanarak bağımlılıkları yükleyin
@@ -64,7 +64,7 @@ Pull request gönderirken, şunlardan emin olun:
 ## Kod Yapısı ve Mimari
 
 ### Modüler, Sınıf Tabanlı Tasarım
-context-manager projesi, net sorumluluk ayrımı ile modüler, sınıf tabanlı bir tasarım desenini takip eder. Mimari, aracın fonksiyonelliğini sağlamak için birlikte çalışan birkaç core bileşenden oluşur.
+ctxman projesi, net sorumluluk ayrımı ile modüler, sınıf tabanlı bir tasarım desenini takip eder. Mimari, aracın fonksiyonelliğini sağlamak için birlikte çalışan birkaç core bileşenden oluşur.
 
 ```mermaid
 classDiagram
@@ -106,10 +106,10 @@ MethodAnalyzer --> MethodFilterParser : "filtreleme için methodlar sağlar"
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L231-L800)
-- [context-manager.js](file://context-manager.js#L124-L229)
-- [context-manager.js](file://context-manager.js#L14-L73)
-- [context-manager.js](file://context-manager.js#L75-L115)
+- [ctxman.js](file://ctxman.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L124-L229)
+- [ctxman.js](file://ctxman.js#L14-L73)
+- [ctxman.js](file://ctxman.js#L75-L115)
 
 ### Core Bileşenler
 Sistemin ana bileşenleri şunlardır:
@@ -122,7 +122,7 @@ Sistemin ana bileşenleri şunlardır:
 Bu bileşenler, modül giriş noktası olarak hizmet eden ve programatik kullanım için tüm core sınıfları export eden index.js dosyası aracılığıyla açığa çıkarılır.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L864)
+- [ctxman.js](file://ctxman.js#L14-L864)
 - [index.js](file://index.js#L0-L7)
 
 ## Test Stratejisi
@@ -236,7 +236,7 @@ Kod inceleme süreci şunları içerir:
 6. Potansiyel güvenlik açıkları için güvenlik incelemesi
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L14-L864)
+- [ctxman.js](file://ctxman.js#L14-L864)
 - [package.json](file://package.json#L0-L55)
 
 ## Aracı Genişletme
@@ -260,8 +260,8 @@ Yeni çıktı formatları eklemek için:
 Araç şu anda detaylı JSON raporları, LLM context dosyaları ve pano entegrasyonu dahil olmak üzere birden fazla çıktı formatını desteklemektedir. Yeni formatlar, AI asistanları için yararlı olan yapılandırılmış, makine tarafından okunabilir çıktı sağlamanın aynı prensiplerini takip etmelidir.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L231-L800)
+- [ctxman.js](file://ctxman.js#L231-L800)
 - [bin/cli.js](file://bin/cli.js#L0-L66)
 
 ## Sonuç
-context-manager projesi, kod tabanlarını analiz etmek ve AI asistanları için optimize edilmiş context oluşturmak için sağlam bir temel sağlar. Bu dokümanda özetlenen rehberleri takip ederek, katkıda bulunanlar aracın geliştirilmesine etkili bir şekilde katılabilir, projenin mimarisi ve hedefleriyle uyumlu yüksek kaliteli katkılar sağlayabilirler. Modüler, sınıf tabanlı tasarım, kod kalitesini ve test kapsamını korurken aracı yeni özellikler veya çıktı formatları ile genişletmeyi nispeten basit hale getirir.
+ctxman projesi, kod tabanlarını analiz etmek ve AI asistanları için optimize edilmiş context oluşturmak için sağlam bir temel sağlar. Bu dokümanda özetlenen rehberleri takip ederek, katkıda bulunanlar aracın geliştirilmesine etkili bir şekilde katılabilir, projenin mimarisi ve hedefleriyle uyumlu yüksek kaliteli katkılar sağlayabilirler. Modüler, sınıf tabanlı tasarım, kod kalitesini ve test kapsamını korurken aracı yeni özellikler veya çıktı formatları ile genişletmeyi nispeten basit hale getirir.

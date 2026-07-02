@@ -2,7 +2,7 @@
 
 <cite>
 **Bu Belgedeki Referans Dosyalar**
-- [context-manager.js](file://context-manager.js) - *Son commit'te güncellendi*
+- [ctxman.js](file://ctxman.js) - *Son commit'te güncellendi*
 - [package.json](file://package.json)
 - [README.md](file://README.md) - *Son commit'te güncellendi*
 - [lib/analyzers/token-calculator.js](file://lib/analyzers/token-calculator.js) - *Son commit'te eklendi*
@@ -22,15 +22,15 @@
 
 ## Giriş
 
-context-manager aracı, LLM context yönetimi ve kod analizini desteklemek için sofistike token sayma işlevselliği sağlar. Sistem, tam GPT-4 uyumlu hesaplamaları akıllı tahmin yöntemleriyle birleştirerek token sayımına ikili bir yaklaşım uygular. Bu dokümantasyon, context-manager aracı içindeki token sayma sisteminin implementasyonunu, kullanımını ve entegrasyonunu detaylandırır.
+ctxman aracı, LLM context yönetimi ve kod analizini desteklemek için sofistike token sayma işlevselliği sağlar. Sistem, tam GPT-4 uyumlu hesaplamaları akıllı tahmin yöntemleriyle birleştirerek token sayımına ikili bir yaklaşım uygular. Bu dokümantasyon, ctxman aracı içindeki token sayma sisteminin implementasyonunu, kullanımını ve entegrasyonunu detaylandırır.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L7-L8)
+- [ctxman.js](file://ctxman.js#L7-L8)
 - [README.md](file://README.md#L294-L356)
 
 ## Token Hesaplama Yöntemleri
 
-context-manager'daki token sayma sistemi, token sayılarını belirlemek için iki tamamlayıcı method uygular: tiktoken kütüphanesini kullanarak tam sayım ve karakter-başına-token oranlarını kullanarak tahmini sayım. Sistem, kütüphane kullanılabilirliğine ve performans gereksinimlerine göre uygun methodu otomatik olarak seçer.
+ctxman'daki token sayma sistemi, token sayılarını belirlemek için iki tamamlayıcı method uygular: tiktoken kütüphanesini kullanarak tam sayım ve karakter-başına-token oranlarını kullanarak tahmini sayım. Sistem, kütüphane kullanılabilirliğine ve performans gereksinimlerine göre uygun methodu otomatik olarak seçer.
 
 Token hesaplaması için birincil giriş noktası, tam ve tahmini sayım methodları arasında dağıtıcı olarak hizmet eden `TokenCalculator` sınıfındaki `calculateTokens` methodudur. tiktoken mevcut olduğunda, sistem tam sayım kullanır; aksi takdirde, tahmini hesaplamaya geçer.
 
@@ -46,14 +46,14 @@ ReturnEstimate --> End
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [ctxman.js](file://ctxman.js#L280-L292)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [ctxman.js](file://ctxman.js#L280-L292)
 
 ## tiktoken ile Tam Token Sayımı
 
-context-manager aracı, mevcut olduğunda tam GPT-4 uyumlu token sayımları sağlamak için tiktoken kütüphanesini kullanır. Implementasyon, başlatma sırasında tiktoken'ı yüklemeye çalışan ve kütüphane mevcut değilse tahmini hesaplamaya geçen zarif bir bozulma modeli izler.
+ctxman aracı, mevcut olduğunda tam GPT-4 uyumlu token sayımları sağlamak için tiktoken kütüphanesini kullanır. Implementasyon, başlatma sırasında tiktoken'ı yüklemeye çalışan ve kütüphane mevcut değilse tahmini hesaplamaya geçen zarif bir bozulma modeli izler.
 
 Tam token sayma işlemi, GPT-4, GPT-3.5-Turbo ve diğer modeller tarafından kullanılan tokenizer olan cl100k_base encoding'ini kullanır. Bu, token sayılarının bu modellerin metni nasıl işleyeceğinin doğru temsilleri olmasını sağlar.
 
@@ -77,16 +77,16 @@ end
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [ctxman.js](file://ctxman.js#L280-L292)
 - [package.json](file://package.json#L35-L38)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L280-L292)
+- [ctxman.js](file://ctxman.js#L280-L292)
 - [package.json](file://package.json#L35-L38)
 
 ## Tahmini Token Sayımı Implementasyonu
 
-tiktoken kütüphanesi mevcut olmadığında, context-manager aracı uzantıya özgü karakter-başına-token oranları kullanan bir tahmin methoduna geri döner. Bu yaklaşım, performansı korurken ve bağımlılıkları azaltırken makul derecede doğru tahminler (~%95 doğruluk) sağlar.
+tiktoken kütüphanesi mevcut olmadığında, ctxman aracı uzantıya özgü karakter-başına-token oranları kullanan bir tahmin methoduna geri döner. Bu yaklaşım, performansı korurken ve bağımlılıkları azaltırken makul derecede doğru tahminler (~%95 doğruluk) sağlar.
 
 Tahmin algoritması şu adımları izler:
 1. filePath parametresinden dosya uzantısını belirle
@@ -111,10 +111,10 @@ Implementasyon, yaygın dosya türleri için spesifik karakter-başına-token or
 - HTML/XML: Token başına 2.8 karakter
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L294-L304)
+- [ctxman.js](file://ctxman.js#L294-L304)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L294-L304)
+- [ctxman.js](file://ctxman.js#L294-L304)
 
 ## Dosya Türüne Özgü Örnekler
 
@@ -127,8 +127,8 @@ JSON, YAML ve XML gibi yapılandırma dosyaları, yapısal özelliklerini yansı
 Sistem, bir dosyanın metin dosyası olarak analiz edilip edilmeyeceğini, hem dosya uzantılarını hem de "readme", "license" ve "changelog" gibi yaygın metin dosyası adlarını kontrol eden `isTextFile` methodu aracılığıyla belirler.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L294-L304)
-- [context-manager.js](file://context-manager.js#L306-L321)
+- [ctxman.js](file://ctxman.js#L294-L304)
+- [ctxman.js](file://ctxman.js#L306-L321)
 
 ## Dosya ve Proje İstatistikleriyle Entegrasyon
 
@@ -187,12 +187,12 @@ StatsObject --> DirStats : "içerir"
 ```
 
 **Diyagram kaynakları**
-- [context-manager.js](file://context-manager.js#L323-L351)
-- [context-manager.js](file://context-manager.js#L455-L480)
+- [ctxman.js](file://ctxman.js#L323-L351)
+- [ctxman.js](file://ctxman.js#L455-L480)
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L323-L351)
-- [context-manager.js](file://context-manager.js#L455-L480)
+- [ctxman.js](file://ctxman.js#L323-L351)
+- [ctxman.js](file://ctxman.js#L455-L480)
 
 ## LLM Context Oluşturma
 
@@ -207,7 +207,7 @@ Context oluşturma iki formatı destekler:
 Format seçimi, kompakt format dosya organizasyonuna odaklanırken ve detaylı format her method için kapsamlı token bilgisi sağlarken, token sayılarının çıktıda nasıl sunulduğunu etkiler.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L482-L503)
+- [ctxman.js](file://ctxman.js#L482-L503)
 
 ## Performans Etkileri
 
@@ -222,12 +222,12 @@ Sistem, mevcut olduğunda tam sayımı tercih edecek şekilde tasarlanmıştır;
 Büyük codebase'ler için performans farkı daha önemli hale gelir ve mutlak hassasiyet gerekli olmadığında tahmini sayımı tercih edilir kılar. Tahmin methodunun metin temizleme ve basit bölme için O(n) karmaşıklığı, büyük dosyalar için bile oldukça verimli olmasını sağlar.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L659-L659)
+- [ctxman.js](file://ctxman.js#L659-L659)
 - [README.md](file://README.md#L294-L356)
 
 ## Yaygın Sorunlar ve Sorun Giderme
 
-context-manager aracındaki token sayımıyla ilgili yaygın sorunlar genellikle standart olmayan dosya türleri için yanlış tahminler veya tiktoken kurulum sorunlarıyla ilgilidir. En sık karşılaşılan sorunlar şunlardır:
+ctxman aracındaki token sayımıyla ilgili yaygın sorunlar genellikle standart olmayan dosya türleri için yanlış tahminler veya tiktoken kurulum sorunlarıyla ilgilidir. En sık karşılaşılan sorunlar şunlardır:
 
 1. **Standart olmayan dosya türleri için yanlış tahminler**: Bir dosya, önceden tanımlanmış eşlemede yer almayan alışılmadık bir uzantıya sahip olduğunda, sistem varsayılan olarak token başına 3.5 karakter oranı kullanır. Bu, özel dosya formatları için yanlış tahminlere yol açabilir.
 
@@ -245,7 +245,7 @@ Token sayma sorunlarını gidermek için kullanıcılar önce tiktoken kurulumun
 
 ## Kurulum ve Yapılandırma
 
-Tam token sayımını sağlamak için tiktoken kütüphanesinin düzgün şekilde yüklenmesi gerekir. context-manager aracı, tiktoken'ı package.json'da hem dependency hem de optionalDependency olarak listeler; bu, tam sayım için kurulumu teşvik ederken aracın onsuz çalışmasına izin verir.
+Tam token sayımını sağlamak için tiktoken kütüphanesinin düzgün şekilde yüklenmesi gerekir. ctxman aracı, tiktoken'ı package.json'da hem dependency hem de optionalDependency olarak listeler; bu, tam sayım için kurulumu teşvik ederken aracın onsuz çalışmasına izin verir.
 
 Kurulum npm aracılığıyla gerçekleştirilir:
 ```bash
@@ -262,6 +262,6 @@ try { tiktoken = require('tiktoken'); } catch {}
 Bu kalıp, aracın tiktoken kurulumu başarısız olsa veya gerçekleştirilmese bile işlevsel kalmasını sağlarken, istendiğinde tam sayım seçeneğini hala sağlar. Başlangıç dizisi, kullanılan token hesaplama methodunu görüntüleyerek kullanıcıların kurulum durumlarını doğrulamalarına yardımcı olur.
 
 **Bölüm kaynakları**
-- [context-manager.js](file://context-manager.js#L7-L9)
+- [ctxman.js](file://ctxman.js#L7-L9)
 - [package.json](file://package.json#L35-L38)
 - [README.md](file://README.md#L294-L356)

@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-Context Manager can automatically generate GitIngest digests from any GitHub repository URL. No need to manually clone, analyze, and generate - just provide the URL!
+Ctxman can automatically generate GitIngest digests from any GitHub repository URL. No need to manually clone, analyze, and generate - just provide the URL!
 
 ### What It Does
 
@@ -32,7 +32,7 @@ Context Manager can automatically generate GitIngest digests from any GitHub rep
 
 **Now (Automated):**
 ```bash
-context-manager github facebook/react
+ctxman github facebook/react
 # ✅ Done! Digest saved to docs/
 ```
 
@@ -44,32 +44,32 @@ context-manager github facebook/react
 
 ```bash
 # Simple format (owner/repo)
-context-manager github facebook/react
+ctxman github facebook/react
 
 # Full URL
-context-manager github https://github.com/vercel/next.js
+ctxman github https://github.com/vercel/next.js
 
 # Git URL
-context-manager git git@github.com:angular/angular.git
+ctxman git git@github.com:angular/angular.git
 ```
 
 ### With Options
 
 ```bash
 # Specific branch
-context-manager github vercel/next.js --branch canary
+ctxman github vercel/next.js --branch canary
 
 # Custom output
-context-manager github nodejs/node -o docs/nodejs-analysis.txt
+ctxman github nodejs/node -o docs/nodejs-analysis.txt
 
 # Verbose mode
-context-manager github microsoft/vscode --verbose
+ctxman github microsoft/vscode --verbose
 
 # With chunking (large repos)
-context-manager github tensorflow/tensorflow --chunk-size 100000
+ctxman github tensorflow/tensorflow --chunk-size 100000
 
 # Keep clone for inspection
-context-manager github rust-lang/rust --keep-clone
+ctxman github rust-lang/rust --keep-clone
 ```
 
 ---
@@ -89,11 +89,11 @@ context-manager github rust-lang/rust --keep-clone
 
 ```bash
 # All of these work:
-context-manager github facebook/react
-context-manager github https://github.com/facebook/react
-context-manager github https://github.com/facebook/react.git
-context-manager github git@github.com:facebook/react.git
-context-manager github github.com/facebook/react
+ctxman github facebook/react
+ctxman github https://github.com/facebook/react
+ctxman github https://github.com/facebook/react.git
+ctxman github git@github.com:facebook/react.git
+ctxman github github.com/facebook/react
 ```
 
 ---
@@ -125,7 +125,7 @@ context-manager github github.com/facebook/react
 ### Example 1: Analyze React.js
 
 ```bash
-context-manager github facebook/react
+ctxman github facebook/react
 ```
 
 **Output:**
@@ -170,14 +170,14 @@ context-manager github facebook/react
 
 ```bash
 # Next.js uses 'canary' as default branch
-context-manager github vercel/next.js --branch canary
+ctxman github vercel/next.js --branch canary
 ```
 
 ### Example 3: Large Repository with Chunking
 
 ```bash
 # VSCode is huge - use chunking
-context-manager github microsoft/vscode --chunk-size 100000 --verbose
+ctxman github microsoft/vscode --chunk-size 100000 --verbose
 ```
 
 **Output:**
@@ -189,16 +189,16 @@ context-manager github microsoft/vscode --chunk-size 100000 --verbose
 
 ```bash
 # Clone and keep for manual exploration
-context-manager github tensorflow/tensorflow --keep-clone
+ctxman github tensorflow/tensorflow --keep-clone
 
-# Clone location: .context-manager/temp/tensorflow-tensorflow/
+# Clone location: .ctxman/temp/tensorflow-tensorflow/
 ```
 
 ### Example 5: Custom Output Location
 
 ```bash
 # Save to specific location
-context-manager github angular/angular -o ~/projects/angular-context.txt
+ctxman github angular/angular -o ~/projects/angular-context.txt
 ```
 
 ---
@@ -208,7 +208,7 @@ context-manager github angular/angular -o ~/projects/angular-context.txt
 ### Programmatic API
 
 ```javascript
-const { GitUtils } = require('@hakkisagdic/context-manager');
+const { GitUtils } = require('ctxman');
 
 const gitUtils = new GitUtils({
     verbose: true,
@@ -264,7 +264,7 @@ console.log(`Default Branch: ${info.defaultBranch}`);
 
 ```bash
 # Just give me the digest
-context-manager github owner/repo
+ctxman github owner/repo
 ```
 
 ### 2. Multiple Repositories
@@ -278,7 +278,7 @@ repos=(
 )
 
 for repo in "${repos[@]}"; do
-    context-manager github $repo
+    ctxman github $repo
 done
 ```
 
@@ -286,17 +286,17 @@ done
 
 ```bash
 # Compare different frameworks
-context-manager github facebook/react -o docs/react.txt
-context-manager github vuejs/core -o docs/vue.txt
-context-manager github angular/angular -o docs/angular.txt
-context-manager github sveltejs/svelte -o docs/svelte.txt
+ctxman github facebook/react -o docs/react.txt
+ctxman github vuejs/core -o docs/vue.txt
+ctxman github angular/angular -o docs/angular.txt
+ctxman github sveltejs/svelte -o docs/svelte.txt
 ```
 
 ### 4. Large Monorepo
 
 ```bash
 # Chromium-sized repos need chunking
-context-manager github chromium/chromium \
+ctxman github chromium/chromium \
     --chunk-size 100000 \
     --branch main \
     --verbose
@@ -345,7 +345,7 @@ Generated: 2025-11-03T02:00:00Z
 
 Cloned repos are stored in:
 ```
-.context-manager/temp/{owner}-{repo}/
+.ctxman/temp/{owner}-{repo}/
 ```
 
 **Auto-cleanup:** Default (unless `--keep-clone`)
@@ -353,10 +353,10 @@ Cloned repos are stored in:
 **Manual cleanup:**
 ```bash
 # Remove all temp repos
-rm -rf .context-manager/temp/
+rm -rf .ctxman/temp/
 
 # Remove specific repo
-rm -rf .context-manager/temp/facebook-react/
+rm -rf .ctxman/temp/facebook-react/
 ```
 
 ### List Cached Repos
@@ -416,7 +416,7 @@ sudo yum install git
 ```bash
 # Set GitHub token (increases rate limit)
 export GITHUB_TOKEN=your_token_here
-context-manager github owner/repo
+ctxman github owner/repo
 ```
 
 ### Branch Not Found
@@ -428,10 +428,10 @@ context-manager github owner/repo
 **Solution:**
 ```bash
 # Check default branch first
-context-manager github owner/repo --verbose
+ctxman github owner/repo --verbose
 
 # Or specify correct branch
-context-manager github owner/repo --branch develop
+ctxman github owner/repo --branch develop
 ```
 
 ---
@@ -462,7 +462,7 @@ Disk Usage: ~500 MB (full history)
 
 For repos > 100k tokens:
 ```bash
-context-manager github large/repo --chunk-size 50000
+ctxman github large/repo --chunk-size 50000
 ```
 
 **Benefits:**
@@ -478,14 +478,14 @@ context-manager github large/repo --chunk-size 50000
 
 ```bash
 # Get full context before reviewing PR
-context-manager github owner/repo --branch feature-branch
+ctxman github owner/repo --branch feature-branch
 ```
 
 ### 2. Learning New Framework
 
 ```bash
 # Study a framework's structure
-context-manager github sveltejs/kit
+ctxman github sveltejs/kit
 # Read digest to understand architecture
 ```
 
@@ -493,8 +493,8 @@ context-manager github sveltejs/kit
 
 ```bash
 # Analyze source before migration
-context-manager github old/framework
-context-manager github new/framework
+ctxman github old/framework
+ctxman github new/framework
 # Compare structures
 ```
 
@@ -502,8 +502,8 @@ context-manager github new/framework
 
 ```bash
 # Full clone for security review
-context-manager github company/app --full-clone --keep-clone
-# Inspect code in .context-manager/temp/
+ctxman github company/app --full-clone --keep-clone
+# Inspect code in .ctxman/temp/
 ```
 
 ---
@@ -517,7 +517,7 @@ const gitUtils = new GitUtils(options)
 
 // Options:
 {
-    tempDir: '.context-manager/temp',  // Clone location
+    tempDir: '.ctxman/temp',  // Clone location
     outputDir: 'docs',                 // Digest output location
     verbose: false                     // Show detailed logs
 }
@@ -550,9 +550,9 @@ List all cached repository clones
 
 ## 🔗 Integration with gitingest.com
 
-Context Manager provides an **offline, scriptable alternative** to gitingest.com:
+Ctxman provides an **offline, scriptable alternative** to gitingest.com:
 
-| Feature | gitingest.com | Context Manager |
+| Feature | gitingest.com | Ctxman |
 |---------|---------------|-----------------|
 | **Web UI** | ✅ | ❌ |
 | **Automation** | ❌ | ✅ |
@@ -563,7 +563,7 @@ Context Manager provides an **offline, scriptable alternative** to gitingest.com
 
 **Best of both worlds:**
 - Use gitingest.com for quick one-off digests
-- Use Context Manager for automation and workflows
+- Use Ctxman for automation and workflows
 
 ---
 
@@ -575,7 +575,7 @@ Context Manager provides an **offline, scriptable alternative** to gitingest.com
 4. **Customizable** - Filters, chunking, formats
 5. **Fast** - Shallow clone by default
 6. **Clean** - Auto-cleanup temp files
-7. **Integrated** - Works with all Context Manager features
+7. **Integrated** - Works with all Ctxman features
 
 ---
 

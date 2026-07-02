@@ -3,7 +3,7 @@
 # Quick Test Script for v3.0.0
 # Tests essential features with Express.js test repo
 
-echo "🧪 Context Manager v3.0.0 - Quick Test Suite"
+echo "🧪 Ctxman v3.0.0 - Quick Test Suite"
 echo "=============================================="
 echo ""
 
@@ -46,31 +46,31 @@ echo ""
 cd test-repos/express
 
 # Test 1: Basic Analysis
-run_test "Basic Analysis" "context-manager --cli --no-verbose"
+run_test "Basic Analysis" "ctxman --cli --no-verbose"
 
 # Test 2: Method-Level Analysis
-run_test "Method-Level Analysis" "context-manager --cli -m --no-verbose"
+run_test "Method-Level Analysis" "ctxman --cli -m --no-verbose"
 
 # Test 3: TOON Format
-run_test "TOON Format Output" "context-manager --cli --output toon --no-verbose"
+run_test "TOON Format Output" "ctxman --cli --output toon --no-verbose"
 
 # Test 4: LLM Model Detection
 export ANTHROPIC_API_KEY=sk-test-fake-key
-run_test "LLM Auto-Detection" "context-manager --cli --auto-detect-llm --no-verbose"
+run_test "LLM Auto-Detection" "ctxman --cli --auto-detect-llm --no-verbose"
 unset ANTHROPIC_API_KEY
 
 # Test 5: List LLMs
 cd ../..
-run_test "List LLM Models" "context-manager --list-llms"
+run_test "List LLM Models" "ctxman --list-llms"
 
 # Test 6: Git Integration (Changed Since)
 cd test-repos/express
-run_test "Git Changed Since" "context-manager --cli --changed-since v5.0.0 --no-verbose"
+run_test "Git Changed Since" "ctxman --cli --changed-since v5.0.0 --no-verbose"
 
 # Test 7: API Server (background)
 cd ../..
 echo -n "Testing: API Server ... "
-context-manager serve --port 3333 > /dev/null 2>&1 &
+ctxman serve --port 3333 > /dev/null 2>&1 &
 SERVER_PID=$!
 sleep 2
 
