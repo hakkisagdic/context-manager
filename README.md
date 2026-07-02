@@ -1,6 +1,5 @@
 # ctxman
 
-> Formerly **@hakkisagdic/context-manager** — now published unscoped as `ctxman` (`npm i -g ctxman`). The old `context-manager` command keeps working as an alias.
 
 **AI Development Platform** with plugin architecture, Git integration, REST API, and watch mode. Supporting 14+ programming languages with method-level filtering, automatic LLM optimization, and real-time analysis. Perfect for AI-assisted development workflows.
 
