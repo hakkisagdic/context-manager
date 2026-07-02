@@ -13,6 +13,8 @@ name: Node.js Package
 on:
   release:
     types: [created]
+  push:
+    tags: ['v*']   # git tag vX.Y.Z && git push --tags
   workflow_dispatch:  # Manuel tetikleme için
 
 jobs:
