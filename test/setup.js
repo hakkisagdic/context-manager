@@ -16,7 +16,8 @@ global.console = {
 try {
   await import('tiktoken');
 } catch (e) {
-  vi.mock('tiktoken', () => ({
+  // doMock is NOT hoisted — the fallback only applies when the import truly failed
+  vi.doMock('tiktoken', () => ({
     default: {
       get_encoding: () => ({
         encode: (text) => new Uint32Array(text.length), // Dummy encoder
@@ -30,7 +31,7 @@ try {
 try {
   await import('supertest');
 } catch (e) {
-  vi.mock('supertest', () => ({
+  vi.doMock('supertest', () => ({
     default: () => ({
       get: () => ({ expect: () => Promise.resolve() }),
       post: () => ({ send: () => ({ expect: () => Promise.resolve() }) }),
